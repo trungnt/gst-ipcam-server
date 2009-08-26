@@ -6,7 +6,17 @@
  */
 #include <gtk/gtk.h>
 
-
+/**
+ * create audio sink for the pipeline
+ * This sink is used in the decoding progress
+ * The name of return object is "audiosink"
+ *
+ * @param None
+ *
+ * @return GstElement* the audio sink or NULL if something wrong
+ *
+ * @author Dam Quang Tuan <damquang.tuan@nomovok.com>
+ */
 void
 democlient_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data);

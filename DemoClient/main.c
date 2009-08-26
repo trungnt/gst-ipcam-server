@@ -19,7 +19,7 @@ int
 main (int argc, char *argv[])
 {
   GtkWidget *mainWindow;
-
+  GMainLoop *loop;
 #ifdef ENABLE_NLS
   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -38,7 +38,9 @@ main (int argc, char *argv[])
    */
   mainWindow = democlient_create_mainWindow ();
   gtk_widget_show (mainWindow);
-
+  //loop = g_main_loop_new(NULL, FALSE);
+  //g_main_loop_run(loop);
+  
   gtk_main ();
   return 0;
 }

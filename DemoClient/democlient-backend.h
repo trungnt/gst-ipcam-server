@@ -34,6 +34,9 @@ democlient_backend_stop();
 void
 democlient_backend_resume();
 
+void
+democlient_backend_deinit();
+
 #ifdef	__cplusplus
 }
 #endif

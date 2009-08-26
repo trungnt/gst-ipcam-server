@@ -6,6 +6,7 @@
  */
 #include <gtk/gtk.h>
 
+//For main Dialog
 GtkWidget *mainWindow;
 GtkWidget *vbox;
 GtkWidget *toolbar;
@@ -33,8 +34,19 @@ GtkWidget *toolitem_Quit;
 GtkWidget *btn_Quit;
 GtkWidget *hbox_VideoPrew;
 GtkWidget *prw_GuestVideo;
-GtkWidget *prw_HostVideo;
+//GtkWidget *prw_HostVideo;
 GtkWidget *statusBar;
+
+//For Connection Dialog
+GtkWidget *connectionDialog;
+GtkWidget *dialog_vbox;
+GtkWidget *tbl_ConInfo;
+GtkWidget *lbl_Url;
+GtkWidget *entry_Url;
+GtkWidget *lbl_VideoStreamType;
+GtkWidget *cbx_VideoStreamType;
+GtkWidget *dialog_action_area;
+GtkWidget *btn_ConnectDialog;
 
 GtkWidget* democlient_create_mainWindow (void);
 GtkWidget* democlient_create_connectionDialog (void);

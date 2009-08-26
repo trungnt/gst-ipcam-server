@@ -33,8 +33,8 @@ GtkWidget*
 democlient_create_mainWindow (void)
 {
   mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (mainWindow), _("Video Conferencing"));
-  gtk_window_set_default_size (GTK_WINDOW (mainWindow), 400, 200);
+  gtk_window_set_title (GTK_WINDOW (mainWindow), _("Demo Client"));
+  gtk_window_set_default_size (GTK_WINDOW (mainWindow), 420, 400);
   //gtk_window_set_resizable (GTK_WINDOW (mainWindow), FALSE);
 
   vbox = gtk_vbox_new (FALSE, 0);
@@ -130,13 +130,13 @@ democlient_create_mainWindow (void)
   gtk_widget_show (hbox_VideoPrew);
   gtk_box_pack_start (GTK_BOX (vbox), hbox_VideoPrew, TRUE, TRUE, 0);
 
-  prw_GuestVideo = gtk_preview_new (GTK_PREVIEW_COLOR);
+  prw_GuestVideo = gtk_drawing_area_new ();//gtk_preview_new (GTK_PREVIEW_COLOR);
   gtk_widget_show (prw_GuestVideo);
   gtk_box_pack_start (GTK_BOX (hbox_VideoPrew), prw_GuestVideo, TRUE, TRUE, 0);
 
-  prw_HostVideo = gtk_preview_new (GTK_PREVIEW_COLOR);
+  /*prw_HostVideo = gtk_preview_new (GTK_PREVIEW_COLOR);
   gtk_widget_show (prw_HostVideo);
-  gtk_box_pack_start (GTK_BOX (hbox_VideoPrew), prw_HostVideo, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox_VideoPrew), prw_HostVideo, TRUE, TRUE, 0);*/
 
   statusBar = gtk_statusbar_new ();
   gtk_widget_show (statusBar);
@@ -187,7 +187,6 @@ democlient_create_mainWindow (void)
   GLADE_HOOKUP_OBJECT (mainWindow, btn_Quit, "btn_Quit");
   GLADE_HOOKUP_OBJECT (mainWindow, hbox_VideoPrew, "hbox_VideoPrew");
   GLADE_HOOKUP_OBJECT (mainWindow, prw_GuestVideo, "prw_GuestVideo");
-  GLADE_HOOKUP_OBJECT (mainWindow, prw_HostVideo, "prw_HostVideo");
   GLADE_HOOKUP_OBJECT (mainWindow, statusBar, "statusBar");
 
   return mainWindow;
@@ -196,16 +195,6 @@ democlient_create_mainWindow (void)
 GtkWidget*
 democlient_create_connectionDialog (void)
 {
-  GtkWidget *connectionDialog;
-  GtkWidget *dialog_vbox;
-  GtkWidget *tbl_ConInfo;
-  GtkWidget *lbl_Url;
-  GtkWidget *entry_Url;
-  GtkWidget *lbl_VideoStreamType;
-  GtkWidget *cbx_VideoStreamType;
-  GtkWidget *dialog_action_area;
-  GtkWidget *btn_ConnectDialog;
-
   connectionDialog = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (connectionDialog), _("Connection"));
   gtk_window_set_resizable (GTK_WINDOW (connectionDialog), FALSE);
@@ -249,7 +238,7 @@ democlient_create_connectionDialog (void)
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Jpeg stream"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Mpeg4 stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264 stream"));
 
   dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
   gtk_widget_show (dialog_action_area);
