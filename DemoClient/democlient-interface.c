@@ -199,14 +199,10 @@ democlient_create_connectionDialog (void)
   GtkWidget *connectionDialog;
   GtkWidget *dialog_vbox;
   GtkWidget *tbl_ConInfo;
-  GtkWidget *entry_IP;
-  GtkWidget *entry_VideoPort;
-  GtkWidget *entry_AudioPort;
-  GtkWidget *lbl_ScreenName;
-  GtkWidget *lbl_IP;
-  GtkWidget *lbl_VideoPort;
-  GtkWidget *lbl_AudioPort;
-  GtkWidget *entry_ScreenName;
+  GtkWidget *lbl_Url;
+  GtkWidget *entry_Url;
+  GtkWidget *lbl_VideoStreamType;
+  GtkWidget *cbx_VideoStreamType;
   GtkWidget *dialog_action_area;
   GtkWidget *btn_ConnectDialog;
 
@@ -218,68 +214,42 @@ democlient_create_connectionDialog (void)
   dialog_vbox = GTK_DIALOG (connectionDialog)->vbox;
   gtk_widget_show (dialog_vbox);
 
-  tbl_ConInfo = gtk_table_new (4, 2, FALSE);
+  tbl_ConInfo = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (tbl_ConInfo);
   gtk_box_pack_start (GTK_BOX (dialog_vbox), tbl_ConInfo, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (tbl_ConInfo), 42);
   gtk_table_set_row_spacings (GTK_TABLE (tbl_ConInfo), 13);
   gtk_table_set_col_spacings (GTK_TABLE (tbl_ConInfo), 32);
 
-  entry_IP = gtk_entry_new ();
-  gtk_widget_show (entry_IP);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), entry_IP, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (entry_IP), 9679);
-
-  entry_VideoPort = gtk_entry_new ();
-  gtk_widget_show (entry_VideoPort);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), entry_VideoPort, 1, 2, 2, 3,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (entry_VideoPort), 9679);
-
-  entry_AudioPort = gtk_entry_new ();
-  gtk_widget_show (entry_AudioPort);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), entry_AudioPort, 1, 2, 3, 4,
-                    (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (entry_AudioPort), 9679);
-
-  lbl_ScreenName = gtk_label_new (_("Screen name"));
-  gtk_widget_show (lbl_ScreenName);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_ScreenName, 0, 1, 0, 1,
+  lbl_Url = gtk_label_new (_("Url"));
+  gtk_widget_show (lbl_Url);
+  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_Url, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_ScreenName), 0, 0.5);
+  gtk_misc_set_alignment (GTK_MISC (lbl_Url), 0, 0.5);
 
-  lbl_IP = gtk_label_new (_("IP"));
-  gtk_widget_show (lbl_IP);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_IP, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_IP), 0, 0.5);
-
-  lbl_VideoPort = gtk_label_new (_("Video port"));
-  gtk_widget_show (lbl_VideoPort);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_VideoPort, 0, 1, 2, 3,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_VideoPort), 0, 0.5);
-
-  lbl_AudioPort = gtk_label_new (_("Audio port"));
-  gtk_widget_show (lbl_AudioPort);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_AudioPort, 0, 1, 3, 4,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_AudioPort), 0, 0.5);
-
-  entry_ScreenName = gtk_entry_new ();
-  gtk_widget_show (entry_ScreenName);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), entry_ScreenName, 1, 2, 0, 1,
+  entry_Url = gtk_entry_new ();
+  gtk_widget_show (entry_Url);
+  gtk_table_attach (GTK_TABLE (tbl_ConInfo), entry_Url, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (entry_ScreenName), 9679);
+  gtk_entry_set_invisible_char (GTK_ENTRY (entry_Url), 9679);
+
+  lbl_VideoStreamType = gtk_label_new (_("Video stream type"));
+  gtk_widget_show (lbl_VideoStreamType);
+  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_VideoStreamType, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (lbl_VideoStreamType), 0, 0.5);
+
+  cbx_VideoStreamType = gtk_combo_box_entry_new_text ();
+  gtk_widget_show (cbx_VideoStreamType);
+  gtk_table_attach (GTK_TABLE (tbl_ConInfo), cbx_VideoStreamType, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Jpeg stream"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Mpeg4 stream"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264"));
 
   dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
   gtk_widget_show (dialog_action_area);
@@ -298,14 +268,10 @@ democlient_create_connectionDialog (void)
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, connectionDialog, "connectionDialog");
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_vbox, "dialog_vbox");
   GLADE_HOOKUP_OBJECT (connectionDialog, tbl_ConInfo, "tbl_ConInfo");
-  GLADE_HOOKUP_OBJECT (connectionDialog, entry_IP, "entry_IP");
-  GLADE_HOOKUP_OBJECT (connectionDialog, entry_VideoPort, "entry_VideoPort");
-  GLADE_HOOKUP_OBJECT (connectionDialog, entry_AudioPort, "entry_AudioPort");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_ScreenName, "lbl_ScreenName");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_IP, "lbl_IP");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_VideoPort, "lbl_VideoPort");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_AudioPort, "lbl_AudioPort");
-  GLADE_HOOKUP_OBJECT (connectionDialog, entry_ScreenName, "entry_ScreenName");
+  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_Url, "lbl_Url");
+  GLADE_HOOKUP_OBJECT (connectionDialog, entry_Url, "entry_Url");
+  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_VideoStreamType, "lbl_VideoStreamType");
+  GLADE_HOOKUP_OBJECT (connectionDialog, cbx_VideoStreamType, "cbx_VideoStreamType");
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_action_area, "dialog_action_area");
   GLADE_HOOKUP_OBJECT (connectionDialog, btn_ConnectDialog, "btn_ConnectDialog");
 

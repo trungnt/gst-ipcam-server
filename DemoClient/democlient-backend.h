@@ -17,8 +17,22 @@ democlient_backend_init (int *argc,
               char **argv[]);
 
 void
+democlient_backend_create_pipeline(const gchar *pipeline_description);
+
+void
 democlient_backend_set_window (gpointer window_);
 
+void
+democlient_backend_play();
+
+void
+democlient_backend_pause();
+
+void
+democlient_backend_stop();
+
+void
+democlient_backend_resume();
 
 #ifdef	__cplusplus
 }
