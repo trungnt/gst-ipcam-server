@@ -1,6 +1,6 @@
 /*
  * File:   democlient-interface.h
- * Author: damquang.tuan@nomovok.com
+ * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * Created on August 26, 2009, 10:04 AM
  */
@@ -48,6 +48,29 @@ GtkWidget *cbx_VideoStreamType;
 GtkWidget *dialog_action_area;
 GtkWidget *btn_ConnectDialog;
 
+/**
+ * create the main window
+ *
+ * @param void
+ *
+ * @return nothing
+ */
 GtkWidget* democlient_create_mainWindow (void);
+
+/**
+ * create the connection dialog
+ *
+ * @param void
+ *
+ * @return nothing
+ */
 GtkWidget* democlient_create_connectionDialog (void);
-GtkWidget* democlient_create_optionDialog (void);
+
+/**
+ * create the options dialog
+ *
+ * @param void
+ *
+ * @return nothing
+ */
+//GtkWidget* democlient_create_optionDialog (void);

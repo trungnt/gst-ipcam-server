@@ -1,6 +1,6 @@
 /*
  * File:   democlient_backend.c
- * Author: dqtuan
+ * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * Created on August 26, 2009, 11:02 AM
  */
@@ -22,8 +22,6 @@ static GstElement *videosink;
  * @param argv[] char **
  *
  * @return nothing
- *
- * @author Dam Quang Tuan <damquang.tuan@nomovok.com>
  */
 void
 democlient_backend_init (int *argc,
@@ -38,8 +36,6 @@ democlient_backend_init (int *argc,
  * @param pipeline_description const gchar * the pipeline description
  *
  * @return nothing
- *
- * @author Dam Quang Tuan <damquang.tuan@nomovok.com>
  */
 void
 democlient_backend_create_pipeline(const gchar *pipeline_description)
@@ -55,12 +51,26 @@ democlient_backend_create_pipeline(const gchar *pipeline_description)
     }
 }
 
+/**
+ * Set the pointer window
+ *
+ * @param window_ gpointer the pointer to show video region in the main window
+ *
+ * @return nothing
+ */
 void
 democlient_backend_set_window (gpointer window_)
 {
     window = window_;
 }
 
+/**
+ * set the pipeline from the state GST_STATE_NULL to the state GST_STATE_PLAYING
+ *
+ * @param nothing
+ *
+ * @return nothing
+ */
 void
 democlient_backend_play()
 {
@@ -68,6 +78,13 @@ democlient_backend_play()
     g_print("Setting to Play.....Done\n");
 }
 
+/**
+ * set the pipeline from the state GST_STATE_PLAYING to the state GST_STATE_PAUSED
+ *
+ * @param nothing
+ *
+ * @return nothing
+ */
 void
 democlient_backend_pause()
 {
@@ -75,6 +92,13 @@ democlient_backend_pause()
     g_print("Setting to Pause.....Done\n");
 }
 
+/**
+ * set the pipeline from the state GST_STATE_PLAYING to the state GST_STATE_NULL
+ *
+ * @param nothing
+ *
+ * @return nothing
+ */
 void
 democlient_backend_stop()
 {
@@ -82,6 +106,13 @@ democlient_backend_stop()
     g_print("Setting to Stop.....Done\n");
 }
 
+/**
+ * set the pipeline from the state GST_STATE_PAUSED to the state GST_STATE_PLAYING
+ *
+ * @param nothing
+ *
+ * @return nothing
+ */
 void
 democlient_backend_resume()
 {
@@ -89,6 +120,13 @@ democlient_backend_resume()
     g_print("Setting to Resume.....Done\n");
 }
 
+/**
+ * free memories for pipeline and videosink pointer before exit the application
+ *
+ * @param nothing
+ *
+ * @return nothing
+ */
 void
 democlient_backend_deinit()
 {

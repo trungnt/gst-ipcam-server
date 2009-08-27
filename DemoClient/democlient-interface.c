@@ -28,7 +28,14 @@
 
 #define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
   g_object_set_data (G_OBJECT (component), name, widget)
-  
+
+/**
+ * create the main window
+ *
+ * @param void
+ *
+ * @return nothing
+ */
 GtkWidget*
 democlient_create_mainWindow (void)
 {
@@ -86,7 +93,7 @@ democlient_create_mainWindow (void)
   gtk_widget_show (lbl_ResumeButton);
   gtk_box_pack_start (GTK_BOX (hbox_ResumeButton), lbl_ResumeButton, FALSE, FALSE, 0);
 
-  toolitem_Options = (GtkWidget*) gtk_tool_item_new ();
+  /*toolitem_Options = (GtkWidget*) gtk_tool_item_new ();
   gtk_widget_show (toolitem_Options);
   gtk_container_add (GTK_CONTAINER (toolbar), toolitem_Options);
 
@@ -108,7 +115,7 @@ democlient_create_mainWindow (void)
 
   lbl_OptionsButton = gtk_label_new_with_mnemonic ("_Options");
   gtk_widget_show (lbl_OptionsButton);
-  gtk_box_pack_start (GTK_BOX (hbox_OptionsButton), lbl_OptionsButton, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox_OptionsButton), lbl_OptionsButton, FALSE, FALSE, 0);*/
 
   toolitem_About = (GtkWidget*) gtk_tool_item_new ();
   gtk_widget_show (toolitem_About);
@@ -159,9 +166,9 @@ democlient_create_mainWindow (void)
                             G_CALLBACK (democlient_on_btn_Resume_clicked),
                             GTK_OBJECT (NULL));
 
-  g_signal_connect_swapped ((gpointer) btn_Options, "clicked",
+  /*g_signal_connect_swapped ((gpointer) btn_Options, "clicked",
                             G_CALLBACK (democlient_on_btn_Options_clicked),
-                            GTK_OBJECT (NULL));
+                            GTK_OBJECT (NULL));*/
   g_signal_connect_swapped ((gpointer) btn_About, "clicked",
                             G_CALLBACK (democlient_on_btn_About_clicked),
                             GTK_OBJECT (NULL));
@@ -192,6 +199,13 @@ democlient_create_mainWindow (void)
   return mainWindow;
 }
 
+/**
+ * create the connection dialog
+ *
+ * @param void
+ *
+ * @return nothing
+ */
 GtkWidget*
 democlient_create_connectionDialog (void)
 {
@@ -267,7 +281,14 @@ democlient_create_connectionDialog (void)
   return connectionDialog;
 }
 
-GtkWidget*
+/**
+ * create the options dialog
+ *
+ * @param void
+ *
+ * @return nothing
+ */
+/*GtkWidget*
 democlient_create_optionDialog (void)
 {
   GtkWidget *optionDialog;
@@ -510,10 +531,10 @@ democlient_create_optionDialog (void)
                             GTK_OBJECT (NULL));
   g_signal_connect_swapped ((gpointer) btn_Ok, "clicked",
                             G_CALLBACK (democlient_on_btn_Ok_clicked),
-                            GTK_OBJECT (NULL));
+                            GTK_OBJECT (NULL));*/
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (optionDialog, optionDialog, "optionDialog");
+  /*GLADE_HOOKUP_OBJECT_NO_REF (optionDialog, optionDialog, "optionDialog");
   GLADE_HOOKUP_OBJECT_NO_REF (optionDialog, dialog_vbox, "dialog_vbox");
   GLADE_HOOKUP_OBJECT (optionDialog, notebook, "notebook");
   GLADE_HOOKUP_OBJECT (optionDialog, vbox2, "vbox2");
@@ -553,4 +574,4 @@ democlient_create_optionDialog (void)
 
   return optionDialog;
 }
-
+*/
