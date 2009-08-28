@@ -1,8 +1,8 @@
 /*
- * File:   democlient_backend.c
- * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+ * \file:   democlient-backend.c
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 11:02 AM
+ * \date 8-26-2009
  */
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>

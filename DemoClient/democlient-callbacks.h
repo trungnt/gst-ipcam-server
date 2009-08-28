@@ -1,8 +1,8 @@
 /*
- * File:   democlient-callbacks.h
- * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+ * \file:   democlient-callbacks.h
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 10:04 AM
+ * \date 8-26-2009
  */
 #include <gtk/gtk.h>
 

@@ -1,12 +1,13 @@
 /*
- * File:   democlient-interface.h
- * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+ * \file:   democlient-interface.h
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 10:04 AM
+ * \date 8-26-2009
  */
+
 #include <gtk/gtk.h>
 
-//For main Dialog
+///For main Dialog
 GtkWidget *mainWindow;
 GtkWidget *vbox;
 GtkWidget *toolbar;
@@ -34,10 +35,10 @@ GtkWidget *toolitem_Quit;
 GtkWidget *btn_Quit;
 GtkWidget *hbox_VideoPrew;
 GtkWidget *prw_GuestVideo;
-//GtkWidget *prw_HostVideo;
+///GtkWidget *prw_HostVideo;
 GtkWidget *statusBar;
 
-//For Connection Dialog
+///For Connection Dialog
 GtkWidget *connectionDialog;
 GtkWidget *dialog_vbox;
 GtkWidget *tbl_ConInfo;
@@ -73,4 +74,4 @@ GtkWidget* democlient_create_connectionDialog (void);
  *
  * @return nothing
  */
-//GtkWidget* democlient_create_optionDialog (void);
+///GtkWidget* democlient_create_optionDialog (void);

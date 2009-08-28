@@ -1,8 +1,8 @@
-/* 
- * File:   democlient_backend.h
- * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+/*
+ * \file:   democlient-backend.h
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 11:02 AM
+ * \date 8-26-2009
  */
 
 #ifndef _DEMOCLIENT_BACKEND_H

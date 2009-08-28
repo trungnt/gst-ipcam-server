@@ -1,8 +1,8 @@
 /*
- * File:   democlient-interface.c
- * Author: damquang.tuan@nomovok.com
+ * \file:   democlient-interface.c
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 10:04 AM
+ * \date 8-26-2009
  */
 
 #ifdef HAVE_CONFIG_H
@@ -42,7 +42,6 @@ democlient_create_mainWindow (void)
   mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (mainWindow), _("Demo Client"));
   gtk_window_set_default_size (GTK_WINDOW (mainWindow), 420, 400);
-  //gtk_window_set_resizable (GTK_WINDOW (mainWindow), FALSE);
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox);
@@ -267,7 +266,7 @@ democlient_create_connectionDialog (void)
                             G_CALLBACK (democlient_on_btn_ConnectDialog_clicked),
                             GTK_OBJECT (NULL));
 
-  /* Store pointers to all widgets, for use by lookup_widget(). */
+  /** Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, connectionDialog, "connectionDialog");
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_vbox, "dialog_vbox");
   GLADE_HOOKUP_OBJECT (connectionDialog, tbl_ConInfo, "tbl_ConInfo");
