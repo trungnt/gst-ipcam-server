@@ -67,16 +67,18 @@ typedef struct _GstvideofpsClass GstvideofpsClass;
 
 struct _Gstvideofps
 {
-  GstElement element;
+  GstBin bin;
 
   GstPad *sinkpad, *srcpad;
 
   gboolean silent;
+
+  GstElement *videorate, *capsfilter;
 };
 
 struct _GstvideofpsClass 
 {
-  GstElementClass parent_class;
+  GstBinClass parent_class;
 };
 
 GType gst_videofps_get_type (void);
