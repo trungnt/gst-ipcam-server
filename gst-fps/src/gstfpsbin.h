@@ -43,46 +43,51 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GST_VIDEOFPS_H__
-#define __GST_VIDEOFPS_H__
+#ifndef __GST_FPSBIN_H__
+#define __GST_FPSBIN_H__
 
 #include <gst/gst.h>
 
 G_BEGIN_DECLS
 
 /* #defines don't like whitespacey bits */
-#define GST_TYPE_VIDEOFPS \
-  (gst_videofps_get_type())
-#define GST_VIDEOFPS(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_VIDEOFPS,Gstvideofps))
-#define GST_VIDEOFPS_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_VIDEOFPS,GstvideofpsClass))
-#define GST_IS_VIDEOFPS(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_VIDEOFPS))
-#define GST_IS_VIDEOFPS_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_VIDEOFPS))
+#define GST_TYPE_FPSBIN \
+  (gst_fps_bin_get_type())
+#define GST_FPSBIN(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_FPSBIN,GstFpsBin))
+#define GST_FPSBIN_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_FPSBIN,GstFpsBinClass))
+#define GST_IS_FPSBIN(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_FPSBIN))
+#define GST_IS_FPSBIN_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_FPSBIN))
 
-typedef struct _Gstvideofps      Gstvideofps;
-typedef struct _GstvideofpsClass GstvideofpsClass;
+typedef struct _GstFpsBin      GstFpsBin;
+typedef struct _GstFpsBinClass GstFpsBinClass;
 
-struct _Gstvideofps
+struct _GstFpsBin
 {
-  GstBin bin;
+  GstBin bin; // we are extending GstBin
 
   GstPad *sinkpad, *srcpad;
 
   gboolean silent;
 
   GstElement *videorate, *capsfilter;
+
+  guint numerator, denominator; // frame per seconds components. Gstreamer use fraction for represent fps value
+
+  // these variable used for testing and will be removed later
+  guint secs;
 };
 
-struct _GstvideofpsClass 
+struct _GstFpsBinClass 
 {
   GstBinClass parent_class;
 };
 
-GType gst_videofps_get_type (void);
+GType gst_fps_bin_get_type (void);
 
 G_END_DECLS
 
-#endif /* __GST_VIDEOFPS_H__ */
+#endif /* __GST_FPSBIN_H__ */
