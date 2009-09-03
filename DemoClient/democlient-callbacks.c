@@ -38,7 +38,7 @@ democlient_on_btn_Connect_clicked                 (GtkButton       *button,
 
     ///add btn_Disconnect button to toolitem_Connect
     gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
-    //show the button
+    ///show the button
     gtk_widget_show (btn_Disconnect);
 
     ///Create the connection Dialog and show it
