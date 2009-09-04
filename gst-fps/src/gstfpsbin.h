@@ -63,26 +63,34 @@ G_BEGIN_DECLS
 #define GST_IS_FPSBIN_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_FPSBIN))
 
-typedef struct _GstFpsBin      GstFpsBin;
+typedef struct _GstFpsBin GstFpsBin;
 typedef struct _GstFpsBinClass GstFpsBinClass;
 
-struct _GstFpsBin
-{
-  GstBin bin; // we are extending GstBin
+/**
+ * private structure storing information for our FpsBin
+ */
+struct _GstFpsBin {
+    /// we are extending GstBin
+    GstBin bin;
 
-  GstPad *sinkpad, *srcpad; // source pad and sink pad. They are ghost pads
+    /// source pad and sink pad. They are ghost pads
+    GstPad *sinkpad, *srcpad;
 
-  GstElement *videorate, *capsfilter; // our bin'll pack videorate and capsfilter elements
+    /// our bin'll pack videorate and capsfilter elements
+    GstElement *videorate, *capsfilter;
 
-  guint numerator, denominator; // frame per seconds components. Gstreamer use fraction for represent fps value
+    /// frame per seconds components. Gstreamer use fraction for represent fps value
+    guint numerator, denominator;
 };
 
-struct _GstFpsBinClass 
-{
-  GstBinClass parent_class;
+/**
+ * Class information for our FpsBin
+ */
+struct _GstFpsBinClass {
+    GstBinClass parent_class;
 };
 
-GType gst_fps_bin_get_type (void);
+GType gst_fps_bin_get_type(void);
 
 G_END_DECLS
 

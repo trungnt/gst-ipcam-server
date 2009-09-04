@@ -154,7 +154,7 @@ static void gst_fps_bin_class_init(GstFpsBinClass * klass) {
 	gobject_class->set_property = gst_fps_bin_set_property;
 	gobject_class->get_property = gst_fps_bin_get_property;
 
-	// install fps property
+	// install framerate property
 	g_object_class_install_property(gobject_class, PROP_FRAMERATE,
 			gst_param_spec_fraction("framerate", "Framerate", "frame rate value",
 			FPS_MIN_NUMERATOR, FPS_MIN_DENOMINATOR,
