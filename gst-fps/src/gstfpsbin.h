@@ -1,8 +1,9 @@
-/*
+/**
  * GStreamer
  * Copyright (C) 2005 Thomas Vander Stichele <thomas@apestaart.org>
  * Copyright (C) 2005 Ronald S. Bultje <rbultje@ronald.bitfreak.net>
- * Copyright (C) 2009 Nguyen Thanh Trung <<user@hostname.org>>
+ * Copyright (C) 2009 Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com>
+ * Copyright (C) 2009 Dam Quang Tuan <damquang.tuan@nomovok.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -69,16 +70,11 @@ struct _GstFpsBin
 {
   GstBin bin; // we are extending GstBin
 
-  GstPad *sinkpad, *srcpad;
+  GstPad *sinkpad, *srcpad; // source pad and sink pad. They are ghost pads
 
-  gboolean silent;
-
-  GstElement *videorate, *capsfilter;
+  GstElement *videorate, *capsfilter; // our bin'll pack videorate and capsfilter elements
 
   guint numerator, denominator; // frame per seconds components. Gstreamer use fraction for represent fps value
-
-  // these variable used for testing and will be removed later
-  guint secs;
 };
 
 struct _GstFpsBinClass 
