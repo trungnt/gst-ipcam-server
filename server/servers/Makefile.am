@@ -1,4 +1,4 @@
-noinst_PROGRAMS = server-video
+noinst_PROGRAMS = onesrc-h264 onesrc-jpeg onesrc-mpeg4
 
 INCLUDES = -I$(top_srcdir) -I$(srcdir)
 
