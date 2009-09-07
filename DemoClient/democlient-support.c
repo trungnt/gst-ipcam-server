@@ -1,4 +1,4 @@
-/*
+/**
  * \file:   democlient-support.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *

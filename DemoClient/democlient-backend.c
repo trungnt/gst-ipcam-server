@@ -1,4 +1,4 @@
-/*
+/**
  * \file:   democlient-backend.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *

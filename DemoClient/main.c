@@ -1,4 +1,4 @@
-/*
+/**
  * \file:   main.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
