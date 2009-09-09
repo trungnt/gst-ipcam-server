@@ -48,7 +48,7 @@ GtkWidget *lbl_VideoStreamType;
 GtkWidget *cbx_VideoStreamType;
 GtkWidget *dialog_action_area;
 GtkWidget *btn_ConnectDialog;
-
+static gboolean is_connect_button_clicked = FALSE;
 /**
  * create the main window
  *
@@ -66,12 +66,3 @@ GtkWidget* democlient_create_mainWindow (void);
  * @return nothing
  */
 GtkWidget* democlient_create_connectionDialog (void);
-
-/**
- * create the options dialog
- *
- * @param void
- *
- * @return nothing
- */
-///GtkWidget* democlient_create_optionDialog (void);

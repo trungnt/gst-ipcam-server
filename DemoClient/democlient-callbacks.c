@@ -41,11 +41,9 @@ democlient_on_btn_Connect_clicked                 (GtkButton       *button,
     ///show the button
     gtk_widget_show (btn_Disconnect);
 
-    ///Create the connection Dialog and show it
-    GtkWidget *connectionDialog;
     connectionDialog = democlient_create_connectionDialog();
-    gtk_widget_show(connectionDialog);
 
+    gtk_widget_show(connectionDialog);
 }
 
 /**
@@ -66,9 +64,17 @@ democlient_on_btn_Disconnect_clicked              (GtkButton       *button,
     gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
     btn_Disconnect = g_object_ref(btn_Disconnect);
 
+    gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Resume);
+    btn_Resume = g_object_ref(btn_Resume);
+
+    gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
+    gtk_widget_show (btn_Pause);
+
+
     ///add btn_Connect to toolitem_Connect and stop the pipeline
     gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
     gtk_widget_show (btn_Connect);
+    gtk_widget_set_sensitive(btn_Pause, FALSE);
     democlient_backend_stop();
 }
 
@@ -92,6 +98,8 @@ democlient_on_btn_Pause_clicked                   (GtkButton       *button,
 
     ///add btn_Resume to toolitem_Pause and pause the pipeline
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Resume);
+    gtk_widget_show(btn_Resume);
+    gtk_widget_set_sensitive(btn_Resume, TRUE);
     democlient_backend_pause();
 }
 
@@ -166,6 +174,7 @@ void
 democlient_on_btn_Quit_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
+    democlient_backend_stop();
     gtk_main_quit();
     democlient_backend_deinit();
 }
@@ -183,6 +192,7 @@ void
 democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data)
 {
+    is_connect_button_clicked = TRUE;
     gchar *url;
     url = gtk_entry_get_text(entry_Url);
     democlient_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
@@ -214,43 +224,61 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
         democlient_backend_create_pipeline(url);
         g_free(url);
     }
+    ///set pipeline to playing status
+    GstStateChangeReturn state = democlient_backend_play ();
+
+    if (state == GST_STATE_CHANGE_FAILURE)
+    {
+        GtkWidget *dialog;
+        dialog = gtk_message_dialog_new(NULL,
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR,
+                                        GTK_BUTTONS_CLOSE,
+                                        "The connection is failed. Please try again");
+
+        gtk_dialog_run (GTK_DIALOG (dialog));
+        gtk_widget_destroy (dialog);
+        ///remove btn_Disconnect button from toolitem_Connect
+        gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
+        btn_Disconnect = g_object_ref(btn_Disconnect);
+
+        ///add btn_Connect to toolitem_Connect and stop the pipeline
+        gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+        gtk_widget_show (btn_Connect);
+
+    }
     else
     {
-        g_print("Error");
-        gtk_main_quit();
+        //Get the Pause button and Disconnect button to be sensitive;
+        gtk_widget_set_sensitive(btn_Pause, TRUE);
+        gtk_widget_set_sensitive(btn_Disconnect, TRUE);
     }
-    ///set pipeline to playing status
-    democlient_backend_play ();
-    ///destroy the connection dialog
+
+    //destroy the connection dialog
     gtk_widget_destroy(connectionDialog);
+    is_connect_button_clicked = FALSE;
 }
 
 /**
- * Handle the event when clicking on the Cancel button in the Options Dialog.
+ * Handle the event when user close the connection dialog
+ * The application will change the Disconnect button to connect button
  *
- * @param button GtkButton *
+ * @param argc GtkButton *
  * @param user_data gpointer
  *
  * @return nothing
  */
 void
-democlient_on_btn_Cancel_clicked                  (GtkButton       *button,
+democlient_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data)
 {
+    if (!is_connect_button_clicked)
+    {
+        gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
+        btn_Disconnect = g_object_ref(btn_Disconnect);
 
-}
-
-/**
- * Handle the event when clicking on the OK button in the Options Dialog.
- *
- * @param button GtkButton *
- * @param user_data gpointer
- *
- * @return nothing
- */
-void
-democlient_on_btn_Ok_clicked                      (GtkButton       *button,
-                                        gpointer         user_data)
-{
-
+        gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+        gtk_widget_show (btn_Connect);
+        gtk_widget_set_sensitive(btn_Pause, FALSE);
+    }
 }

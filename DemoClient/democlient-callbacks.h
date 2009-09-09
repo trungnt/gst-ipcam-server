@@ -114,35 +114,14 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
- * Handle the event when clicking on the Cancel button in the Options Dialog.
+ * Handle the event when user close the connection dialog
+ * The application will change the Disconnect button to connect button
  *
- * @param button GtkButton *
+ * @param argc GtkButton *
  * @param user_data gpointer
  *
  * @return nothing
  */
 void
-democlient_on_btn_Cancel_clicked                  (GtkButton       *button,
+democlient_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data);
-
-/**
- * Handle the event when clicking on the OK button in the Options Dialog.
- *
- * @param button GtkButton *
- * @param user_data gpointer
- *
- * @return nothing
- */
-void
-democlient_on_btn_Ok_clicked                      (GtkButton       *button,
-                                        gpointer         user_data);
-
-/**
- * init for using gstreamer
- * This function is used whenever the main function is created
- *
- * @param argc int *
- * @param argv[] char **
- *
- * @return nothing
- */

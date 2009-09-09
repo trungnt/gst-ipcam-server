@@ -9,11 +9,10 @@
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
 #include "democlient-backend.h"
-
+#include "democlient-interface.h"
 static gpointer window;
 static GstElement *pipeline;
 static GstElement *videosink;
-
 /**
  * init for using gstreamer
  * This function is used whenever the main function is created
@@ -41,8 +40,8 @@ void
 democlient_backend_create_pipeline(const gchar *pipeline_description)
 {
     pipeline = gst_parse_launch(pipeline_description, NULL);
-    videosink = gst_bin_get_by_name (GST_BIN(pipeline), "videosink");
 
+    videosink = gst_bin_get_by_name (GST_BIN(pipeline), "videosink");
     g_object_set (G_OBJECT (videosink), "force-aspect-ratio", TRUE, NULL);
 
     if (GST_IS_X_OVERLAY (videosink))
@@ -69,13 +68,17 @@ democlient_backend_set_window (gpointer window_)
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_play()
 {
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    GstStateChangeReturn stateReturn;
+
+    stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
     g_print("Setting to Play.....Done\n");
+
+    return stateReturn;
 }
 
 /**
@@ -83,13 +86,17 @@ democlient_backend_play()
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_pause()
 {
-    gst_element_set_state(pipeline, GST_STATE_PAUSED);
+    GstStateChangeReturn stateReturn;
+    
+    stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
     g_print("Setting to Pause.....Done\n");
+
+    return stateReturn;
 }
 
 /**
@@ -97,13 +104,17 @@ democlient_backend_pause()
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_stop()
 {
-    gst_element_set_state(pipeline, GST_STATE_NULL);
+    GstStateChangeReturn stateReturn;
+
+    stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
     g_print("Setting to Stop.....Done\n");
+
+    return stateReturn;
 }
 
 /**
@@ -111,13 +122,17 @@ democlient_backend_stop()
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_resume()
 {
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    GstStateChangeReturn stateReturn;
+
+    stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
     g_print("Setting to Resume.....Done\n");
+
+    return stateReturn;
 }
 
 /**
