@@ -202,8 +202,9 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     {
         ///set url and create the pipeline to get jpeg stream
         url = g_strconcat("rtspsrc location=", url, " ! rtpjpegdepay ! jpegdec ! queue ! ffmpegcolorspace ! videoscale ! xvimagesink name=videosink", NULL);
-        g_print(url);
+        
         democlient_backend_create_pipeline(url);
+        
         g_free(url);
     }
     ///if video stream type is mpeg4
@@ -211,8 +212,9 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     {
         ///set url and create the pipeline to get mpeg4 stream
         url = g_strconcat("rtspsrc location=", url, " ! rtpmp4vdepay ! ffdec_mpeg4 ! queue ! ffmpegcolorspace ! xvimagesink name=videosink", NULL);
-        g_print(url);
+        
         democlient_backend_create_pipeline(url);
+        
         g_free(url);
     }
     ///if video stream type is h264
@@ -220,12 +222,15 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     {
         ///set url and create the pipeline to get h264 stream
         url = g_strconcat("rtspsrc location=", url, " ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! xvimagesink name=videosink", NULL);
-        g_print(url);
+
         democlient_backend_create_pipeline(url);
+
         g_free(url);
     }
+    g_print("\nPLAY request is sending...");
     ///set pipeline to playing status
     GstStateChangeReturn state = democlient_backend_play ();
+    g_print("\nPLAY request sent.");
 
     if (state == GST_STATE_CHANGE_FAILURE)
     {

@@ -39,7 +39,9 @@ democlient_backend_init (int *argc,
 void
 democlient_backend_create_pipeline(const gchar *pipeline_description)
 {
+    g_print("\nSETUP request is sending...");
     pipeline = gst_parse_launch(pipeline_description, NULL);
+    g_print("\nSETUP request sent.");
 
     videosink = gst_bin_get_by_name (GST_BIN(pipeline), "videosink");
     g_object_set (G_OBJECT (videosink), "force-aspect-ratio", TRUE, NULL);
@@ -76,7 +78,7 @@ democlient_backend_play()
     GstStateChangeReturn stateReturn;
 
     stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-    g_print("Setting to Play.....Done\n");
+    g_print("\nSetting to Play.....Done\n");
 
     return stateReturn;
 }
@@ -94,7 +96,7 @@ democlient_backend_pause()
     GstStateChangeReturn stateReturn;
     
     stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
-    g_print("Setting to Pause.....Done\n");
+    g_print("\nSetting to Pause.....Done\n");
 
     return stateReturn;
 }
@@ -112,7 +114,7 @@ democlient_backend_stop()
     GstStateChangeReturn stateReturn;
 
     stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
-    g_print("Setting to Stop.....Done\n");
+    g_print("\nSetting to Stop.....Done\n");
 
     return stateReturn;
 }
@@ -130,7 +132,7 @@ democlient_backend_resume()
     GstStateChangeReturn stateReturn;
 
     stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-    g_print("Setting to Resume.....Done\n");
+    g_print("\nSetting to Resume.....Done\n");
 
     return stateReturn;
 }
