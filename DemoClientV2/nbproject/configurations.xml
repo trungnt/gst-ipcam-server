@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>democlient-backend.h</itemPath>
+      <itemPath>democlient-callbacks.h</itemPath>
+      <itemPath>democlient-interface.h</itemPath>
+      <itemPath>democlient-support.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>democlient-backend.c</itemPath>
+      <itemPath>democlient-callbacks.c</itemPath>
+      <itemPath>democlient-interface.c</itemPath>
+      <itemPath>democlient-support.c</itemPath>
+      <itemPath>main.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gtk-2.0</pElem>
+            <pElem>/usr/lib/gtk-2.0/include</pElem>
+            <pElem>/usr/lib/glib-2.0/include</pElem>
+            <pElem>/usr/include/glib-2.0</pElem>
+            <pElem>/usr/include/atk-1.0</pElem>
+            <pElem>/usr/include/cairo</pElem>
+            <pElem>/usr/include/freetype2</pElem>
+            <pElem>/usr/include/pango-1.0</pElem>
+            <pElem>/usr/include/libpng</pElem>
+            <pElem>/usr/include/gstreamer-0.10</pElem>
+            <pElem>/usr/lib/gstreamer-0.10</pElem>
+            <pElem>/usr/include/libxml2</pElem>
+            <pElem>/usr/include/dbus-1.0</pElem>
+            <pElem>/usr/lib/dbus-1.0/include</pElem>
+          </incDir>
+        </cTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+          <commandLine>`pkg-config --libs gstreamer-0.10 gtk+-2.0 dbus-glib-1` -lgstinterfaces-0.10</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
