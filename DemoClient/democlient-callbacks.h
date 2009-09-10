@@ -125,3 +125,15 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
 void
 democlient_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data);
+
+/**
+ * Handle the event when user close the main window
+ * The application will exit and send Teardown to server
+ *
+ * @param argc GtkButton *
+ * @param user_data gpointer
+ *
+ * @return nothing
+ */
+void democlient_on_mainWindow_destroy                (GtkObject       *object,
+                                        gpointer         user_data);

@@ -146,6 +146,9 @@ democlient_create_mainWindow (void)
   g_signal_connect_swapped ((gpointer) btn_Quit, "clicked",
                             G_CALLBACK (democlient_on_btn_Quit_clicked),
                             GTK_OBJECT (NULL));
+  g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
+                            G_CALLBACK (democlient_on_mainWindow_destroy),
+                            GTK_OBJECT (NULL));
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainWindow, mainWindow, "mainWindow");
