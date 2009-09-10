@@ -1,0 +1,48 @@
+This's the brief instruction on how to fetch, build and test gstreamer-rtsp-server DemoClient. And for the testing purpose, we'll use Ubuntu 9.04 as the target OS.
+
+I. FETCH SOURCE CODE
+ - make a folder for storing source code
+ - cd to that folder
+ - git clone git://github.com/trungnt/gstreamer-rtsp-server.git
+   The clone command will fetch source code in our release.
+ - Change to gstreamer-rtsp-server folder:
+   cd gstreamer-rtsp-server
+ - For testing development version, using following command
+   git checkout --track -b client-development origin/client-development
+ - In the case that you've fetch developing code before, you don't need to checkout repository or branch from server.
+Instead, run following command:
+   git checkout client-development # to switch to existed server-development branch
+   git pull # to update to the latest version
+ 
+II. BUILD
+ - NOTE: before building the client, go to section III to see if your system match dependences and install requirement packages if needed
+ - cd to the folder "DemoClient"
+ - Build :
+   make
+ 
+III. DEPENDENCIES
+1. Gstreamers encoders
+ ffmpeg mpeg4 and h264 encoder, these elements are: ffenc_mpeg4 and ffenc_libx264
+- To get this encoder, we need to install following packages, using standard ubuntu packages would be enought:
++ gstreamer0.10-ffmpeg
++ libavcodec-unstripped-52
+- You can install 2 packages at the same times if you haven't install gstreamer0.10-ffmpeg:
+sudo apt-get install libavcodec-unstripped-52 gstreamer0.10-ffmpeg
+- Or just install libavcodec-unstripped if gstreamer0.10-ffmpeg was installed before
+sudo apt-get install libavcodec-unstripped-52
+ 
+- After installation, using gst-inspect you may not found ffenc_mpeg4 and ffenc_libx264. This case often happened when you install gstreamer0.10-ffmpeg before with the package libavcodec. So, to use them, you must remove old gstreamer plugins registry file by this command:
+rm ~/.gstreamer-0.10/registry.*.bin
+NOTE: may be with older implementation of gstreamer, you file will be registry.*.xml
+ 
+- After removing registry, gst-launch of gst-inspect will auto rebuild registry and the elements will be there
+ 
+2. To build client, you may need to install following packages
+autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
+ 
+IV. RUN
+ - run command
+   ./DemoClient
+ - Using: the client is simple, investigate and try yourself 
+ 
+
