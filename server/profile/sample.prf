@@ -1,0 +1,15 @@
+v4l2src name=${v4l2srcname} ! videorate ! video/x-raw-yuv, framerate='(fraction)'${fps} ! autovideosink
+v4l2srcname="just a name"
+fps=5/1
+
+# This is a sample profile file
+# Any line (not first line) that does not have the format "name=default value" will be skipped
+# So feel free to command any thing here
+# In this file:
+# - First line is the pipeline description. This pipeline contains 2 variables: v4l2src and fps
+# - 2nd and 3rd lines is the variables with default value.
+# So the default pipeline produced by gis_profile_build_pipeline() will be:
+
+v4l2src name="just a name" ! videorate ! video/x-raw-yuv, framerate='(fraction)'5/1 ! autovideosink
+
+# Test this pipeline with gst-launch if you want
