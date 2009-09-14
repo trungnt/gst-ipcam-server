@@ -3,28 +3,28 @@ Release notes for gst-ipcam-server 0.1
 
 This is a release announcement for gst-ipcam-server software package
 
-gst-ipcam-server is a media streaming server based on gstreamer and rtsp protocol and gst-rtsp-server project. The server is the implementation for SH7724 streaming server prototype. The server support 3 codecs for video channel: H.264, MPEG4 and JPEG
+gst-ipcam-server is a media streaming server based on gstreamer library, rtsp protocol and gst-rtsp-server project. The server implementation is for SH7724 streaming server prototype. The server support 3 codecs for images and video compression/format: H.264, MPEG4 and JPEG.
 
-Current version is 0.1 with 2 components:
+Current stable version is 0.1 and includes 2 components:
 	* server: based on gst-rtsp-server project
-	* client: a simple client used for demontrations
+	* client: a simple client used for demontration
 
-Feature of this release
+Features of this release:
 Server:
 	* use library from gst-rtsp-server project
-	* support both 3 video channels, but only one can be run at the same time
-	* addresses for the video stream in the video-demo application are:
-		- rtsp://ip:8554/mp4 for MPEG4 channel
-		- rtsp://ip:8554/h264 for H.264 channel
-		- rtsp://ip:8554/jpg for JPEG channel
+	* support jpeg, h264 and mpeg4 video stream separately but all can not run at the same time
+	* RTSP request to connect to relevant server are: 
+		- rtsp://ip:8554/mp4 for MPEG4 stream
+		- rtsp://ip:8554/h264 for H.264 stream
+		- rtsp://ip:8554/jpg for JPEG stream
 	* both run at 25/1 fps
-	* the address can be open with a movie player like mplayer or totem movie player
+	* they can be opened with a movie player like mplayer or totem movie player
 Client:
 	* A simple demo client with gtk ui
 	* support basic features:
 		- connect/disconnect
 		- play/pause stream
-	* support both 3 video channels
+	* support both jpeg, h264 and mpeg4 video stream
 	
 Git repository:
 	git://github.com/trungnt/gst-ipcam-server.git
