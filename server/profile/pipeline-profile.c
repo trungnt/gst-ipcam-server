@@ -142,6 +142,7 @@ GISProfile * gis_profile_load(const gchar* file_name) {
 			gchar ** vars = g_strsplit(line, "=", -1);
 			if (g_strv_length(vars) != 2) {
 				g_warning("invalid format at line %d", i);
+				continue;
 			}
 			if (gis_profile_add_var(profile, vars[0], vars[1]) == FALSE) {
 				g_warning("Error when inserting var '%s'", vars[0]);
@@ -191,7 +192,6 @@ gboolean gis_profile_set_var(GISProfile* profile, const gchar* var_name, const g
 
 	gchar * var = g_strdup(var_name);
 	g_hash_table_replace(profile->vars, var, g_strdup(value));
-	g_free(var);
 	return TRUE;
 }
 
