@@ -1,8 +1,8 @@
 /*
- * File:   democlient-callbacks.h
- * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+ * \file:   democlient-callbacks.h
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 10:04 AM
+ * \date 8-26-2009
  */
 #include <gtk/gtk.h>
 
@@ -114,35 +114,26 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
- * Handle the event when clicking on the Cancel button in the Options Dialog.
+ * Handle the event when user close the connection dialog
+ * The application will change the Disconnect button to connect button
  *
- * @param button GtkButton *
+ * @param argc GtkButton *
  * @param user_data gpointer
  *
  * @return nothing
  */
 void
-democlient_on_btn_Cancel_clicked                  (GtkButton       *button,
+democlient_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data);
 
 /**
- * Handle the event when clicking on the OK button in the Options Dialog.
+ * Handle the event when user close the main window
+ * The application will exit and send Teardown to server
  *
- * @param button GtkButton *
+ * @param argc GtkButton *
  * @param user_data gpointer
  *
  * @return nothing
  */
-void
-democlient_on_btn_Ok_clicked                      (GtkButton       *button,
+void democlient_on_mainWindow_destroy                (GtkObject       *object,
                                         gpointer         user_data);
-
-/**
- * init for using gstreamer
- * This function is used whenever the main function is created
- *
- * @param argc int *
- * @param argv[] char **
- *
- * @return nothing
- */

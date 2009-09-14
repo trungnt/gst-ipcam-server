@@ -1,8 +1,8 @@
-/* 
- * File:   main.c
- * Author: damquang.tuan@nomovok.com
+/**
+ * \file:   main.c
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 10:04 AM
+ * \date 8-26-2009
  */
 
 #ifdef HAVE_CONFIG_H

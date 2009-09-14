@@ -1,8 +1,8 @@
-/* 
- * File:   democlient_backend.h
- * Author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+/*
+ * \file:   democlient-backend.h
+ * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
- * Created on August 26, 2009, 11:02 AM
+ * \date 8-26-2009
  */
 
 #ifndef _DEMOCLIENT_BACKEND_H
@@ -50,9 +50,9 @@ democlient_backend_set_window (gpointer window_);
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_play();
 
 /**
@@ -60,9 +60,9 @@ democlient_backend_play();
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_pause();
 
 /**
@@ -70,9 +70,9 @@ democlient_backend_pause();
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_stop();
 
 /**
@@ -80,11 +80,10 @@ democlient_backend_stop();
  *
  * @param nothing
  *
- * @return nothing
+ * @return Result of the state change
  */
-void
+gint
 democlient_backend_resume();
-
 /**
  * free memories for pipeline and videosink pointer before exit the application
  *
