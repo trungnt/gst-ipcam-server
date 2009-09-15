@@ -24,7 +24,7 @@ Client:
 	* Support the following basic features:
 		- connect/disconnect.
 		- play/pause stream.
-	* Support jpeg, h264 and mpeg4 video stream.
+	* Support JPEG, H.264 and MPEG4 video stream.
 	
 Git repository:
 	git://github.com/trungnt/gst-ipcam-server.git.
