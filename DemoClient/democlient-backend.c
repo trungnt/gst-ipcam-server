@@ -196,7 +196,7 @@ democlient_backend_deinit() {
 static GstElement * democlient_backend_find_best_video_sink() {
 	GList *list, *item;
 	GstElement *choice = NULL;
-	GstMessage *message = NULL;
+//	GstMessage *message = NULL;
 	GSList *errors = NULL;
 	GstBus *bus = gst_bus_new();
 
@@ -222,10 +222,12 @@ static GstElement * democlient_backend_find_best_video_sink() {
 			}
 
 			/* collect all error messages */
+/*
 			while ((message = gst_bus_pop_filtered(bus, GST_MESSAGE_ERROR))) {
-				g_error("error message %" GST_PTR_FORMAT, message);
+				g_warning("error message %" GST_PTR_FORMAT, message);
 				errors = g_slist_append(errors, message);
 			}
+*/
 
 			gst_element_set_state(el, GST_STATE_NULL);
 			gst_object_unref(el);
