@@ -1,33 +1,33 @@
 
-Release notes for gst-ipcam-server 0.1
+Release notes for gst-ipcam-server 0.1.
 
-This is a release announcement for gst-ipcam-server software package
+This is a release announcement for gst-ipcam-server software package.
 
-gst-ipcam-server is a media streaming server based on gstreamer library, rtsp protocol and gst-rtsp-server project. The server implementation is for SH7724 streaming server prototype. The server support 3 codecs for images and video compression/format: H.264, MPEG4 and JPEG.
+gst-ipcam-server is a media streaming server based on gstreamer library, rtsp protocol and gst-rtsp-server project. The server implementation is for SH7724 streaming server prototype. The server supports 3 codecs for images and video format: H.264, MPEG4 and JPEG.
 
 Current stable version is 0.1 and includes 2 components:
-	* server: based on gst-rtsp-server project
-	* client: a simple client used for demontration
+	* server: based on gst-rtsp-server project.
+	* client: a simple client used for demonstration.
 
 Features of this release:
 Server:
-	* use library from gst-rtsp-server project
-	* support jpeg, h264 and mpeg4 video stream separately but all can not run at the same time
+	* use library from gst-rtsp-server project.
+	* support jpeg, h264 and mpeg4 video stream separately but all can not run at the same time.
 	* RTSP request to connect to relevant server are: 
-		- rtsp://ip:8554/mp4 for MPEG4 stream
-		- rtsp://ip:8554/h264 for H.264 stream
-		- rtsp://ip:8554/jpg for JPEG stream
-	* both run at 25/1 fps
-	* they can be opened with a movie player like mplayer or totem movie player
+		- rtsp://ip:8554/mp4 for MPEG4 stream.
+		- rtsp://ip:8554/h264 for H.264 stream.
+		- rtsp://ip:8554/jpg for JPEG stream.
+	* all run at 25/1 fps.
+	* they can be opened with a movie player like mplayer or totem movie player.
 Client:
-	* A simple demo client with gtk ui
-	* support basic features:
-		- connect/disconnect
-		- play/pause stream
-	* support both jpeg, h264 and mpeg4 video stream
+	* a simple demo client with gtk ui.
+	* support the following basic features:
+		- connect/disconnect.
+		- play/pause stream.
+	* support jpeg, h264 and mpeg4 video stream.
 	
 Git repository:
-	git://github.com/trungnt/gst-ipcam-server.git
+	git://github.com/trungnt/gst-ipcam-server.git.
 
 Contributors to this release:
 	Nguyen Thi Le Chau <nguyenthi.lechau@nomovok.com>
