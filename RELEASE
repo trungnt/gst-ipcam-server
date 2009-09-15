@@ -12,13 +12,13 @@ Current stable version is 0.1 and includes 2 components:
 Features of this release:
 Server:
 	* Use library from gst-rtsp-server project.
-	* Support jpeg, h264 and mpeg4 video stream separately but all can not run at the same time.
+	* Support JPEG, H.264 and MPEG4 formats and as independent streams.
 	* RTSP requests to connect to relevant server are: 
 		- rtsp://ip:8554/mp4 for MPEG4 stream.
 		- rtsp://ip:8554/h264 for H.264 stream.
 		- rtsp://ip:8554/jpg for JPEG stream.
-	* All run at 25/1 fps.
-	* They can be opened with a movie player like mplayer or totem movie player.
+	* All streams run at 25/1 fps.
+	* Streams can be played with a movie player like mplayer or totem movie player.
 Client:
 	* A simple demo client with gtk ui.
 	* Support the following basic features:
