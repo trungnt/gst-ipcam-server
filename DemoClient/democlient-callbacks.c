@@ -19,6 +19,12 @@
 #include "democlient-support.h"
 #include "democlient-backend.h"
 
+//store the url in the current session
+static gchar *URL = NULL;
+//store the gstream type in the current session
+static gint TYPE = 2;
+
+
 /**
  * Handle the event when clicking on Connect button in the main window.
  * The button will change to Disconnect button and the connection dialog will appear
@@ -33,14 +39,14 @@ democlient_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
     ///remove btn_Connect button from toolitem_Connect
-    gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
-    btn_Connect = g_object_ref(btn_Connect);
+    //gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+    //btn_Connect = g_object_ref(btn_Connect);
 
     ///add btn_Disconnect button to toolitem_Connect
-    gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
+    //gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
     ///show the button
-    gtk_widget_show (btn_Disconnect);
-
+    //gtk_widget_show (btn_Disconnect);
+    gtk_widget_set_sensitive(btn_Connect, FALSE);
     connectionDialog = democlient_create_connectionDialog();
 
     gtk_widget_show(connectionDialog);
@@ -62,10 +68,10 @@ democlient_on_btn_Disconnect_clicked              (GtkButton       *button,
 {
     ///remove btn_Disconnect button from toolitem_Connect
     gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
-    btn_Disconnect = g_object_ref(btn_Disconnect);
+    //btn_Disconnect = g_object_ref(btn_Disconnect);
 
     gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Resume);
-    btn_Resume = g_object_ref(btn_Resume);
+    //btn_Resume = g_object_ref(btn_Resume);
 
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
     gtk_widget_show (btn_Pause);
@@ -73,7 +79,9 @@ democlient_on_btn_Disconnect_clicked              (GtkButton       *button,
 
     ///add btn_Connect to toolitem_Connect and stop the pipeline
     gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+    gtk_widget_set_sensitive(btn_Connect, TRUE);
     gtk_widget_show (btn_Connect);
+
     gtk_widget_set_sensitive(btn_Pause, FALSE);
     democlient_backend_stop();
 }
@@ -94,7 +102,7 @@ democlient_on_btn_Pause_clicked                   (GtkButton       *button,
 {
     ///remove btn_Pause from toolitem_Pause
     gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Pause);
-    btn_Pause = g_object_ref(btn_Pause);
+    //btn_Pause = g_object_ref(btn_Pause);
 
     ///add btn_Resume to toolitem_Pause and pause the pipeline
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Resume);
@@ -119,7 +127,7 @@ democlient_on_btn_Resume_clicked                  (GtkButton       *button,
 {
     ///remove btn_Resume from toolitem_Pause
     gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Resume);
-    btn_Resume = g_object_ref(btn_Resume);
+    //btn_Resume = g_object_ref(btn_Resume);
 
     ///add btn_Pause to toolitem_Pause and resume playing video
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
@@ -192,9 +200,13 @@ void
 democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data)
 {
+    gtk_entry_set_text(GTK_ENTRY(entry_Url), URL);
+    
     is_connect_button_clicked = TRUE;
     gchar *url;
     url = gtk_entry_get_text(entry_Url);
+    URL = url;
+    gtk_combo_box_entry_set_text_column(cbx_VideoStreamType, TYPE);
     democlient_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
 
     ///if video stream type is JPEG
@@ -202,7 +214,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     {
         ///set url and create the pipeline to get jpeg stream
         url = g_strconcat("rtspsrc location=", url, " ! rtpjpegdepay ! jpegdec ! queue ! ffmpegcolorspace ! videoscale ! identity name=connector", NULL);
-        
+        TYPE = 0;
         democlient_backend_create_pipeline(url);
         
         g_free(url);
@@ -212,7 +224,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     {
         ///set url and create the pipeline to get mpeg4 stream
         url = g_strconcat("rtspsrc location=", url, " ! rtpmp4vdepay ! ffdec_mpeg4 ! queue ! ffmpegcolorspace ! identity name=connector", NULL);
-        
+        TYPE = 1;
         democlient_backend_create_pipeline(url);
         
         g_free(url);
@@ -222,7 +234,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     {
         ///set url and create the pipeline to get h264 stream
         url = g_strconcat("rtspsrc location=", url, " ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! identity name=connector", NULL);
-
+	TYPE = 2;
         democlient_backend_create_pipeline(url);
 
         g_free(url);
@@ -243,17 +255,18 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
 
         gtk_dialog_run (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
-        ///remove btn_Disconnect button from toolitem_Connect
-        gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
-        btn_Disconnect = g_object_ref(btn_Disconnect);
-
-        ///add btn_Connect to toolitem_Connect and stop the pipeline
-        gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
-        gtk_widget_show (btn_Connect);
-
+	gtk_widget_set_sensitive(btn_Connect, TRUE);
     }
     else
     {
+	///remove btn_Disconnect button from toolitem_Connect
+        gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+        //btn_Disconnect = g_object_ref(btn_Connect);
+
+        ///add btn_Connect to toolitem_Connect and stop the pipeline
+        gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
+        gtk_widget_show (btn_Disconnect);
+
         //Get the Pause button and Disconnect button to be sensitive;
         gtk_widget_set_sensitive(btn_Pause, TRUE);
         gtk_widget_set_sensitive(btn_Disconnect, TRUE);
@@ -279,12 +292,8 @@ democlient_on_connectionDialog_destroy                (GtkObject       *object,
 {
     if (!is_connect_button_clicked)
     {
-        gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
-        btn_Disconnect = g_object_ref(btn_Disconnect);
-
-        gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
-        gtk_widget_show (btn_Connect);
         gtk_widget_set_sensitive(btn_Pause, FALSE);
+        gtk_widget_set_sensitive(btn_Connect, TRUE);
     }
 }
 
@@ -303,4 +312,26 @@ void democlient_on_mainWindow_destroy                (GtkObject       *object,
     democlient_backend_stop();
     gtk_main_quit();
     democlient_backend_deinit();
+}
+
+/**
+ * Handle the event when users press enter button in the connectionDialog
+ * The application will exit and send Teardown to server
+ *
+ * @param argc GtkButton *
+ * @param user_data gpointer
+ *
+ * @return nothing
+ */
+gboolean
+democlient_on_connectionDialog_key_press_event        (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data)
+{
+    if (event->keyval == GDK_Return)
+     {
+         democlient_on_btn_ConnectDialog_clicked(NULL, NULL);
+     }
+
+    return FALSE;
 }

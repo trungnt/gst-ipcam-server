@@ -137,3 +137,17 @@ democlient_on_connectionDialog_destroy                (GtkObject       *object,
  */
 void democlient_on_mainWindow_destroy                (GtkObject       *object,
                                         gpointer         user_data);
+
+/**
+ * Handle the event when users press enter button in the connectionDialog
+ * The application will exit and send Teardown to server
+ *
+ * @param argc GtkButton *
+ * @param user_data gpointer
+ *
+ * @return nothing
+ */
+gboolean
+democlient_on_connectionDialog_key_press_event        (GtkWidget       *widget,
+                                        GdkEventKey     *event,
+                                        gpointer         user_data);

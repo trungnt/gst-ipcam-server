@@ -64,7 +64,7 @@ democlient_create_mainWindow (void)
   btn_Disconnect = gtk_button_new_from_stock ("gtk-disconnect");
   //gtk_widget_show (btn_Disconnect);
   gtk_widget_set_sensitive(btn_Disconnect, FALSE);
-  gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
+  //gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
 
   toolitem_Pause = (GtkWidget*) gtk_tool_item_new ();
   gtk_widget_show (toolitem_Pause);
@@ -194,9 +194,9 @@ democlient_create_connectionDialog (void)
   tbl_ConInfo = gtk_table_new (2, 2, FALSE);
   gtk_widget_show (tbl_ConInfo);
   gtk_box_pack_start (GTK_BOX (dialog_vbox), tbl_ConInfo, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (tbl_ConInfo), 42);
-  gtk_table_set_row_spacings (GTK_TABLE (tbl_ConInfo), 13);
-  gtk_table_set_col_spacings (GTK_TABLE (tbl_ConInfo), 32);
+  gtk_container_set_border_width (GTK_CONTAINER (tbl_ConInfo), 3);
+  gtk_table_set_row_spacings (GTK_TABLE (tbl_ConInfo), 4);
+  gtk_table_set_col_spacings (GTK_TABLE (tbl_ConInfo), 11);
 
   lbl_Url = gtk_label_new (_("Url"));
   gtk_widget_show (lbl_Url);
@@ -226,7 +226,7 @@ democlient_create_connectionDialog (void)
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Jpeg stream"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Mpeg4 stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264 stream"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264"));
 
   dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
   gtk_widget_show (dialog_action_area);
@@ -237,9 +237,18 @@ democlient_create_connectionDialog (void)
   gtk_dialog_add_action_widget (GTK_DIALOG (connectionDialog), btn_ConnectDialog, 0);
   GTK_WIDGET_SET_FLAGS (btn_ConnectDialog, GTK_CAN_DEFAULT);
 
+  gint id_response = gtk_dialog_get_response_for_widget(GTK_DIALOG(connectionDialog), GTK_WIDGET(btn_ConnectDialog));
+  gtk_dialog_set_default_response(GTK_DIALOG(connectionDialog), id_response);
+  gtk_entry_set_activates_default (GTK_ENTRY(entry_Url), TRUE);
+
+  g_signal_connect ((gpointer) connectionDialog, "key_press_event",
+                    G_CALLBACK (democlient_on_connectionDialog_key_press_event),
+                    NULL);
+
   g_signal_connect_swapped ((gpointer) connectionDialog, "destroy",
                             G_CALLBACK (democlient_on_connectionDialog_destroy),
                             GTK_OBJECT (NULL));
+
   g_signal_connect_swapped ((gpointer) btn_ConnectDialog, "clicked",
                             G_CALLBACK (democlient_on_btn_ConnectDialog_clicked),
                             GTK_OBJECT (NULL));
