@@ -23,24 +23,24 @@ II. BUILD
 III. SOFTWARE REQUIREMENTS
 1.Basic gstreamer packages
  - In order to build and run the demo client, we need following gstreamer packages: libgstreamer0.10-dev, gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, gstreamer0.10-plugins-bad. Run following command to install:
-	$sudo apt-get install libgstreamer0.10-dev gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
+	$ sudo apt-get install libgstreamer0.10-dev gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
 
-2. Gstreamers encoders
+2. MPEG4 and H.264 encoders
  - We need MPEG4 and H.264 encoder from FFMPEG packages. To get these encoders, install the following packages:
 	+ gstreamer0.10-ffmpeg version 6.02 (NOTE: must use version 6.02: this's the standard Ubuntu package, ppa package may not work)
 	+ libavcodec-unstripped-52
 
 	$sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
  - After installation, gst-inspect may not found ffenc_mpeg4 and ffenc_libx264. This case often happened when you install gstreamer0.10-ffmpeg before with libavcodec package. So, to use them, you must remove old gstreamer plugins registry file by using this command:
-	$rm ~/.gstreamer-0.10/registry.*
+	$ rm ~/.gstreamer-0.10/registry.*
  
 3.Other requirements to build client:
  - Run following command to install other packages to build the demo client:
-	$sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
+	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
 
 IV. RUN
  - run command
-   ./DemoClient
+   	$ ./DemoClient
  - Using: the client is simple, investigate and try yourself 
  
 
