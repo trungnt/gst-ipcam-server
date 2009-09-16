@@ -10,7 +10,7 @@
 //store the url in the current session
 static gchar *URL;
 //store the gstream type in the current session
-static gint TYPE = 2;
+static gint TYPE = 4;
 
 
 /**
