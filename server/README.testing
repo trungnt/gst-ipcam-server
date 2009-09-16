@@ -1,76 +1,50 @@
-This's the brief instruction on how to fetch, build and test gstreamer-rtsp-server. For detail instruction on installing, see INSTALL.
-And for the testing purpose, we'll use Ubuntu 9.04 as the target OS.
+This's the brief instruction guide to fetch, build and test gst-ipcam-server servers on Ubuntu 9.04.
 
 I. FETCH SOURCE CODE
- - make a folder for storing source code
- - cd to that folder
- - git clone git://github.com/trungnt/gstreamer-rtsp-server.git
-   The clone command will fetch source code in our release.
- - Change to gstreamer-rtsp-server folder:
-   cd gstreamer-rtsp-server
- - For testing development version, using following command
-   git checkout --track -b server-development origin/server-development
+ - Make a new folder to store source code.
+ - Go to that folder and fetch the code with this command:
+  	$ git clone git://github.com/trungnt/gst-ipcam-server.git
+   After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
+ - Go to gst-ipcam-server folder:
+	$ cd gst-ipcam-server
+ - To test the development version, using the following command:
+   	$ git checkout --track -b server-development origin/server-development
  - In the case that you've fetch developing code before, you don't need to checkout repository or branch from server.
-Instead, run following command:
-   git checkout server-development # to switch to existed server-development branch
-   git pull # to update to the latest version
+Otherwise, run following commands:
+	$ git checkout server-development 	# to switch to existed server-development branch
+	$ git pull 				# to update to the latest version
 
 II. BUILD
  - NOTE: before building server, go to section III to see if your system match dependences and install requirement packages if needed
- - cd to the folder "server"
+ - Go to the folder "server"
  - For the first time building, run:
-   ./autogen.sh
+   	$ ./autogen.sh
  - Build :
-   make
+   	$ make
 
-III. DEPENDENCIES
-1. Gstreamers encoders
- ffmpeg mpeg4 and h264 encoder, these elements are: ffenc_mpeg4 and ffenc_libx264
-	- To get this encoder, we need to install following packages, using standard ubuntu packages would be enought:
-		+ gstreamer0.10-ffmpeg
-		+ libavcodec-unstripped-52
-	- You can install 2 packages at the same times if you haven't install gstreamer0.10-ffmpeg:
-		sudo apt-get install libavcodec-unstripped-52 gstreamer0.10-ffmpeg
-	- Or just install libavcodec-unstripped if gstreamer0.10-ffmpeg was installed before
-		sudo apt-get install libavcodec-unstripped-52
+III. SOFTWARE REQUIREMENTS
+1. MPEG4 and H.264 encoders
+ - We need MPEG4 and H.264 encoder from FFMPEG packages. To get these encoders, install the following packages:
+	+ gstreamer0.10-ffmpeg version 6.02 (NOTE: must use version 6.02: this's the standard Ubuntu package, ppa package may not work)
+	+ libavcodec-unstripped-52
 
-	- After installation, using gst-inspect you may not found ffenc_mpeg4 and ffenc_libx264. This case often happened when you install gstreamer0.10-ffmpeg before with the package libavcodec. So, to use them, you must remove old gstreamer plugins registry file by this command:
-	rm ~/.gstreamer-0.10/registry.*.bin
-	NOTE: may be with older implementation of gstreamer, you file will be registry.*.xml
+	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
+ - After installation, gst-inspect may not found ffenc_mpeg4 and ffenc_libx264. This case often happened when you install gstreamer0.10-ffmpeg before with libavcodec package. So, to use them, you must remove old gstreamer plugins registry file by using this command:
+	$ rm ~/.gstreamer-0.10/registry.*
 
-	- After removing registry, gst-launch of gst-inspect will auto rebuild registry and the elements will be there
-
-2. For run autogen.sh:
-	autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
-
-3. Gstreamers new version
- - our server require gstreamer >= 0.10.24.1 but the version comes with ubuntu is 0.10.22,
- - We have 2 choices here:
-	=> so we'll use packages from ppa. Add followings line to /etc/apt/sources.list:
-	 use these code:  
-		+ deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
-		+ deb-src http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main 
-	 	Then
-			+ sudo apt-get update
-			+ then install
- 			+ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
-	=> In the case that first option does not work (at the writing time, gstreamer 0.10.24.1 is still in developing process so PPA does not comes with it), we must build requirement packages from source
-		+ Install dependences packages
-			+ sudo apt-get install flex bison cvs gtk-doc-tools gstreamer-git
-		+ Fetch source code from git (remember to select position for our source code)
-			-> gstreamer:
-				+ git clone git://cgit.freedesktop.org/gstreamer/gstreamer/
-				+ cd gstreamer
-				+ ./autogen.sh --prefix=/usr
-				+ make
-				+ sudo make install
-			-> then gstreamer-plugins-base
-				+ git clone git://cgit.freedesktop.org/gstreamer/gst-plugins-base/
-				+ cd gst-plugins-base
-				+ ./autogen.sh --prefix=/usr
-				+ make
-				+ sudo make install
-
+2. Gstreamers new version
+ - Our server require gstreamer >= 0.10.24.1 but the version comes with ubuntu is 0.10.22. So we will use packages from ppa repository.
+ - Add followings line to /etc/apt/sources.list:	 use these code:  
+	+ deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
+	+ deb-src http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main 
+ - Then:
+	$ sudo apt-get update
+ - Then install:
+ 	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+ 
+3. Other requirements
+ - To build the server, run followings command in order to install needed packages:
+	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
 
 IV. RUN
    We have 3 server for h264, jpeg and mpeg4 inside servers directory with names : 
