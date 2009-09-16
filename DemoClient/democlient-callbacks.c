@@ -19,11 +19,6 @@
 #include "democlient-support.h"
 #include "democlient-backend.h"
 
-//store the url in the current session
-static gchar *URL = NULL;
-//store the gstream type in the current session
-static gint TYPE = 2;
-
 
 /**
  * Handle the event when clicking on Connect button in the main window.
@@ -47,7 +42,16 @@ democlient_on_btn_Connect_clicked                 (GtkButton       *button,
     ///show the button
     //gtk_widget_show (btn_Disconnect);
     gtk_widget_set_sensitive(btn_Connect, FALSE);
-    connectionDialog = democlient_create_connectionDialog();
+    connectionDialog = democlient_create_connectionDialog(); 
+
+    if (TYPE != 4)
+    {
+	gtk_combo_box_set_active(cbx_VideoStreamType, TYPE);
+    }
+    if (URL != NULL)
+    {
+	gtk_entry_set_text(GTK_ENTRY(entry_Url), URL);
+    }
 
     gtk_widget_show(connectionDialog);
 }
@@ -199,14 +203,11 @@ democlient_on_btn_Quit_clicked                    (GtkButton       *button,
 void
 democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data)
-{
-    gtk_entry_set_text(GTK_ENTRY(entry_Url), URL);
-    
+{   
     is_connect_button_clicked = TRUE;
     gchar *url;
     url = gtk_entry_get_text(entry_Url);
-    URL = url;
-    gtk_combo_box_entry_set_text_column(cbx_VideoStreamType, TYPE);
+    URL = g_strconcat("", url, NULL);
     democlient_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
 
     ///if video stream type is JPEG
