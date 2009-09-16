@@ -201,7 +201,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "Jpeg stream") == 0)
     {
         ///set url and create the pipeline to get jpeg stream
-        url = g_strconcat("rtspsrc location=", url, " ! rtpjpegdepay ! jpegdec ! queue ! ffmpegcolorspace ! videoscale ! xvimagesink name=videosink", NULL);
+        url = g_strconcat("rtspsrc location=", url, " ! rtpjpegdepay ! jpegdec ! queue ! ffmpegcolorspace ! videoscale ! identity name=connector", NULL);
         
         democlient_backend_create_pipeline(url);
         
@@ -211,7 +211,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     else if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "Mpeg4 stream") == 0)
     {
         ///set url and create the pipeline to get mpeg4 stream
-        url = g_strconcat("rtspsrc location=", url, " ! rtpmp4vdepay ! ffdec_mpeg4 ! queue ! ffmpegcolorspace ! xvimagesink name=videosink", NULL);
+        url = g_strconcat("rtspsrc location=", url, " ! rtpmp4vdepay ! ffdec_mpeg4 ! queue ! ffmpegcolorspace ! identity name=connector", NULL);
         
         democlient_backend_create_pipeline(url);
         
@@ -221,7 +221,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     else if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "H264 stream") == 0)
     {
         ///set url and create the pipeline to get h264 stream
-        url = g_strconcat("rtspsrc location=", url, " ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! xvimagesink name=videosink", NULL);
+        url = g_strconcat("rtspsrc location=", url, " ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! identity name=connector", NULL);
 
         democlient_backend_create_pipeline(url);
 
