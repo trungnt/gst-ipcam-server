@@ -15,7 +15,7 @@ Otherwise, run following commands:
 	$ git pull 				# to update to the latest version
 
 II. BUILD
- - NOTE: before building server, go to section III to see if your system match dependences and install requirement packages if needed
+ - NOTE: before building the server, go to section III to see if your system match dependences and install requirement packages if needed.
  - Go to the folder "server"
  - For the first time building, run:
    	$ ./autogen.sh
