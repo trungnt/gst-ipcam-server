@@ -63,15 +63,15 @@ extern "C" {
      * - a list of variables name
      * - a hash table to store variables and their values. Each variable will have a default value
      *
-     * To load a profile from file use gis_profile_load()
-     * We can use gis_profile_set_var() to set the value for available variable
-     * After that use gis_profile_build_pipeline() to build the last pipeline. Variables will be replaced by values
+     * To load a profile from file use gst_rtsp_pipeline_profile_load()
+     * We can use gst_rtsp_pipeline_profile_set_var() to set the value for available variable
+     * After that use gst_rtsp_pipeline_profile_build_pipeline() to build the last pipeline. Variables will be replaced by values
      */
-    typedef struct GISProfile {
+    typedef struct GstRTSPPipelineProfile {
         GList * vars_name;     /// list of variables name
         GHashTable * vars;     /// table of variables and their values
         gchar * pipeline_desc; /// the string represent the pipeline
-    } GISProfile;
+    } GstRTSPPipelineProfile;
 
     /**
      * Load a profile from a profile file.
@@ -84,52 +84,52 @@ extern "C" {
      *
      * @param file_name gchar* name of profile file
      * 
-     * @return GISProfile* a profile or NULL if something wrong
+     * @return GstRTSPPipelineProfile* a profile or NULL if something wrong
      */
-    GISProfile * gis_profile_load(const gchar * file_name);
+    GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar * file_name);
 
     /**
-     * Free the memory used for given GISProfile.
+     * Free the memory used for given GstRTSPPipelineProfile.
      *
-     * @param profile GISProfile* the profile that we want to free
+     * @param profile GstRTSPPipelineProfile* the profile that we want to free
      * 
      * @return None
      */
-    void gis_profile_free(GISProfile * profile);
+    void gst_rtsp_pipeline_profile_free(GstRTSPPipelineProfile * profile);
 
     /**
      * Set the value for a variable in the profile.
      * If any of parameters is NULL or the var_name is not available in the profile then return FALSE.
      *
-     * @param profile GISProfile* the profile we want to use
+     * @param profile GstRTSPPipelineProfile* the profile we want to use
      * @param var_name gchar* name of the variable to set
      * @param value gchar* the value we want to set to
      * 
      * @return gboolean TRUE if everything is ok or FALSE otherwise
      */
-    gboolean gis_profile_set_var(GISProfile * profile, const gchar * var_name, const gchar * value);
+    gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar * value);
 
     /**
      * Get the double linked list of variables list of the profile.
      * The return value should not be free or changed
      *
-     * @param profile GISProfile* the profile we want to use
+     * @param profile GstRTSPPipelineProfile* the profile we want to use
      *
      * @return GList* the double linked list storing variables name
      */
-    const GList * gis_profile_get_vars_list(GISProfile * profile);
+    const GList * gst_rtsp_pipeline_profile_get_vars_list(GstRTSPPipelineProfile * profile);
 
     /**
      * Build the pipeline of the profile from the pipeline description.
      * Variables will be replaced by their values.
      *
      * If the value for a variable is not set, default value will be used.
-     * Use gis_profile_set_var() to set value for a variable.
+     * Use gst_rtsp_pipeline_profile_set_var() to set value for a variable.
      *
-     * @param profile GISProfile* the profile we want to use
+     * @param profile GstRTSPPipelineProfile* the profile we want to use
      * @return gchar* the pipeline for this profile
      */
-    gchar * gis_profile_build_pipeline(GISProfile * profile);
+    gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profile);
 
 #ifdef	__cplusplus
 }

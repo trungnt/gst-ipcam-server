@@ -50,38 +50,38 @@
 #include "pipeline-profile.h"
 
 /**
- * Allocate memory and initialize an empty GISProfile structure.
+ * Allocate memory and initialize an empty GstRTSPPipelineProfile structure.
  *
  * @param None
- * @return GISProfile an empty GISProfile structure
+ * @return GstRTSPPipelineProfile an empty GstRTSPPipelineProfile structure
  */
-static GISProfile * gis_profile_alloc();
+static GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_alloc();
 
 /**
  * Add a variable to a profile.
  * If a variable is already existed, nothing will be added and return FALSE
  *
- * @param profile GISProfile* the profile we want to use
+ * @param profile GstRTSPPipelineProfile* the profile we want to use
  * @param var_name gchar* the variable name
  * @param init_value gchar* default value for the variable
  *
  * @return gboolean TRUE if the variable is added successful, FALSE otherwise
  */
-static gboolean gis_profile_add_var(GISProfile * profile, const gchar * var_name, const gchar * init_value);
+static gboolean gst_rtsp_pipeline_profile_add_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar * init_value);
 
 /**
  * Check if the given profile has a variable with given name.
  *
- * @param profile GISProfile* the profile we want to check
+ * @param profile GstRTSPPipelineProfile* the profile we want to check
  * @param var_name gchar* name of variable to check
  *
  * @return gboolean TRUE if the variable is existed, FALSE otherwise
  */
-static gboolean gis_profile_has_var(GISProfile * profile, const gchar * var_name);
+static gboolean gst_rtsp_pipeline_profile_has_var(GstRTSPPipelineProfile * profile, const gchar * var_name);
 
 /**
  * Function to replace variale it the pipeline with it's value.
- * This function will be passed to g_hash_table_replace() in gis_profile_build_pipeline() function and should not be called elsewhere
+ * This function will be passed to g_hash_table_replace() in gst_rtsp_pipeline_profile_build_pipeline() function and should not be called elsewhere
  *
  * @param key gpointer variable name.
  * @param value gpointer value of the variable
@@ -89,28 +89,28 @@ static gboolean gis_profile_has_var(GISProfile * profile, const gchar * var_name
  *
  * @return None
  */
-static void gis_profile_var_replacing_func(gpointer key, gpointer value, gpointer user_data);
+static void gst_rtsp_pipeline_profile_var_replacing_func(gpointer key, gpointer value, gpointer user_data);
 
-static GISProfile * gis_profile_alloc() {
-	GISProfile * profile = g_malloc(sizeof (GISProfile));
+static GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_alloc() {
+	GstRTSPPipelineProfile * profile = g_malloc(sizeof (GstRTSPPipelineProfile));
 	g_return_val_if_fail(profile != NULL, NULL);
 
 	profile->pipeline_desc = NULL;
 	profile->vars = g_hash_table_new(g_str_hash, g_str_equal);
 	if (profile->vars == NULL) {
-		gis_profile_free(profile);
+		gst_rtsp_pipeline_profile_free(profile);
 	}
 
 	profile->vars_name = g_list_alloc();
 	if (profile->vars_name == NULL) {
-		gis_profile_free(profile);
+		gst_rtsp_pipeline_profile_free(profile);
 	}
 
 	return profile;
 }
 
-GISProfile * gis_profile_load(const gchar* file_name) {
-	GISProfile * profile = gis_profile_alloc();
+GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar* file_name) {
+	GstRTSPPipelineProfile * profile = gst_rtsp_pipeline_profile_alloc();
 	g_return_val_if_fail(profile != NULL, NULL);
 
 	g_return_val_if_fail(file_name != NULL, NULL);
@@ -121,7 +121,7 @@ GISProfile * gis_profile_load(const gchar* file_name) {
 		if (g_file_get_contents(file_name, &contents, NULL, &error) == FALSE) {
 			g_warning("Error: %s", error->message);
 			g_error_free(error);
-			gis_profile_free(profile);
+			gst_rtsp_pipeline_profile_free(profile);
 			return NULL;
 		}
 
@@ -129,7 +129,7 @@ GISProfile * gis_profile_load(const gchar* file_name) {
 		g_free(contents);
 		gint no_lines = g_strv_length(lines);
 		if (no_lines <= 0) {
-			gis_profile_free(profile);
+			gst_rtsp_pipeline_profile_free(profile);
 			return NULL;
 		}
 
@@ -138,13 +138,17 @@ GISProfile * gis_profile_load(const gchar* file_name) {
 		// next will be vars with the format var_name=default_value
 		gint i;
 		for (i = 1; i < no_lines; i++) {
-			gchar * line = lines[i];
+			gchar * line = g_strstrip(lines[i]);
+			if (line[0] == '\0') {
+				// empty line
+				continue;
+			}
 			gchar ** vars = g_strsplit(line, "=", -1);
 			if (g_strv_length(vars) != 2) {
 				g_warning("invalid format at line %d", i);
 				continue;
 			}
-			if (gis_profile_add_var(profile, vars[0], vars[1]) == FALSE) {
+			if (gst_rtsp_pipeline_profile_add_var(profile, vars[0], vars[1]) == FALSE) {
 				g_warning("Error when inserting var '%s'", vars[0]);
 			}
 			g_strfreev(vars);
@@ -158,7 +162,7 @@ GISProfile * gis_profile_load(const gchar* file_name) {
 	return profile;
 }
 
-void gis_profile_free(GISProfile* profile) {
+void gst_rtsp_pipeline_profile_free(GstRTSPPipelineProfile* profile) {
 	if (profile != NULL) {
 		if (profile->pipeline_desc != NULL) {
 			g_free(profile->pipeline_desc);
@@ -178,14 +182,14 @@ void gis_profile_free(GISProfile* profile) {
 	}
 }
 
-gboolean gis_profile_set_var(GISProfile* profile, const gchar* var_name, const gchar* value) {
+gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile* profile, const gchar* var_name, const gchar* value) {
 	g_return_val_if_fail(profile != NULL, FALSE);
 	g_return_val_if_fail(var_name != NULL, FALSE);
 	// what if in the case that we want to unset value for a var ??
 	g_return_val_if_fail(value != NULL, FALSE);
 
 	// do not allow to set an unexisted variable
-	if (!gis_profile_has_var(profile, var_name)) {
+	if (!gst_rtsp_pipeline_profile_has_var(profile, var_name)) {
 		g_warning("gis_profile_set_var(): No variable name '%s'", var_name);
 		return FALSE;
 	}
@@ -195,7 +199,7 @@ gboolean gis_profile_set_var(GISProfile* profile, const gchar* var_name, const g
 	return TRUE;
 }
 
-static gboolean gis_profile_has_var(GISProfile* profile, const gchar* var_name) {
+static gboolean gst_rtsp_pipeline_profile_has_var(GstRTSPPipelineProfile* profile, const gchar* var_name) {
 	GList * first = profile->vars_name;
 	GList * node = first;
 
@@ -211,12 +215,12 @@ static gboolean gis_profile_has_var(GISProfile* profile, const gchar* var_name) 
 	return FALSE;
 }
 
-static gboolean gis_profile_add_var(GISProfile* profile, const gchar* var_name, const gchar* init_value) {
+static gboolean gst_rtsp_pipeline_profile_add_var(GstRTSPPipelineProfile* profile, const gchar* var_name, const gchar* init_value) {
 	g_return_val_if_fail(profile != NULL, FALSE);
 	g_return_val_if_fail(var_name != NULL, FALSE);
 	g_return_val_if_fail(init_value != NULL, FALSE);
 
-	g_return_val_if_fail(gis_profile_has_var(profile, var_name) == FALSE, FALSE);
+	g_return_val_if_fail(gst_rtsp_pipeline_profile_has_var(profile, var_name) == FALSE, FALSE);
 
 	profile->vars_name = g_list_append(profile->vars_name, g_strdup(var_name));
 	g_hash_table_insert(profile->vars, g_strdup(var_name), g_strdup(init_value));
@@ -224,16 +228,16 @@ static gboolean gis_profile_add_var(GISProfile* profile, const gchar* var_name, 
 	return TRUE;
 }
 
-gchar * gis_profile_build_pipeline(GISProfile* profile) {
+gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile* profile) {
 	g_return_val_if_fail(profile != NULL, NULL);
 
 	gchar * pipeline_desc = g_strdup(profile->pipeline_desc);
-	g_hash_table_foreach(profile->vars, gis_profile_var_replacing_func, &pipeline_desc);
+	g_hash_table_foreach(profile->vars, gst_rtsp_pipeline_profile_var_replacing_func, &pipeline_desc);
 
 	return pipeline_desc;
 }
 
-static void gis_profile_var_replacing_func(gpointer key, gpointer value, gpointer user_data) {
+static void gst_rtsp_pipeline_profile_var_replacing_func(gpointer key, gpointer value, gpointer user_data) {
 	gchar ** pipeline_desc_ptr = (gchar**) user_data;
 	gchar * pipeline_desc = *pipeline_desc_ptr;
 	// var name is 'name', but in the pipeline description, it's represented as '${name}'
@@ -248,7 +252,7 @@ static void gis_profile_var_replacing_func(gpointer key, gpointer value, gpointe
 	*pipeline_desc_ptr = temp_pipeline;
 }
 
-const GList * gis_profile_get_vars_list(GISProfile* profile) {
+const GList * gst_rtsp_pipeline_profile_get_vars_list(GstRTSPPipelineProfile* profile) {
 	g_return_val_if_fail(profile != NULL, NULL);
 
 	return profile->vars_name;

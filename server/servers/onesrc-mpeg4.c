@@ -20,6 +20,12 @@
 #include <gst/gst.h>
 #include <gst/rtsp-server/rtsp-server.h>
 
+#include "server-profile.h"
+#include "profile/pipeline-profile.h"
+
+// default profile file for this server
+#define DEFAULT_PROFILE_FILE "onesrc-mpeg4.prf"
+
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)
 {
@@ -39,6 +45,9 @@ main (int argc, char *argv[])
   GstRTSPServer *server;
   GstRTSPMediaMapping *mapping;
   GstRTSPMediaFactory *factory;
+  gchar * profile_file_name = DEFAULT_PROFILE_FILE;
+  GstRTSPPipelineProfile * profile;
+  gchar * pipeline_str = NULL;
 
   gst_init (&argc, &argv);
 
@@ -57,10 +66,22 @@ main (int argc, char *argv[])
    * element with pay%d names will be a stream */
   factory = gst_rtsp_media_factory_new ();
 
-  gst_rtsp_media_factory_set_launch (factory, "( "
-    "v4l2src ! video/x-raw-yuv,width=352,height=288,framerate=25/1 ! ffmpegcolorspace ! "
-    "ffenc_mpeg4 ! rtpmp4vpay name=pay0 pt=96 "
-    ")");
+  /* start building the pipeline */
+  profile = gst_rtsp_pipeline_profile_load(profile_file_name);
+  if (profile == NULL) {
+	  pipeline_str = g_strdup("");
+  } else {
+	  /* we can set some common server parameter by using functions in server-profile.h
+	   * but default values will be used here
+	   */
+	  pipeline_str = gst_rtsp_pipeline_profile_build_pipeline(profile);
+	  g_warning("Our pipeline is '%s'", pipeline_str);
+  }
+
+  gst_rtsp_media_factory_set_launch (factory, pipeline_str);
+
+  // free unneeded string
+  g_free(pipeline_str);
 
   /* share the pipeline with multiple clients */
   gst_rtsp_media_factory_set_shared(factory, TRUE);
