@@ -240,13 +240,13 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
 
         g_free(url);
     }
-    g_print("\nPLAY request is sending...");
+    g_message("PLAY request is sending...");
     ///set pipeline to playing status
     GstStateChangeReturn state = democlient_backend_play ();
-    g_print("\nPLAY request sent.");
 
     if (state == GST_STATE_CHANGE_FAILURE)
     {
+	g_message("PLAY request could not be sent.");
         GtkWidget *dialog;
 		
         dialog = gtk_message_dialog_new(NULL,
@@ -261,6 +261,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     }
     else
     {
+	g_message("PLAY request sent.");
 	///remove btn_Disconnect button from toolitem_Connect
         gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
         //btn_Disconnect = g_object_ref(btn_Connect);

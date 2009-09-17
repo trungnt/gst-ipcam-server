@@ -226,7 +226,7 @@ democlient_create_connectionDialog (void)
                     (GtkAttachOptions) (GTK_FILL), 0, 0);
   gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Jpeg stream"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Mpeg4 stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264 stream"));
 
   dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
   gtk_widget_show (dialog_action_area);
