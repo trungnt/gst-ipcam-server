@@ -1,7 +1,7 @@
-This's the brief instruction guide to fetch, build and test gst-ipcam-server servers on Ubuntu 9.04.
+This is the brief instruction guide to fetch, build and test gst-ipcam-server servers on Ubuntu 9.04.
 
 I. FETCH SOURCE CODE
- - Make a new folder to store source code.
+ - Create a new folder to store source code.
  - Go to that folder and fetch the code with this command:
   	$ git clone git://github.com/trungnt/gst-ipcam-server.git
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
@@ -15,7 +15,7 @@ Otherwise, run following commands:
 	$ git pull 				# to update to the latest version
 
 II. BUILD
- - NOTE: before building the server, go to section III to see if your system match dependences and install requirement packages if needed.
+ - NOTE: before building the server, go to section III to check whether your system meet necessary packages.
  - Go to the folder "server"
  - For the first time building, run:
    	$ ./autogen.sh
@@ -28,8 +28,8 @@ III. SOFTWARE REQUIREMENTS
 	+ gstreamer0.10-ffmpeg version 6.02 (NOTE: must use version 6.02: this's the standard Ubuntu package, ppa package may not work)
 	+ libavcodec-unstripped-52
 
-	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
- - After installation, gst-inspect may not found ffenc_mpeg4 and ffenc_libx264. This case often happened when you install gstreamer0.10-ffmpeg before with libavcodec package. So, to use them, you must remove old gstreamer plugins registry file by using this command:
+	$sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
+ - After installing, gst-inspect may not found ffenc_mpeg4 and ffenc_libx264. This case often happens when you install gstreamer0.10-ffmpeg before with libavcodec package (which does not come with MPEG4 and H.264 encoders). So, to use them, you must remove old gstreamer plugins registry file by using this command:
 	$ rm ~/.gstreamer-0.10/registry.*
 
 2. Gstreamers new version
