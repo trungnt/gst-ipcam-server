@@ -1,6 +1,7 @@
 /**
  * \file:   democlient-callbacks.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+ * \author: Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com>
  *
  * \date 8-26-2009
  */

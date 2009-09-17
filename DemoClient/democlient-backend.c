@@ -1,6 +1,7 @@
 /**
  * \file:   democlient-backend.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
+ * \author: Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com>
  *
  * \date 8-26-2009
  */
@@ -9,6 +10,7 @@
 
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
+#include <gstreamer-0.10/gst/gstmessage.h>
 
 #include "democlient-backend.h"
 #include "democlient-interface.h"
@@ -66,6 +68,15 @@ static GstElement * democlient_backend_create_sink(GstElementFactory * factory);
 static gboolean democlient_backend_bus_watch(GstBus * bus, GstMessage * msg, gpointer data);
 
 /**
+ * Parse and print gstreamer message in the case that it's info/warning or error message.
+ *
+ * @param message GstMessage* the message that we need to parse and print
+ *
+ * @return Nothing
+ */
+static void democlient_backend_print_gst_message(GstMessage * message);
+
+/**
  * init for using gstreamer
  * This function is used whenever the main function is created
  *
@@ -106,7 +117,7 @@ democlient_backend_create_pipeline(const gchar *pipeline_description) {
 
 	// set the bus message handling function
 	{
-		GstBus * bus = gst_pipeline_get_bus(pipeline);
+		GstBus * bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
 		gst_bus_add_watch(bus, democlient_backend_bus_watch, NULL);
 		gst_object_unref(bus);
 	}
@@ -257,7 +268,9 @@ static GstElement * democlient_backend_find_best_video_sink() {
 			/* FIXME: we forward the first error for now; but later on it might make
 			 * sense to actually analyse them */
 			gst_message_ref(GST_MESSAGE(errors->data));
-			g_warning("reposting message %s", errors->data);			
+			//g_warning("reposting message %s", errors->data);
+			democlient_backend_print_gst_message(errors->data);
+			gst_message_unref(GST_MESSAGE(errors->data));
 		} else {
 			/* send warning message to application and use a fakesink */
 			g_warning("Failed to find a usable video sink");
@@ -332,4 +345,29 @@ static gboolean democlient_backend_bus_watch(GstBus* bus, GstMessage* msg, gpoin
 	}
 
 	return TRUE;
+}
+
+static void democlient_backend_print_gst_message(GstMessage* message) {
+	switch (GST_MESSAGE_TYPE(message)) {
+		case GST_MESSAGE_ERROR:
+		case GST_MESSAGE_INFO:
+		case GST_MESSAGE_WARNING:
+		{
+			gchar * debug;
+			GError * error;
+			gst_message_parse_error(message, &error, &debug);
+
+			if (debug != NULL) {
+				g_free(debug);
+			}
+
+			if (error != NULL) {
+				g_warning("Backend message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_error_free(error);
+			}
+		}
+			break;
+		default:
+			break;
+	}
 }
