@@ -248,6 +248,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     if (state == GST_STATE_CHANGE_FAILURE)
     {
         GtkWidget *dialog;
+		
         dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,

@@ -6,15 +6,15 @@
  */
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
+
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
-#include <gstreamer-0.10/gst/gstelementfactory.h>
-#include <gstreamer-0.10/gst/gstutils.h>
+
 #include "democlient-backend.h"
 #include "democlient-interface.h"
+
 static gpointer window;
 static GstElement *pipeline;
-static GstElement *videosink;
 
 /**
  * This function will try to find the best suitable video sink used for current window system.
@@ -55,6 +55,17 @@ static gboolean democlient_backend_video_sink_factory_filter(GstPluginFeature * 
 static GstElement * democlient_backend_create_sink(GstElementFactory * factory);
 
 /**
+ * handle messages from pipeline bus.
+ *
+ * @param bus GstBus* the bus that contains the messages
+ * @param msg GstMessage* current bus message
+ * @param data gpointer addition user data
+ *
+ * @return gboolean will comment on this later
+ */
+static gboolean democlient_backend_bus_watch(GstBus * bus, GstMessage * msg, gpointer data);
+
+/**
  * init for using gstreamer
  * This function is used whenever the main function is created
  *
@@ -67,6 +78,7 @@ void
 democlient_backend_init(int *argc,
 		char **argv[]) {
 	gst_init(argc, argv);
+	pipeline = NULL;
 }
 
 /**
@@ -79,15 +91,25 @@ democlient_backend_init(int *argc,
 void
 democlient_backend_create_pipeline(const gchar *pipeline_description) {
 	GstElement * connector;
-	g_print("\nSETUP request is sending...");
+	GstElement * videosink;
+	g_message("SETUP request is sending...");
+	g_debug("the pipeline is :%s", pipeline_description);
 	pipeline = gst_parse_launch(pipeline_description, NULL);
-	g_print("\nSETUP request sent.");
+	g_message("SETUP request sent.");
 
 	videosink = democlient_backend_find_best_video_sink();
 	connector = gst_bin_get_by_name(GST_BIN(pipeline), "connector");
 	gst_bin_add(GST_BIN(pipeline), videosink);
 	gst_element_link(connector, videosink);
 	g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
+	gst_object_unref(connector);
+
+	// set the bus message handling function
+	{
+		GstBus * bus = gst_pipeline_get_bus(pipeline);
+		gst_bus_add_watch(bus, democlient_backend_bus_watch, NULL);
+		gst_object_unref(bus);
+	}
 
 	if (GST_IS_X_OVERLAY(videosink)) {
 		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
@@ -118,7 +140,7 @@ democlient_backend_play() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-	g_print("\nSetting to Play.....Done\n");
+	g_message("Setting to Play.....Done");
 
 	return stateReturn;
 }
@@ -135,7 +157,7 @@ democlient_backend_pause() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
-	g_print("\nSetting to Pause.....Done\n");
+	g_message("Setting to Pause.....Done");
 
 	return stateReturn;
 }
@@ -152,7 +174,7 @@ democlient_backend_stop() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
-	g_print("\nSetting to Stop.....Done\n");
+	g_message("Setting to Stop.....Done");
 
 	return stateReturn;
 }
@@ -169,7 +191,7 @@ democlient_backend_resume() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-	g_print("\nSetting to Resume.....Done\n");
+	g_message("Setting to Resume.....Done");
 
 	return stateReturn;
 }
@@ -186,10 +208,6 @@ democlient_backend_deinit() {
 	if (pipeline != NULL) {
 		gst_object_unref(pipeline);
 		pipeline = NULL;
-	}
-	if (videosink != NULL) {
-		gst_object_unref(videosink);
-		videosink = NULL;
 	}
 }
 
@@ -217,7 +235,7 @@ static GstElement * democlient_backend_find_best_video_sink() {
 			ret = gst_element_set_state(el, GST_STATE_READY);
 			if (ret == GST_STATE_CHANGE_SUCCESS) {
 				choice = el;
-				g_warning("So we are using '%s'", GST_PLUGIN_FEATURE (f)->name);
+				g_debug("So we are using '%s'", GST_PLUGIN_FEATURE (f)->name);
 				break;
 			}
 
@@ -292,4 +310,26 @@ static GstElement * democlient_backend_create_sink(GstElementFactory* factory) {
 	GstElement * sink;
 	sink = gst_element_factory_create(factory, "video-sink");
 	return sink;
+}
+
+static gboolean democlient_backend_bus_watch(GstBus* bus, GstMessage* msg, gpointer data) {
+	switch (GST_MESSAGE_TYPE(msg)) {
+		case GST_MESSAGE_ERROR:
+		{
+			gchar * debug;
+			GError * error;
+
+			gst_message_parse_error(msg, &error, &debug);
+            g_free(debug);
+
+            g_warning("Pipeline error: %s", error->message);
+
+            g_error_free(error);
+		}
+			break;
+		default:
+			break;
+	}
+
+	return TRUE;
 }
