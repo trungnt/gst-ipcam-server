@@ -1,0 +1,1 @@
+( alsasrc ! audio/x-raw-int ! faac ! rtpmp4apay name=pay0 pt=96 )
