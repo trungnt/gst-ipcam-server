@@ -14,6 +14,7 @@
 
 #include "democlient-backend.h"
 #include "democlient-interface.h"
+#include "democlient-callbacks.h"
 
 static gpointer window;
 static GstElement *pipeline;
@@ -118,7 +119,7 @@ democlient_backend_create_pipeline(const gchar *pipeline_description) {
 	// set the bus message handling function
 	{
 		GstBus * bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-		gst_bus_add_watch(bus, democlient_backend_bus_watch, NULL);
+                gst_bus_add_watch(bus, democlient_backend_bus_watch, NULL);
 		gst_object_unref(bus);
 	}
 
@@ -182,6 +183,7 @@ democlient_backend_pause() {
  */
 gint
 democlient_backend_stop() {
+	gtk_window_resize(GTK_WINDOW(mainWindow), 420, 50);
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
@@ -246,7 +248,7 @@ static GstElement * democlient_backend_find_best_video_sink() {
 			ret = gst_element_set_state(el, GST_STATE_READY);
 			if (ret == GST_STATE_CHANGE_SUCCESS) {
 				choice = el;
-				g_debug("We are using '%s'", GST_PLUGIN_FEATURE (f)->name);
+				g_debug("So we are using '%s'", GST_PLUGIN_FEATURE (f)->name);
 				break;
 			}
 
@@ -326,24 +328,36 @@ static GstElement * democlient_backend_create_sink(GstElementFactory* factory) {
 }
 
 static gboolean democlient_backend_bus_watch(GstBus* bus, GstMessage* msg, gpointer data) {
-	switch (GST_MESSAGE_TYPE(msg)) {
-		case GST_MESSAGE_ERROR:
-		{
-			gchar * debug;
-			GError * error;
+        switch (GST_MESSAGE_TYPE(msg)) {
+            case GST_MESSAGE_ERROR:
+            {
+		gchar * debug;
+		GError * error;
+                gst_message_parse_error(msg, &error, &debug);
 
-			gst_message_parse_error(msg, &error, &debug);
-            g_free(debug);
+                g_message("PLAY request could not be sent.");
+                
+                GtkWidget *dialog;
+                dialog = gtk_message_dialog_new(NULL,
+                                                GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_CLOSE,
+                                                "The connection is failed. Please try again");
 
-            g_warning("Pipeline error: %s", error->message);
+                gtk_dialog_run (GTK_DIALOG (dialog));
+                gtk_widget_destroy (dialog);
 
-            g_error_free(error);
-		}
-			break;
-		default:
-			break;
-	}
+                democlient_on_btn_Disconnect_clicked(NULL, NULL);
+                g_free(debug);
 
+                g_warning("Pipeline error: %s", error->message);
+
+                g_error_free(error);
+            }
+                break;
+            default:
+		break;
+        }
 	return TRUE;
 }
 
