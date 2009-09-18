@@ -41,7 +41,7 @@ democlient_create_mainWindow (void)
 {
   mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (mainWindow), _("Demo Client"));
-  gtk_window_set_default_size (GTK_WINDOW (mainWindow), 420, 400);
+  gtk_window_set_default_size (GTK_WINDOW (mainWindow), 420, 50);
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox);

@@ -204,7 +204,8 @@ democlient_on_btn_Quit_clicked                    (GtkButton       *button,
 void
 democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data)
-{   
+{
+    static gint counter = 0;
     is_connect_button_clicked = TRUE;
     gchar *url;
     url = gtk_entry_get_text(entry_Url);
@@ -241,15 +242,11 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
 
         g_free(url);
     }
-    g_message("PLAY request is sending...");
-    ///set pipeline to playing status
-    GstStateChangeReturn state = democlient_backend_play ();
-
-    if (state == GST_STATE_CHANGE_FAILURE)
+    else
     {
-	g_message("PLAY request could not be sent.");
+        g_message("PLAY request could not be sent.");
         GtkWidget *dialog;
-		
+
         dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_MESSAGE_ERROR,
@@ -259,26 +256,36 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
         gtk_dialog_run (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
 	gtk_widget_set_sensitive(btn_Connect, TRUE);
+        //destroy the connection dialog
+        gtk_widget_destroy(connectionDialog);
+        is_connect_button_clicked = FALSE;
+        
+        return;
     }
-    else
-    {
-	g_message("PLAY request sent.");
-	///remove btn_Disconnect button from toolitem_Connect
-        gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
-        //btn_Disconnect = g_object_ref(btn_Connect);
+    g_message("PLAY request is sending...");
+    ///set pipeline to playing status
+    democlient_backend_play ();
 
-        ///add btn_Connect to toolitem_Connect and stop the pipeline
-        gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
+    g_message("PLAY request sent.");
+
+    //Resize the mainwindow to show Video got from server
+    gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
+
+    ///remove btn_Connect button from toolitem_Connect
+    gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+    //btn_Disconnect = g_object_ref(btn_Connect);
+
+    ///add btn_Disconnect to toolitem_Connect
+    gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
         gtk_widget_show (btn_Disconnect);
 
         //Get the Pause button and Disconnect button to be sensitive;
         gtk_widget_set_sensitive(btn_Pause, TRUE);
         gtk_widget_set_sensitive(btn_Disconnect, TRUE);
-    }
 
-    //destroy the connection dialog
-    gtk_widget_destroy(connectionDialog);
-    is_connect_button_clicked = FALSE;
+        //destroy the connection dialog
+        gtk_widget_destroy(connectionDialog);
+        is_connect_button_clicked = FALSE;
 }
 
 /**
@@ -296,6 +303,7 @@ democlient_on_connectionDialog_destroy                (GtkObject       *object,
 {
     if (!is_connect_button_clicked)
     {
+        //Active the Connect button and Inactive the Pause button
         gtk_widget_set_sensitive(btn_Pause, FALSE);
         gtk_widget_set_sensitive(btn_Connect, TRUE);
     }
