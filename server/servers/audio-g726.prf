@@ -1,1 +1,1 @@
-( alsasrc ! audio/x-raw-int,rate=8000,channels=1,depth=16,width=16,endianness=1234,signed=true ! ffenc_g726 bitrate=16000 ! rtpg726pay name=pay0 pt=96 )
+ alsasrc ! audio/x-raw-int,rate=8000,channels=1,depth=16,width=16,endianness=1234,signed=true ! ffenc_g726 bitrate=16000 ! rtpg726pay name=pay1 pt=96 )
