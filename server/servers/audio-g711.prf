@@ -1,1 +1,0 @@
- alsasrc ! audio/x-raw-int ! alawenc ! rtppcmapay name=pay1 pt=96 )
