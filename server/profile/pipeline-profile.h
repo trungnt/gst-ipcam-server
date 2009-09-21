@@ -53,84 +53,132 @@
 extern "C" {
 #endif
 
-    /**
-     * Structure storing information about profile for gst-ipcam-server servers.
-     * This structure will contains:
-     * - a string to describe the pipeline with some variables. For examples:
-     *      v4l2src ! fpsbin framerate=${fps} ! rtpsink
-     * The ${fps} represent a variable name {fps}
-     *
-     * - a list of variables name
-     * - a hash table to store variables and their values. Each variable will have a default value
-     *
-     * To load a profile from file use gst_rtsp_pipeline_profile_load()
-     * We can use gst_rtsp_pipeline_profile_set_var() to set the value for available variable
-     * After that use gst_rtsp_pipeline_profile_build_pipeline() to build the last pipeline. Variables will be replaced by values
-     */
-    typedef struct GstRTSPPipelineProfile {
-        GList * vars_name;     /// list of variables name
-        GHashTable * vars;     /// table of variables and their values
-        gchar * pipeline_desc; /// the string represent the pipeline
-    } GstRTSPPipelineProfile;
+	typedef enum {
+		GST_RTSP_PIPELINE_INVALID = -1,
+		GST_RTSP_PIPELINE_VIDEO = 0,
+		GST_RTSP_PIPELINE_AUDIO = 1,
+	} GstRTSPPipelineType;
 
-    /**
-     * Load a profile from a profile file.
-     * A profile file is a text file with the following format
-     *
-     * first line: pipeline description.
-     * next lines: each line will describe a variable with the format 'name'='default value'.
-     *
-     * Variables with invalid format will be skipped, then the produced pipeline can be wrong.
-     *
-     * @param file_name gchar* name of profile file
-     * 
-     * @return GstRTSPPipelineProfile* a profile or NULL if something wrong
-     */
-    GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar * file_name);
+	/**
+	 * Structure storing information about profile for gst-ipcam-server servers.
+	 * This structure will contains:
+	 * - a string to describe the pipeline with some variables. For examples:
+	 *      v4l2src ! fpsbin framerate=${fps} ! rtpsink
+	 * The ${fps} represent a variable name {fps}
+	 *
+	 * - a list of variables name
+	 * - a hash table to store variables and their values. Each variable will have a default value
+	 *
+	 * To load a profile from file use gst_rtsp_pipeline_profile_load()
+	 * We can use gst_rtsp_pipeline_profile_set_var() to set the value for available variable
+	 * After that use gst_rtsp_pipeline_profile_build_pipeline() to build the last pipeline. Variables will be replaced by values
+	 */
+	typedef struct GstRTSPPipelineProfile {
+		gchar * pipeline_name; /// name of the pipeline
+		GstRTSPPipelineType pipeline_type; /// type of the pipeline, see GstRTSPPipelineType for more information
+		gchar * pipeline_codec; /// both video and audio support some codec
+		gchar * pipeline_desc; /// the string represent the pipeline
+		GList * vars_name; /// list of variables name
+		GHashTable * vars; /// table of variables and their values
+	} GstRTSPPipelineProfile;
 
-    /**
-     * Free the memory used for given GstRTSPPipelineProfile.
-     *
-     * @param profile GstRTSPPipelineProfile* the profile that we want to free
-     * 
-     * @return None
-     */
-    void gst_rtsp_pipeline_profile_free(GstRTSPPipelineProfile * profile);
+	/**
+	 * Load a profile from a configuration file
+	 * If the configuration file contain more than one pipeline, this function will load the 1st one.
+	 *
+	 * For the format of configuration file and pipeline definition, see GstRTSPServerConfiguration declaration.
+	 *
+	 * @param file_name gchar* name of the configuration file
+	 *
+	 * @return GstRTSPPipelineProfile* a profile or NULL if something wrong
+	 */
+	GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar * name);
 
-    /**
-     * Set the value for a variable in the profile.
-     * If any of parameters is NULL or the var_name is not available in the profile then return FALSE.
-     *
-     * @param profile GstRTSPPipelineProfile* the profile we want to use
-     * @param var_name gchar* name of the variable to set
-     * @param value gchar* the value we want to set to
-     * 
-     * @return gboolean TRUE if everything is ok or FALSE otherwise
-     */
-    gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar * value);
+	/**
+	 * Load profile from given configuration contents.
+	 * The contents is an array of text line.
+	 *
+	 * @param lines gchar** configuration contents to load pipeline
+	 * @param start_line gint* start line to parse
+	 *
+	 * @return GstRTSPPipelineProfile * a profile or NULL if something wrong
+	 */
+	GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load_from_text(gchar ** lines, gint * start_line);
 
-    /**
-     * Get the double linked list of variables list of the profile.
-     * The return value should not be free or changed
-     *
-     * @param profile GstRTSPPipelineProfile* the profile we want to use
-     *
-     * @return GList* the double linked list storing variables name
-     */
-    const GList * gst_rtsp_pipeline_profile_get_vars_list(GstRTSPPipelineProfile * profile);
+	/**
+	 * Free the memory used for given GstRTSPPipelineProfile.
+	 *
+	 * @param profile GstRTSPPipelineProfile* the profile that we want to free
+	 *
+	 * @return None
+	 */
+	void gst_rtsp_pipeline_profile_free(GstRTSPPipelineProfile * profile);
 
-    /**
-     * Build the pipeline of the profile from the pipeline description.
-     * Variables will be replaced by their values.
-     *
-     * If the value for a variable is not set, default value will be used.
-     * Use gst_rtsp_pipeline_profile_set_var() to set value for a variable.
-     *
-     * @param profile GstRTSPPipelineProfile* the profile we want to use
-     * @return gchar* the pipeline for this profile
-     */
-    gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profile);
+	/**
+	 * Set name for the given pipeline profile
+	 *
+	 * @param profile GstRTSPPipelineProfile* the pipeline profile to set name
+	 * @param name gchar* the name to set to
+	 *
+	 * @return None
+	 */
+	void gst_rtsp_pipeline_profile_set_name(GstRTSPPipelineProfile * profile, const gchar * name);
 
+	/**
+	 * Get the name of given pipepline profile
+	 *
+	 * @param profile GstRTSPPipelineProfile* the pipeline profile to get name
+	 *
+	 * @return gchar* the name of given profile
+	 */
+	const gchar * gst_rtsp_pipeline_profile_get_name(const GstRTSPPipelineProfile * profile);
+
+	/**
+	 * Get the type of given pipeline profile.
+	 * See GstRTSPPipelineType for the list of supported type.
+	 * This function will return GST_RTSP_PIPELINE_TYPE_INVALID if something wrong (for exam: the profile is NULL)
+	 *
+	 * @param profile GstRTSPPipelineProfile* the pipeline profile to get type
+	 *
+	 * @return GstRTSPPipelineType the type of the given pipeline
+	 */
+	GstRTSPPipelineType gst_rtsp_pipeline_profile_get_type(const GstRTSPPipelineProfile * profile);
+
+	/**
+	 * Set the value for a variable in the profile.
+	 * If any of parameters is NULL or the var_name is not available in the profile then return FALSE.
+	 *
+	 * @param profile GstRTSPPipelineProfile* the profile we want to use
+	 * @param var_name gchar* name of the variable to set
+	 * @param value gchar* the value we want to set to
+	 *
+	 * @return gboolean TRUE if everything is ok or FALSE otherwise
+	 */
+	gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar * value);
+
+	/**
+	 * Get the double linked list of variables list of the profile.
+	 * The return value should not be free or changed
+	 *
+	 * @param profile GstRTSPPipelineProfile* the profile we want to use
+	 *
+	 * @return GList* the double linked list storing variables name
+	 */
+	const GList * gst_rtsp_pipeline_profile_get_vars_list(GstRTSPPipelineProfile * profile);
+
+	/**
+	 * Build the pipeline of the profile from the pipeline description.
+	 * Variables will be replaced by their values.
+	 *
+	 * If the value for a variable is not set, default value will be used.
+	 * Use gst_rtsp_pipeline_profile_set_var() to set value for a variable.
+	 *
+	 * @param profile GstRTSPPipelineProfile* the profile we want to use
+	 * @return gchar* the pipeline for this profile
+	 */
+	gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profile);
+
+	gboolean gst_rtsp_server_configuration_should_skip_line(const gchar * line);
 #ifdef	__cplusplus
 }
 #endif

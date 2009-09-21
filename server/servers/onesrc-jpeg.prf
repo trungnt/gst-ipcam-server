@@ -1,4 +1,11 @@
-( v4l2src ! videoscale ! videorate ! video/x-raw-yuv,width=${video-width},height=${video-height},framerate=${video-framerate} ! ffmpegcolorspace ! jpegenc ! rtpjpegpay name=pay0 pt=96 )
+# onesrc jpeg profile
+[pipeline]
+pipeline-name = onesrc jpeg
+pipeline-type = video
+pipeline-codec = JPEG
+pipeline-desc = ( v4l2src ! videoscale ! videorate ! video/x-raw-yuv,width=${video-width},height=${video-height},framerate=${video-framerate} ! ffmpegcolorspace ! jpegenc ! rtpjpegpay name=pay0 pt=96 )
+
+[onesrc jpeg-variables]
 video-width=352
 video-height=288
 video-framerate="25/1"

@@ -8,7 +8,8 @@ public_headers = \
 		rtsp-sdp.h \
 		rtsp-session-pool.h \
 		rtsp-session.h \
-                ../../profile/pipeline-profile.h
+        ../../profile/pipeline-profile.h \
+        ../../profile/server-configuration.h
 		
 c_sources = \
 	rtsp-server.c \
@@ -20,7 +21,8 @@ c_sources = \
         rtsp-sdp.c \
 	rtsp-session-pool.c \
 	rtsp-session.c \
-        ../../profile/pipeline-profile.c
+        ../../profile/pipeline-profile.c \
+        ../../profile/server-configuration.c
 	
 lib_LTLIBRARIES = \
 	libgstrtspserver-@GST_MAJORMINOR@.la
