@@ -78,35 +78,34 @@ main (int argc, char *argv[])
 	   */
 	  gst_rtsp_pipeline_profile_set_video_height(profile_video, 500);
 	  pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
-          pipeline_str = pipeline_video_str;
+     pipeline_str = pipeline_video_str;
 
-          if (argc > 1) {
-              if (g_strrstr(argv[1], "aac")) {
-		  profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_AAC);
-  	      } else if (g_strrstr(argv[1], "g726")) {
-		  profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G726);
-	      } else if (g_strrstr(argv[1], "g711")) {
-		  profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G711);
-              }
-
-	      if (profile_audio != NULL) {
-		  pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
-                  pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
-                  // free unneeded string
-                  g_free(pipeline_video_str); 
-                  g_free(pipeline_audio_str);
-                  // free unneeded profile
-                  g_free(profile_audio);
-              }
+     if (argc > 1) {
+       if (g_strrstr(argv[1], "aac")) {
+		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_AAC);
+  	    } else if (g_strrstr(argv[1], "g726")) {
+		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G726);
+	    } else if (g_strrstr(argv[1], "g711")) {
+		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G711);
+       }
+		 if (profile_audio != NULL) {
+		   pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
+         pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
+         /* free pipeline audio video string */
+         g_free(pipeline_video_str); 
+         g_free(pipeline_audio_str);
+         /* free profile audio string */
+         g_free(profile_audio);
+       }
 	  }
-          // free unneeded profile
-          g_free(profile_video);
+     /* free profile video string */
+     g_free(profile_video);
 	  g_print("Our pipeline is '%s'\n", pipeline_str);
   }
 
   gst_rtsp_media_factory_set_launch (factory, pipeline_str);
   
-  // free unneeded string
+  /* free pipeline string */
   g_free(pipeline_str);
 
   /* share the pipeline with multiple clients */
