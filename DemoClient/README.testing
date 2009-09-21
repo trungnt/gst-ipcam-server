@@ -1,48 +1,46 @@
-This's the brief instruction on how to fetch, build and test gstreamer-rtsp-server DemoClient. And for the testing purpose, we'll use Ubuntu 9.04 as the target OS.
+This is the brief instruction guide to fetch, build and test gst-ipcam-server DemoClient on Ubuntu 9.04
 
 I. FETCH SOURCE CODE
- - make a folder for storing source code
- - cd to that folder
- - git clone git://github.com/trungnt/gstreamer-rtsp-server.git
-   The clone command will fetch source code in our release.
- - Change to gstreamer-rtsp-server folder:
-   cd gstreamer-rtsp-server
- - For testing development version, using following command
-   git checkout --track -b client-development origin/client-development
+ - Create a new folder to store source code.
+ - Go to that folder and fetch the code with this command:
+  	$ git clone git://github.com/trungnt/gst-ipcam-server.git
+   After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
+ - Go to gst-ipcam-server folder:
+	$ cd gst-ipcam-server
+ - To test the development version, using the following command:
+   	$ git checkout --track -b client-development origin/client-development
  - In the case that you've fetch developing code before, you don't need to checkout repository or branch from server.
-Instead, run following command:
-   git checkout client-development # to switch to existed server-development branch
-   git pull # to update to the latest version
+Otherwise, run following commands:
+	$ git checkout client-development 	# to switch to existed client-development branch
+	$ git pull 				# to update to the latest version
  
 II. BUILD
- - NOTE: before building the client, go to section III to see if your system match dependences and install requirement packages if needed
- - cd to the folder "DemoClient"
- - Build :
-   make
+ - NOTE: before building the client, go to section III to check whether your system meet necessary packages.
+ - Go to the folder "DemoClient"
+ - Build the package:
+	$ make
+
+III. SOFTWARE REQUIREMENTS
+1.Basic gstreamer packages
+ - In order to build and run the demo client, we need the following gstreamer packages: libgstreamer0.10-dev, gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, gstreamer0.10-plugins-bad. Run following command to install:
+	$ sudo apt-get install libgstreamer0.10-dev gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
+
+2. MPEG4 and H.264 encoders
+ - We need MPEG4 and H.264 encoder from FFMPEG packages. To get these encoders, install the following packages:
+	+ gstreamer0.10-ffmpeg version 6.02 (NOTE: must use version 6.02: this's the standard Ubuntu package, ppa package may not work)
+	+ libavcodec-unstripped-52
+
+	$sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
+ - After installing, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens when you install gstreamer0.10-ffmpeg with libavcodec package before (which does not come with MPEG4 and H.264 encoders). So, to use them, you must remove old gstreamer plugins registry file by using this command:
+	$ rm ~/.gstreamer-0.10/registry.*
  
-III. DEPENDENCIES
-1. Gstreamers encoders
- ffmpeg mpeg4 and h264 encoder, these elements are: ffenc_mpeg4 and ffenc_libx264
-- To get this encoder, we need to install following packages, using standard ubuntu packages would be enought:
-+ gstreamer0.10-ffmpeg
-+ libavcodec-unstripped-52
-- You can install 2 packages at the same times if you haven't install gstreamer0.10-ffmpeg:
-sudo apt-get install libavcodec-unstripped-52 gstreamer0.10-ffmpeg
-- Or just install libavcodec-unstripped if gstreamer0.10-ffmpeg was installed before
-sudo apt-get install libavcodec-unstripped-52
- 
-- After installation, using gst-inspect you may not found ffenc_mpeg4 and ffenc_libx264. This case often happened when you install gstreamer0.10-ffmpeg before with the package libavcodec. So, to use them, you must remove old gstreamer plugins registry file by this command:
-rm ~/.gstreamer-0.10/registry.*.bin
-NOTE: may be with older implementation of gstreamer, you file will be registry.*.xml
- 
-- After removing registry, gst-launch of gst-inspect will auto rebuild registry and the elements will be there
- 
-2. To build client, you may need to install following packages
-autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
- 
+3.Other requirements to build client:
+ - Run following command to install other packages to build the demo client:
+	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
+
 IV. RUN
  - run command
-   ./DemoClient
+   	$ ./DemoClient
  - Using: the client is simple, investigate and try yourself 
  
 
