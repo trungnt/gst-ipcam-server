@@ -1,0 +1,48 @@
+This is the brief instruction guide to fetch, build and test gst-ipcam-server servers on Ubuntu 9.04.
+
+I. FETCH SOURCE CODE
+ - Create a new folder to store source code.
+ - Go to that folder and fetch the code with this command:
+  	$ git clone git://github.com/trungnt/gst-ipcam-server.git
+   After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
+ - Go to gst-ipcam-server folder:
+	$ cd gst-ipcam-server
+ - To test the development version, using the following command:
+   	$ git checkout --track -b server-development origin/server-development
+ - In the case that you've fetch developing code before, you don't need to checkout repository or branch from server.
+Otherwise, run following commands:
+	$ git checkout server-development 	# to switch to existed server-development branch
+	$ git pull 				# to update to the latest version
+
+II. BUILD
+ - NOTE: before building the server, go to section III to check whether your system meet necessary packages.
+ - Go to the folder "server"
+ - For the first time building, run:
+   	$ ./autogen.sh
+ - Build :
+   	$ make
+
+III. SOFTWARE REQUIREMENTS
+1. MPEG4 and H.264 encoders
+ - We need MPEG4 and H.264 encoder from FFMPEG packages. To get these encoders, install the following packages:
+	+ gstreamer0.10-ffmpeg version 6.02 (NOTE: must use version 6.02: this's the standard Ubuntu package, ppa package may not work)
+	+ libavcodec-unstripped-52
+
+	$sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
+ - After installing, gst-inspect may not found ffenc_mpeg4 and ffenc_libx264. This case often happens when you install gstreamer0.10-ffmpeg before with libavcodec package (which does not come with MPEG4 and H.264 encoders). So, to use them, you must remove old gstreamer plugins registry file by using this command:
+	$ rm ~/.gstreamer-0.10/registry.*
+
+2. Basic gstreamer packages
+ - Our server require some gstreamer packages: libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev. Install them by using the following command:
+ 	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+ 
+3. Other requirements
+ - To build the server, run followings command in order to install needed packages:
+	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
+
+IV. RUN
+   We have 3 server for h264, jpeg and mpeg4 inside servers directory with names : 
+    - onesrc-h264 (url: rtsp://ip:8554/h264)
+    - onesrc-jpeg (url: rtsp://ip:8554/jpg)
+    - onesrc-mpeg4 (url: rtsp://ip:8554/mpeg4)
+
