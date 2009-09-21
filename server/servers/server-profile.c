@@ -2,6 +2,7 @@
 
 #include "server-profile.h"
 #include "profile/pipeline-profile.h"
+#include "profile/server-configuration.h"
 
 gboolean gst_rtsp_pipeline_profile_set_int_var(GstRTSPPipelineProfile * profile, const gchar * var, const gint value) {
 	gchar * str_value = g_strdup_printf("%d", value);

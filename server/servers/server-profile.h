@@ -9,6 +9,7 @@
 #define	_SERVER_PROFILE_H
 
 #include "profile/pipeline-profile.h"
+#include "profile/server-configuration.h"
 
 #ifdef	__cplusplus
 extern "C" {

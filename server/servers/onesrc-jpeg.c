@@ -24,7 +24,7 @@
 #include "profile/pipeline-profile.h"
 
 // default profile file for this server
-#define DEFAULT_PROFILE_FILE "onesrc-jpeg.prf"
+#define DEFAULT_PROFILE_FILE "onesrc-jpeg.ini"
 
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)

@@ -24,10 +24,10 @@
 #include "profile/pipeline-profile.h"
 
 // default profile file for this server
-#define DEFAULT_PROFILE_FILE_VIDEO "onesrc-mpeg4.prf"
-#define DEFAULT_PROFILE_FILE_AUDIO_AAC "audio-aac.prf"
-#define DEFAULT_PROFILE_FILE_AUDIO_G711 "audio-g711.prf"
-#define DEFAULT_PROFILE_FILE_AUDIO_G726 "audio-g726.prf"
+#define DEFAULT_PROFILE_FILE_VIDEO "onesrc-mpeg4.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_AAC "audio-aac.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_G711 "audio-g711.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_G726 "audio-g726.ini"
 
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)
