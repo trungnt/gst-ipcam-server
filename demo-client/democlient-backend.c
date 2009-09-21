@@ -248,7 +248,7 @@ static GstElement * democlient_backend_find_best_video_sink() {
 			ret = gst_element_set_state(el, GST_STATE_READY);
 			if (ret == GST_STATE_CHANGE_SUCCESS) {
 				choice = el;
-				g_debug("So we are using '%s'", GST_PLUGIN_FEATURE (f)->name);
+				g_debug("We are using '%s'", GST_PLUGIN_FEATURE (f)->name);
 				break;
 			}
 
