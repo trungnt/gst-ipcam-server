@@ -29,35 +29,48 @@ extern "C" {
 
 	/**
 	 * Set the width of video size. All servers have this variable.
+	 * If the pipeline is not a video pipeline, then return FALSE.
 	 *
 	 * @param profile GstRTSPPipelineProfile* profile to set
 	 * @param width gint value to set
 	 *
 	 * @return gboolean TRUE if everything is ok, FALSE otherwise
 	 */
-	gboolean gst_rtsp_pipeline_profile_set_video_width(GstRTSPPipelineProfile * profile, const gint width);
+	gboolean gst_rtsp_pipeline_profile_video_set_width(GstRTSPPipelineProfile * profile, gint width);
 
 	/**
 	 * Set the height of video size. All servers have this variable.
+	 * If the pipeline is not a video pipeline, then return FALSE.
 	 *
 	 * @param profile GstRTSPPipelineProfile* profile to set
 	 * @param height gint value to set
 	 *
 	 * @return gboolean TRUE if everything is ok, FALSE otherwise
 	 */
-	gboolean gst_rtsp_pipeline_profile_set_video_height(GstRTSPPipelineProfile * profile, const gint height);
+	gboolean gst_rtsp_pipeline_profile_video_set_height(GstRTSPPipelineProfile * profile, gint height);
 
 	/**
 	 * Set the framerate for the stream. All servers have this variable.
+	 * If the pipeline is not a video pipeline, then return FALSE.
 	 *
 	 * @param profile GstRTSPPipelineProfile* profile to set
 	 * @param framerate gchar* value to set
 	 *
 	 * @return gboolean TRUE if everything is ok, FALSE otherwise
 	 */
-	gboolean gst_rtsp_pipeline_profile_set_video_framerate(GstRTSPPipelineProfile * profile, const gchar * framerate);
+	gboolean gst_rtsp_pipeline_profile_video_set_framerate(GstRTSPPipelineProfile * profile, const gchar * framerate);
 
-
+	/**
+	 * Set the bitrate to the video encoder. Not all pipeline has this variable.
+	 * If current pipeline is not a video pipeline and does not has "video-bitrate" variable: return FALSE
+	 *
+	 * @param profile GstRTSPPipelineProfile* profile to set
+	 * @param bitrate gint value to set
+	 *
+	 * @return gboolean TRUE if everything is ok, FALSE otherwise
+	 */
+	gboolean gst_rtsp_pipeline_profile_video_set_bitrate(GstRTSPPipelineProfile * profile, gint bitrate);
+	
 #ifdef	__cplusplus
 }
 #endif

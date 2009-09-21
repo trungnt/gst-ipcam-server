@@ -480,7 +480,7 @@ const gchar * gst_rtsp_pipeline_profile_get_name(const GstRTSPPipelineProfile * 
 }
 
 GstRTSPPipelineType gst_rtsp_pipeline_profile_get_type(const GstRTSPPipelineProfile* profile) {
-	g_return_val_if_fail(profile != NULL, GST_RTSP_PIPELINE_INVALID);
+	g_return_val_if_fail(profile != NULL, GST_RTSP_PIPELINE_TYPE_INVALID);
 
 	return profile->pipeline_type;
 }
@@ -567,13 +567,13 @@ static gboolean gst_rtsp_pipeline_profile_set_type(GstRTSPPipelineProfile* profi
 	g_return_val_if_fail(profile != NULL, FALSE);
 
 	if (g_strcasecmp(type, "video") == 0) {
-		profile->pipeline_type = GST_RTSP_PIPELINE_VIDEO;
+		profile->pipeline_type = GST_RTSP_PIPELINE_TYPE_VIDEO;
 		return TRUE;
 	} else if (g_strcasecmp(type, "audio") == 0) {
-		profile->pipeline_type = GST_RTSP_PIPELINE_AUDIO;
+		profile->pipeline_type = GST_RTSP_PIPELINE_TYPE_AUDIO;
 		return TRUE;
 	} else {
-		profile->pipeline_type = GST_RTSP_PIPELINE_INVALID;
+		profile->pipeline_type = GST_RTSP_PIPELINE_TYPE_INVALID;
 		g_warning("Pipeline profile loader: invalid pipeline type '%s' at line %d", type, line);
 	}
 

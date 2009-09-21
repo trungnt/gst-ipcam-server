@@ -74,9 +74,9 @@ main (int argc, char *argv[])
 	  /* we can set some common server parameter by using functions in server-profile.h
 	   * but default values will be used here
 	   */
-	  gst_rtsp_pipeline_profile_set_video_width(profile, 600);
-	  gst_rtsp_pipeline_profile_set_video_height(profile, 400);
-	  gst_rtsp_pipeline_profile_set_video_framerate(profile, "25/1");
+	  gst_rtsp_pipeline_profile_video_set_width(profile, 600);
+	  gst_rtsp_pipeline_profile_video_set_height(profile, 400);
+	  gst_rtsp_pipeline_profile_video_set_framerate(profile, "25/1");
 	  pipeline_str = gst_rtsp_pipeline_profile_build_pipeline(profile);
 	  g_warning("Our pipeline is '%s'", pipeline_str);
   }

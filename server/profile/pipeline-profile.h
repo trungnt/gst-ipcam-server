@@ -53,11 +53,28 @@
 extern "C" {
 #endif
 
+	/**
+	 * Define supported pipeline type in our server configuration
+	 * We have only 2 types right now: video and audio
+	 */
 	typedef enum {
-		GST_RTSP_PIPELINE_INVALID = -1,
-		GST_RTSP_PIPELINE_VIDEO = 0,
-		GST_RTSP_PIPELINE_AUDIO = 1,
+		/** invalid pipeline type */
+		GST_RTSP_PIPELINE_TYPE_INVALID = -1,
+		/** video pipeline */
+		GST_RTSP_PIPELINE_TYPE_VIDEO = 0,
+		/** audio pipeline */
+		GST_RTSP_PIPELINE_TYPE_AUDIO = 1,
 	} GstRTSPPipelineType;
+
+	/**
+	 * check if the profile contain a video pipeline
+	 */
+#define gst_rtsp_pipeline_profile_is_video(profile) ( (profile != NULL) && (profile->pipeline-type == GST_RTSP_PIPELINE_TYPE_VIDEO) )
+
+	/**
+	 * check if the profile contain an audio pipeline
+	 */
+#define gst_rtsp_pipeline_profile_is_audio(profile) ( (profile != NULL) && (profile->pipeline-type == GST_RTSP_PIPELINE_TYPE_AUDIO) )
 
 	/**
 	 * Structure storing information about profile for gst-ipcam-server servers.

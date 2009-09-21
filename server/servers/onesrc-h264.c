@@ -76,7 +76,7 @@ main (int argc, char *argv[])
 	  /* we can set some common server parameter by using functions in server-profile.h
 	   * but default values will be used here
 	   */
-	  gst_rtsp_pipeline_profile_set_video_height(profile_video, 500);
+	  gst_rtsp_pipeline_profile_video_set_height(profile_video, 500);
 	  pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
      pipeline_str = pipeline_video_str;
 
