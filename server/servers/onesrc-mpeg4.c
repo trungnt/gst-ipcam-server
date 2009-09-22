@@ -18,9 +18,7 @@
  */
 
 #include <gst/gst.h>
-
 #include <gst/rtsp-server/rtsp-server.h>
-
 
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)
@@ -40,7 +38,7 @@ main (int argc, char *argv[])
   GMainLoop *loop;
   GstRTSPServer *server;
   GstRTSPMediaMapping *mapping;
-  GstRTSPMediaFactory *factorymp4, *factoryjpg, *factoryh264;
+  GstRTSPMediaFactory *factory;
 
   gst_init (&argc, &argv);
 
@@ -53,62 +51,22 @@ main (int argc, char *argv[])
    * that be used to map uri mount points to media factories */
   mapping = gst_rtsp_server_get_media_mapping (server);
 
-  /*----------------Mpeg 4 video only stream server start----------------------------*/
   /* make a media factory for a mpeg 4 video stream. The default media factory can use
    * gst-launch syntax to create pipelines. 
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
-  factorymp4 = gst_rtsp_media_factory_new ();
+  factory = gst_rtsp_media_factory_new ();
 
-  gst_rtsp_media_factory_set_launch (factorymp4, "( "
+  gst_rtsp_media_factory_set_launch (factory, "( "
     "v4l2src ! video/x-raw-yuv,width=352,height=288,framerate=25/1 ! ffmpegcolorspace ! "
     "ffenc_mpeg4 ! rtpmp4vpay name=pay0 pt=96 "
     ")");
 
   /* share the pipeline with multiple clients */
-  gst_rtsp_media_factory_set_shared(factorymp4, TRUE);
+  gst_rtsp_media_factory_set_shared(factory, TRUE);
 
   /* attach the test factory to the /mp4 url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/mp4", factorymp4);
-  /*----------------Mpeg 4 video only stream server end------------------------------*/
-
-  /*----------------Jpeg only stream server start------------------------------------*/
-  /* make a media factory for a jpeg stream. The default media factory can use
-   * gst-launch syntax to create pipelines. 
-   * any launch line works as long as it contains elements named pay%d. Each
-   * element with pay%d names will be a stream */
-  factoryjpg = gst_rtsp_media_factory_new ();
-
-  gst_rtsp_media_factory_set_launch (factoryjpg, "( "
-    "v4l2src ! video/x-raw-yuv,width=352,height=288,framerate=25/1 ! "
-    "jpegenc ! rtpjpegpay name=pay0 pt=96 "
-    ")");
-
-  /* share the pipeline with multiple clients */
-  gst_rtsp_media_factory_set_shared(factoryjpg, TRUE);
-
-  /* attach the test factory to the /jpg url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/jpg", factoryjpg);
-  /*----------------Jpeg only stream server end--------------------------------------*/
-
-  /*----------------Jpeg h264 video only stream server start-------------------------*/
-  /* make a media factory for a h264 video stream. The default media factory can use
-   * gst-launch syntax to create pipelines. 
-   * any launch line works as long as it contains elements named pay%d. Each
-   * element with pay%d names will be a stream */
-  factoryh264 = gst_rtsp_media_factory_new ();
-
-  gst_rtsp_media_factory_set_launch (factoryh264, "( "
-    "v4l2src ! video/x-raw-yuv,width=352,height=288,framerate=25/1 ! "
-    "ffenc_libx264 ! rtph264pay name=pay0 pt=96 "
-    ")");
-
-  /* share the pipeline with multiple clients */
-  gst_rtsp_media_factory_set_shared(factoryh264, TRUE);
-
-  /* attach the test factory to the /h264 url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/h264", factoryh264);
-  /*----------------Jpeg h264 video only stream server end---------------------------*/
+  gst_rtsp_media_mapping_add_factory (mapping, "/mp4", factory);
 
   /* don't need the ref to the mapper anymore */
   g_object_unref (mapping);
