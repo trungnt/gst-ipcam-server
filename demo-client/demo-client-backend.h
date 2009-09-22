@@ -5,8 +5,8 @@
  * \date 8-26-2009
  */
 
-#ifndef _DEMO-CLIENT_BACKEND_H
-#define	_DEMO-CLIENT_BACKEND_H
+#ifndef _DEMO_CLIENT_BACKEND_H
+#define	_DEMO_CLIENT_BACKEND_H
 
 #ifdef	__cplusplus
 extern "C" {
@@ -98,5 +98,5 @@ demo_client_backend_deinit();
 }
 #endif
 
-#endif	/* _DEMO-CLIENT_BACKEND_H */
+#endif	/* _DEMO_CLIENT_BACKEND_H */
 

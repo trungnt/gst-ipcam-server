@@ -5,12 +5,13 @@
  *
  * \date 8-26-2009
  */
+#include <string.h>
+
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
-#include <gstreamer-0.10/gst/gstmessage.h>
 
 #include "demo-client-backend.h"
 #include "demo-client-interface.h"
