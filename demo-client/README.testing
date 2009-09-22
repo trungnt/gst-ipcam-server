@@ -16,7 +16,7 @@ Otherwise, run following commands:
  
 II. BUILD
  - NOTE: before building the client, go to section III to check whether your system meet necessary packages.
- - Go to the folder "DemoClient"
+ - Go to the folder "demo-client"
  - Build the package:
 	$ make
 
@@ -40,7 +40,7 @@ III. SOFTWARE REQUIREMENTS
 
 IV. RUN
  - run command
-   	$ ./DemoClient
+   	$ ./demo-client
  - Using: the client is simple, investigate and try yourself 
  
 

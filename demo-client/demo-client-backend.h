@@ -1,12 +1,12 @@
 /*
- * \file:   democlient-backend.h
+ * \file:   demo-client-backend.h
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
  */
 
-#ifndef _DEMOCLIENT_BACKEND_H
-#define	_DEMOCLIENT_BACKEND_H
+#ifndef _DEMO_CLIENT_BACKEND_H
+#define	_DEMO_CLIENT_BACKEND_H
 
 #ifdef	__cplusplus
 extern "C" {
@@ -22,7 +22,7 @@ extern "C" {
  * @return nothing
  */
 void
-democlient_backend_init (int *argc,
+demo_client_backend_init (int *argc,
               char **argv[]);
 
 /**
@@ -33,7 +33,7 @@ democlient_backend_init (int *argc,
  * @return nothing
  */
 void
-democlient_backend_create_pipeline(const gchar *pipeline_description);
+demo_client_backend_create_pipeline(const gchar *pipeline_description);
 
 /**
  * Set the pointer window
@@ -43,7 +43,7 @@ democlient_backend_create_pipeline(const gchar *pipeline_description);
  * @return nothing
  */
 void
-democlient_backend_set_window (gpointer window_);
+demo_client_backend_set_window (gpointer window_);
 
 /**
  * set the pipeline from the state GST_STATE_NULL to the state GST_STATE_PLAYING
@@ -53,7 +53,7 @@ democlient_backend_set_window (gpointer window_);
  * @return Result of the state change
  */
 gint
-democlient_backend_play();
+demo_client_backend_play();
 
 /**
  * set the pipeline from the state GST_STATE_PLAYING to the state GST_STATE_PAUSED
@@ -63,7 +63,7 @@ democlient_backend_play();
  * @return Result of the state change
  */
 gint
-democlient_backend_pause();
+demo_client_backend_pause();
 
 /**
  * set the pipeline from the state GST_STATE_PLAYING to the state GST_STATE_NULL
@@ -73,7 +73,7 @@ democlient_backend_pause();
  * @return Result of the state change
  */
 gint
-democlient_backend_stop();
+demo_client_backend_stop();
 
 /**
  * set the pipeline from the state GST_STATE_PAUSED to the state GST_STATE_PLAYING
@@ -83,7 +83,7 @@ democlient_backend_stop();
  * @return Result of the state change
  */
 gint
-democlient_backend_resume();
+demo_client_backend_resume();
 /**
  * free memories for pipeline and videosink pointer before exit the application
  *
@@ -92,11 +92,11 @@ democlient_backend_resume();
  * @return nothing
  */
 void
-democlient_backend_deinit();
+demo_client_backend_deinit();
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* _DEMOCLIENT_BACKEND_H */
+#endif	/* _DEMO_CLIENT_BACKEND_H */
 
