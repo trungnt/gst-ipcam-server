@@ -69,12 +69,12 @@ extern "C" {
 	/**
 	 * check if the profile contain a video pipeline
 	 */
-#define gst_rtsp_pipeline_profile_is_video(profile) ( (profile != NULL) && (profile->pipeline-type == GST_RTSP_PIPELINE_TYPE_VIDEO) )
+#define gst_rtsp_pipeline_profile_is_video(profile) ( (profile != NULL) && (profile->pipeline_type == GST_RTSP_PIPELINE_TYPE_VIDEO) )
 
 	/**
 	 * check if the profile contain an audio pipeline
 	 */
-#define gst_rtsp_pipeline_profile_is_audio(profile) ( (profile != NULL) && (profile->pipeline-type == GST_RTSP_PIPELINE_TYPE_AUDIO) )
+#define gst_rtsp_pipeline_profile_is_audio(profile) ( (profile != NULL) && (profile->pipeline_type == GST_RTSP_PIPELINE_TYPE_AUDIO) )
 
 	/**
 	 * Structure storing information about profile for gst-ipcam-server servers.
