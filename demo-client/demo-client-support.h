@@ -1,5 +1,5 @@
 /*
- * \file:   democlient-support.h
+ * \file:   demo-client-support.h
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
@@ -56,7 +56,7 @@ GtkWidget*  lookup_widget              (GtkWidget       *widget,
  *
  *  @return nothing
  */
-void        democlient_add_pixmap_directory       (const gchar     *directory);
+void        demo_client_add_pixmap_directory       (const gchar     *directory);
 
 
 /*
@@ -101,7 +101,7 @@ GdkPixbuf*  create_pixbuf              (const gchar     *filename);
  *
  *  @return nothing
  */
-void        democlient_glade_set_atk_action_description (AtkAction       *action,
+void        demo_client_glade_set_atk_action_description (AtkAction       *action,
                                               const gchar     *action_name,
                                               const gchar     *description);
 

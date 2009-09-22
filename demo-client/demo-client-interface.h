@@ -1,5 +1,5 @@
 /*
- * \file:   democlient-interface.h
+ * \file:   demo-client-interface.h
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
@@ -56,7 +56,7 @@ static gboolean is_connect_button_clicked = FALSE;
  *
  * @return nothing
  */
-GtkWidget* democlient_create_mainWindow (void);
+GtkWidget* demo_client_create_mainWindow (void);
 
 /**
  * create the connection dialog
@@ -65,4 +65,4 @@ GtkWidget* democlient_create_mainWindow (void);
  *
  * @return nothing
  */
-GtkWidget* democlient_create_connectionDialog (void);
+GtkWidget* demo_client_create_connectionDialog (void);

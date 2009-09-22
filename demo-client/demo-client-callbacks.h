@@ -1,5 +1,5 @@
 /*
- * \file:   democlient-callbacks.h
+ * \file:   demo-client-callbacks.h
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
@@ -21,7 +21,7 @@ static gint TYPE = 4;
  * @return nothing
  */
 void
-democlient_on_btn_Connect_clicked                 (GtkButton       *button,
+demo_client_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -35,7 +35,7 @@ democlient_on_btn_Connect_clicked                 (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_btn_Disconnect_clicked              (GtkButton       *button,
+demo_client_on_btn_Disconnect_clicked              (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -49,7 +49,7 @@ democlient_on_btn_Disconnect_clicked              (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_btn_Pause_clicked                   (GtkButton       *button,
+demo_client_on_btn_Pause_clicked                   (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -63,7 +63,7 @@ democlient_on_btn_Pause_clicked                   (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_btn_Resume_clicked                  (GtkButton       *button,
+demo_client_on_btn_Resume_clicked                  (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -76,7 +76,7 @@ democlient_on_btn_Resume_clicked                  (GtkButton       *button,
  * @return nothing
  */
 /*void
-democlient_on_btn_Options_clicked                 (GtkButton       *button,
+demo_client_on_btn_Options_clicked                 (GtkButton       *button,
                                         gpointer         user_data);*/
 
 /**
@@ -89,7 +89,7 @@ democlient_on_btn_Options_clicked                 (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_btn_About_clicked                   (GtkButton       *button,
+demo_client_on_btn_About_clicked                   (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -102,7 +102,7 @@ democlient_on_btn_About_clicked                   (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_btn_Quit_clicked                    (GtkButton       *button,
+demo_client_on_btn_Quit_clicked                    (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -115,7 +115,7 @@ democlient_on_btn_Quit_clicked                    (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
+demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -128,7 +128,7 @@ democlient_on_btn_ConnectDialog_clicked           (GtkButton       *button,
  * @return nothing
  */
 void
-democlient_on_connectionDialog_destroy                (GtkObject       *object,
+demo_client_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data);
 
 /**
@@ -140,7 +140,7 @@ democlient_on_connectionDialog_destroy                (GtkObject       *object,
  *
  * @return nothing
  */
-void democlient_on_mainWindow_destroy                (GtkObject       *object,
+void demo_client_on_mainWindow_destroy                (GtkObject       *object,
                                         gpointer         user_data);
 
 /**
@@ -153,6 +153,6 @@ void democlient_on_mainWindow_destroy                (GtkObject       *object,
  * @return nothing
  */
 gboolean
-democlient_on_connectionDialog_key_press_event        (GtkWidget       *widget,
+demo_client_on_connectionDialog_key_press_event        (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data);
