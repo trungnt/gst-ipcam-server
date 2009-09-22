@@ -9,7 +9,7 @@ Current stable version is 0.2 and includes 2 components:
 	* Server: based on gst-rtsp-server project.
 	* Client: a simple client used for demonstration.
 
-Changes of this release from 0.1:
+Changes on new release:
 Server:
 	* Use new source code from gst-rtsp-server project (this require gstreamer-plugins-base-dev >= 0.10.24.1).
 	* Use 3 separated servers for 3 streams (RTSP requests are the same as 0.1):
