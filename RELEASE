@@ -9,10 +9,10 @@ Current stable version is 0.2 and includes 2 components:
 	* Server: based on gst-rtsp-server project.
 	* Client: a simple client used for demonstration.
 
-Changes on new release:
+Changes from release 0.1:
 Server:
-	* Use new source code from gst-rtsp-server project (this require gstreamer-plugins-base-dev >= 0.10.24.1).
-	* Use 3 separated servers for 3 streams (RTSP requests are the same as 0.1):
+	* Use new source code from gst-rtsp-server project (this requires gstreamer-plugins-base-dev >= 0.10.24.1).
+	* Use 3 separate servers for 3 streams (RTSP requests are the same as in release 0.1):
 		- onesrc-h264 for H.264 stream.
 		- onesrc-mpeg4 for MPEG4 stream.
 		- onesrc-jpeg for JPEG stream.
