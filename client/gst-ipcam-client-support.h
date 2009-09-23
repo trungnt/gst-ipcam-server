@@ -56,7 +56,7 @@ GtkWidget*  lookup_widget              (GtkWidget       *widget,
  *
  *  @return nothing
  */
-void        demo_client_add_pixmap_directory       (const gchar     *directory);
+void        gst_ipcam_client_add_pixmap_directory       (const gchar     *directory);
 
 
 /*
@@ -101,7 +101,7 @@ GdkPixbuf*  create_pixbuf              (const gchar     *filename);
  *
  *  @return nothing
  */
-void        demo_client_glade_set_atk_action_description (AtkAction       *action,
+void        gst_ipcam_client_glade_set_atk_action_description (AtkAction       *action,
                                               const gchar     *action_name,
                                               const gchar     *description);
 

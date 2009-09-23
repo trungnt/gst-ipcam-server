@@ -18,9 +18,9 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 
-#include "demo-client-callbacks.h"
-#include "demo-client-interface.h"
-#include "demo-client-support.h"
+#include "gst-ipcam-client-callbacks.h"
+#include "gst-ipcam-client-interface.h"
+#include "gst-ipcam-client-support.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -37,7 +37,7 @@
  * @return nothing
  */
 GtkWidget*
-demo_client_create_mainWindow (void)
+gst_ipcam_client_create_mainWindow (void)
 {
   mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (mainWindow), _("Demo Client"));
@@ -125,29 +125,29 @@ demo_client_create_mainWindow (void)
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (statusBar), FALSE);
 
   g_signal_connect_swapped ((gpointer) btn_Connect, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Connect_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Connect_clicked),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_Disconnect, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Disconnect_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Disconnect_clicked),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_Pause, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Pause_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Pause_clicked),
                             GTK_OBJECT (NULL));
   
   g_signal_connect_swapped ((gpointer) btn_Resume, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Resume_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Resume_clicked),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_About, "clicked",
-                            G_CALLBACK (demo_client_on_btn_About_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_About_clicked),
                             GTK_OBJECT (NULL));
   g_signal_connect_swapped ((gpointer) btn_Quit, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Quit_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Quit_clicked),
                             GTK_OBJECT (NULL));
   g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
-                            G_CALLBACK (demo_client_on_mainWindow_destroy),
+                            G_CALLBACK (gst_ipcam_client_on_mainWindow_destroy),
                             GTK_OBJECT (NULL));
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -181,7 +181,7 @@ demo_client_create_mainWindow (void)
  * @return nothing
  */
 GtkWidget*
-demo_client_create_connectionDialog (void)
+gst_ipcam_client_create_connectionDialog (void)
 {
   connectionDialog = gtk_dialog_new ();
   gtk_window_set_title (GTK_WINDOW (connectionDialog), _("Connection"));
@@ -242,15 +242,15 @@ demo_client_create_connectionDialog (void)
   gtk_entry_set_activates_default (GTK_ENTRY(entry_Url), TRUE);
 
   g_signal_connect ((gpointer) connectionDialog, "key_press_event",
-                    G_CALLBACK (demo_client_on_connectionDialog_key_press_event),
+                    G_CALLBACK (gst_ipcam_client_on_connectionDialog_key_press_event),
                     NULL);
 
   g_signal_connect_swapped ((gpointer) connectionDialog, "destroy",
-                            G_CALLBACK (demo_client_on_connectionDialog_destroy),
+                            G_CALLBACK (gst_ipcam_client_on_connectionDialog_destroy),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_ConnectDialog, "clicked",
-                            G_CALLBACK (demo_client_on_btn_ConnectDialog_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_ConnectDialog_clicked),
                             GTK_OBJECT (NULL));
 
   /** Store pointers to all widgets, for use by lookup_widget(). */

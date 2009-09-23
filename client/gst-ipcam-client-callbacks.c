@@ -15,10 +15,10 @@
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "demo-client-callbacks.h"
-#include "demo-client-interface.h"
-#include "demo-client-support.h"
-#include "demo-client-backend.h"
+#include "gst-ipcam-client-callbacks.h"
+#include "gst-ipcam-client-interface.h"
+#include "gst-ipcam-client-support.h"
+#include "gst-ipcam-client-backend.h"
 
 
 /**
@@ -31,7 +31,7 @@
  * @return nothing
  */
 void
-demo_client_on_btn_Connect_clicked                 (GtkButton       *button,
+gst_ipcam_client_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
     ///remove btn_Connect button from toolitem_Connect
@@ -43,7 +43,7 @@ demo_client_on_btn_Connect_clicked                 (GtkButton       *button,
     ///show the button
     //gtk_widget_show (btn_Disconnect);
     gtk_widget_set_sensitive(btn_Connect, FALSE);
-    connectionDialog = demo_client_create_connectionDialog(); 
+    connectionDialog = gst_ipcam_client_create_connectionDialog(); 
 
     if (TYPE != 4)
     {
@@ -68,7 +68,7 @@ demo_client_on_btn_Connect_clicked                 (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Disconnect_clicked              (GtkButton       *button,
+gst_ipcam_client_on_btn_Disconnect_clicked              (GtkButton       *button,
                                            gpointer         user_data)
 {
     ///remove btn_Disconnect button from toolitem_Connect
@@ -88,7 +88,7 @@ demo_client_on_btn_Disconnect_clicked              (GtkButton       *button,
     gtk_widget_show (btn_Connect);
 
     gtk_widget_set_sensitive(btn_Pause, FALSE);
-    demo_client_backend_stop();
+    gst_ipcam_client_backend_stop();
 }
 
 /**
@@ -102,7 +102,7 @@ demo_client_on_btn_Disconnect_clicked              (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Pause_clicked                   (GtkButton       *button,
+gst_ipcam_client_on_btn_Pause_clicked                   (GtkButton       *button,
                                             gpointer         user_data)
 {
     ///remove btn_Pause from toolitem_Pause
@@ -113,7 +113,7 @@ demo_client_on_btn_Pause_clicked                   (GtkButton       *button,
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Resume);
     gtk_widget_show(btn_Resume);
     gtk_widget_set_sensitive(btn_Resume, TRUE);
-    demo_client_backend_pause();
+    gst_ipcam_client_backend_pause();
 }
 
 /**
@@ -127,7 +127,7 @@ demo_client_on_btn_Pause_clicked                   (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Resume_clicked                  (GtkButton       *button,
+gst_ipcam_client_on_btn_Resume_clicked                  (GtkButton       *button,
                                             gpointer         user_data)
 {
     ///remove btn_Resume from toolitem_Pause
@@ -137,7 +137,7 @@ demo_client_on_btn_Resume_clicked                  (GtkButton       *button,
     ///add btn_Pause to toolitem_Pause and resume playing video
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
     gtk_widget_show (btn_Pause);
-    demo_client_backend_resume();
+    gst_ipcam_client_backend_resume();
 }
 
 /**
@@ -150,11 +150,11 @@ demo_client_on_btn_Resume_clicked                  (GtkButton       *button,
  * @return nothing
  */
 /*void
-demo_client_on_btn_Options_clicked                 (GtkButton       *button,
+gst_ipcam_client_on_btn_Options_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
     GtkWidget *optionDialog;
-    optionDialog = demo_client_create_optionDialog();
+    optionDialog = gst_ipcam_client_create_optionDialog();
     gtk_widget_show(optionDialog);
 }*/
 
@@ -168,7 +168,7 @@ demo_client_on_btn_Options_clicked                 (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_About_clicked                   (GtkButton       *button,
+gst_ipcam_client_on_btn_About_clicked                   (GtkButton       *button,
                                         gpointer         user_data)
 {
 
@@ -184,12 +184,12 @@ demo_client_on_btn_About_clicked                   (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Quit_clicked                    (GtkButton       *button,
+gst_ipcam_client_on_btn_Quit_clicked                    (GtkButton       *button,
                                         gpointer         user_data)
 {
-    demo_client_backend_stop();
+    gst_ipcam_client_backend_stop();
     gtk_main_quit();
-    demo_client_backend_deinit();
+    gst_ipcam_client_backend_deinit();
 }
 
 /**
@@ -202,7 +202,7 @@ demo_client_on_btn_Quit_clicked                    (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
+gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data)
 {
     static gint counter = 0;
@@ -210,7 +210,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     gchar *url;
     url = gtk_entry_get_text(entry_Url);
     URL = g_strconcat("", url, NULL);
-    demo_client_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
+    gst_ipcam_client_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
 
     ///if video stream type is JPEG
     if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "Jpeg stream") == 0)
@@ -218,7 +218,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
         ///set url and create the pipeline to get jpeg stream
         url = g_strconcat("rtspsrc location=", url, " ! rtpjpegdepay ! jpegdec ! queue ! ffmpegcolorspace ! videoscale ! identity name=connector", NULL);
         TYPE = 0;
-        demo_client_backend_create_pipeline(url);
+        gst_ipcam_client_backend_create_pipeline(url);
         
         g_free(url);
     }
@@ -228,7 +228,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
         ///set url and create the pipeline to get mpeg4 stream
         url = g_strconcat("rtspsrc location=", url, " ! rtpmp4vdepay ! ffdec_mpeg4 ! queue ! ffmpegcolorspace ! identity name=connector", NULL);
         TYPE = 1;
-        demo_client_backend_create_pipeline(url);
+        gst_ipcam_client_backend_create_pipeline(url);
         
         g_free(url);
     }
@@ -238,7 +238,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
         ///set url and create the pipeline to get h264 stream
         url = g_strconcat("rtspsrc location=", url, " ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! identity name=connector", NULL);
 	TYPE = 2;
-        demo_client_backend_create_pipeline(url);
+        gst_ipcam_client_backend_create_pipeline(url);
 
         g_free(url);
     }
@@ -264,7 +264,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
     }
     g_message("PLAY request is sending...");
     ///set pipeline to playing status
-    demo_client_backend_play ();
+    gst_ipcam_client_backend_play ();
 
     g_message("PLAY request sent.");
 
@@ -298,7 +298,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_connectionDialog_destroy                (GtkObject       *object,
+gst_ipcam_client_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data)
 {
     if (!is_connect_button_clicked)
@@ -318,12 +318,12 @@ demo_client_on_connectionDialog_destroy                (GtkObject       *object,
  *
  * @return nothing
  */
-void demo_client_on_mainWindow_destroy                (GtkObject       *object,
+void gst_ipcam_client_on_mainWindow_destroy                (GtkObject       *object,
                                         gpointer         user_data)
 {
-    demo_client_backend_stop();
+    gst_ipcam_client_backend_stop();
     gtk_main_quit();
-    demo_client_backend_deinit();
+    gst_ipcam_client_backend_deinit();
 }
 
 /**
@@ -336,13 +336,13 @@ void demo_client_on_mainWindow_destroy                (GtkObject       *object,
  * @return nothing
  */
 gboolean
-demo_client_on_connectionDialog_key_press_event        (GtkWidget       *widget,
+gst_ipcam_client_on_connectionDialog_key_press_event        (GtkWidget       *widget,
                                         GdkEventKey     *event,
                                         gpointer         user_data)
 {
     if (event->keyval == GDK_Return)
      {
-         demo_client_on_btn_ConnectDialog_clicked(NULL, NULL);
+         gst_ipcam_client_on_btn_ConnectDialog_clicked(NULL, NULL);
      }
 
     return FALSE;

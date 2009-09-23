@@ -17,7 +17,7 @@
 
 #include <gtk/gtk.h>
 
-#include "demo-client-support.h"
+#include "gst-ipcam-client-support.h"
 
 /**
  *  Use this function to set the directory containing installed pixmaps.
@@ -61,7 +61,7 @@ static GList *pixmaps_directories = NULL;
  *  @return nothing
  */
 void
-demo_client_add_pixmap_directory                   (const gchar     *directory)
+gst_ipcam_client_add_pixmap_directory                   (const gchar     *directory)
 {
   pixmaps_directories = g_list_prepend (pixmaps_directories,
                                         g_strdup (directory));
@@ -169,7 +169,7 @@ create_pixbuf                          (const gchar     *filename)
  *  @return nothing
  */
 void
-demo_client_glade_set_atk_action_description       (AtkAction       *action,
+gst_ipcam_client_glade_set_atk_action_description       (AtkAction       *action,
                                         const gchar     *action_name,
                                         const gchar     *description)
 {

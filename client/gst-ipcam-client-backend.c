@@ -13,9 +13,9 @@
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "demo-client-backend.h"
-#include "demo-client-interface.h"
-#include "demo-client-callbacks.h"
+#include "gst-ipcam-client-backend.h"
+#include "gst-ipcam-client-interface.h"
+#include "gst-ipcam-client-callbacks.h"
 
 static gpointer window;
 static GstElement *pipeline;
@@ -25,7 +25,7 @@ static GstElement *pipeline;
  *
  * @return GstElement* a video sink that can be worked for current window system
  */
-static GstElement * demo_client_backend_find_best_video_sink();
+static GstElement * gst_ipcam_client_backend_find_best_video_sink();
 
 /**
  * Compare ranks of 2 plugin features to sort the list of features.
@@ -36,7 +36,7 @@ static GstElement * demo_client_backend_find_best_video_sink();
  *
  * @return gint 0 if they are equal, -1 if f1 is less than f2 and 1 if f1 is greater
  */
-static gint demo_client_backend_video_sink_compare_ranks(GstPluginFeature * f1, GstPluginFeature * f2);
+static gint gst_ipcam_client_backend_video_sink_compare_ranks(GstPluginFeature * f1, GstPluginFeature * f2);
 
 /**
  * Check if we should list given feature in to search list
@@ -47,7 +47,7 @@ static gint demo_client_backend_video_sink_compare_ranks(GstPluginFeature * f1, 
  *
  * @return gboolean TRUE if should/ FALSE if not
  */
-static gboolean demo_client_backend_video_sink_factory_filter(GstPluginFeature * feature, gpointer data);
+static gboolean gst_ipcam_client_backend_video_sink_factory_filter(GstPluginFeature * feature, gpointer data);
 
 /**
  * Create a sink with given factory
@@ -56,7 +56,7 @@ static gboolean demo_client_backend_video_sink_factory_filter(GstPluginFeature *
  *
  * @return GstElement* an element created with given factory
  */
-static GstElement * demo_client_backend_create_sink(GstElementFactory * factory);
+static GstElement * gst_ipcam_client_backend_create_sink(GstElementFactory * factory);
 
 /**
  * handle messages from pipeline bus.
@@ -67,7 +67,7 @@ static GstElement * demo_client_backend_create_sink(GstElementFactory * factory)
  *
  * @return gboolean will comment on this later
  */
-static gboolean demo_client_backend_bus_watch(GstBus * bus, GstMessage * msg, gpointer data);
+static gboolean gst_ipcam_client_backend_bus_watch(GstBus * bus, GstMessage * msg, gpointer data);
 
 /**
  * Parse and print gstreamer message in the case that it's info/warning or error message.
@@ -76,7 +76,7 @@ static gboolean demo_client_backend_bus_watch(GstBus * bus, GstMessage * msg, gp
  *
  * @return Nothing
  */
-static void demo_client_backend_print_gst_message(GstMessage * message);
+static void gst_ipcam_client_backend_print_gst_message(GstMessage * message);
 
 /**
  * init for using gstreamer
@@ -88,7 +88,7 @@ static void demo_client_backend_print_gst_message(GstMessage * message);
  * @return nothing
  */
 void
-demo_client_backend_init(int *argc,
+gst_ipcam_client_backend_init(int *argc,
 		char **argv[]) {
 	gst_init(argc, argv);
 	pipeline = NULL;
@@ -102,7 +102,7 @@ demo_client_backend_init(int *argc,
  * @return nothing
  */
 void
-demo_client_backend_create_pipeline(const gchar *pipeline_description) {
+gst_ipcam_client_backend_create_pipeline(const gchar *pipeline_description) {
 	GstElement * connector;
 	GstElement * videosink;
 	g_message("SETUP request is sending...");
@@ -110,7 +110,7 @@ demo_client_backend_create_pipeline(const gchar *pipeline_description) {
 	pipeline = gst_parse_launch(pipeline_description, NULL);
 	g_message("SETUP request sent.");
 
-	videosink = demo_client_backend_find_best_video_sink();
+	videosink = gst_ipcam_client_backend_find_best_video_sink();
 	connector = gst_bin_get_by_name(GST_BIN(pipeline), "connector");
 	gst_bin_add(GST_BIN(pipeline), videosink);
 	gst_element_link(connector, videosink);
@@ -120,7 +120,7 @@ demo_client_backend_create_pipeline(const gchar *pipeline_description) {
 	// set the bus message handling function
 	{
 		GstBus * bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-                gst_bus_add_watch(bus, demo_client_backend_bus_watch, NULL);
+                gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, NULL);
 		gst_object_unref(bus);
 	}
 
@@ -137,7 +137,7 @@ demo_client_backend_create_pipeline(const gchar *pipeline_description) {
  * @return nothing
  */
 void
-demo_client_backend_set_window(gpointer window_) {
+gst_ipcam_client_backend_set_window(gpointer window_) {
 	window = window_;
 }
 
@@ -149,7 +149,7 @@ demo_client_backend_set_window(gpointer window_) {
  * @return Result of the state change
  */
 gint
-demo_client_backend_play() {
+gst_ipcam_client_backend_play() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
@@ -166,7 +166,7 @@ demo_client_backend_play() {
  * @return Result of the state change
  */
 gint
-demo_client_backend_pause() {
+gst_ipcam_client_backend_pause() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
@@ -183,7 +183,7 @@ demo_client_backend_pause() {
  * @return Result of the state change
  */
 gint
-demo_client_backend_stop() {
+gst_ipcam_client_backend_stop() {
 	gtk_window_resize(GTK_WINDOW(mainWindow), 420, 50);
 	GstStateChangeReturn stateReturn;
 
@@ -201,7 +201,7 @@ demo_client_backend_stop() {
  * @return Result of the state change
  */
 gint
-demo_client_backend_resume() {
+gst_ipcam_client_backend_resume() {
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
@@ -218,14 +218,14 @@ demo_client_backend_resume() {
  * @return nothing
  */
 void
-demo_client_backend_deinit() {
+gst_ipcam_client_backend_deinit() {
 	if (pipeline != NULL) {
 		gst_object_unref(pipeline);
 		pipeline = NULL;
 	}
 }
 
-static GstElement * demo_client_backend_find_best_video_sink() {
+static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 	GList *list, *item;
 	GstElement *choice = NULL;
 //	GstMessage *message = NULL;
@@ -235,14 +235,14 @@ static GstElement * demo_client_backend_find_best_video_sink() {
 	GstElement * sink = gst_element_factory_make("fakesink", "fake-video-sink");
 
 	list = gst_registry_feature_filter(gst_registry_get_default(),
-			(GstPluginFeatureFilter) demo_client_backend_video_sink_factory_filter, FALSE, sink);
-	list = g_list_sort(list, (GCompareFunc) demo_client_backend_video_sink_compare_ranks);
+			(GstPluginFeatureFilter) gst_ipcam_client_backend_video_sink_factory_filter, FALSE, sink);
+	list = g_list_sort(list, (GCompareFunc) gst_ipcam_client_backend_video_sink_compare_ranks);
 
 	for (item = list; item != NULL; item = item->next) {
 		GstElementFactory *f = GST_ELEMENT_FACTORY(item->data);
 		GstElement *el;
 
-		if ((el = demo_client_backend_create_sink(f))) {
+		if ((el = gst_ipcam_client_backend_create_sink(f))) {
 			GstStateChangeReturn ret;
 
 			gst_element_set_bus(el, bus);
@@ -272,7 +272,7 @@ static GstElement * demo_client_backend_find_best_video_sink() {
 			 * sense to actually analyse them */
 			gst_message_ref(GST_MESSAGE(errors->data));
 			//g_warning("reposting message %s", errors->data);
-			demo_client_backend_print_gst_message(errors->data);
+			gst_ipcam_client_backend_print_gst_message(errors->data);
 			gst_message_unref(GST_MESSAGE(errors->data));
 		} else {
 			/* send warning message to application and use a fakesink */
@@ -291,7 +291,7 @@ static GstElement * demo_client_backend_find_best_video_sink() {
 	return choice;
 }
 
-static gint demo_client_backend_video_sink_compare_ranks(GstPluginFeature * f1, GstPluginFeature * f2) {
+static gint gst_ipcam_client_backend_video_sink_compare_ranks(GstPluginFeature * f1, GstPluginFeature * f2) {
 	gint diff;
 
 	diff = gst_plugin_feature_get_rank(f2) - gst_plugin_feature_get_rank(f1);
@@ -301,7 +301,7 @@ static gint demo_client_backend_video_sink_compare_ranks(GstPluginFeature * f1, 
 			gst_plugin_feature_get_name(f1));
 }
 
-static gboolean demo_client_backend_video_sink_factory_filter(GstPluginFeature * feature, gpointer data) {
+static gboolean gst_ipcam_client_backend_video_sink_factory_filter(GstPluginFeature * feature, gpointer data) {
 	guint rank;
 	const gchar *klass;
 
@@ -322,13 +322,13 @@ static gboolean demo_client_backend_video_sink_factory_filter(GstPluginFeature *
 	return TRUE;
 }
 
-static GstElement * demo_client_backend_create_sink(GstElementFactory* factory) {
+static GstElement * gst_ipcam_client_backend_create_sink(GstElementFactory* factory) {
 	GstElement * sink;
 	sink = gst_element_factory_create(factory, "video-sink");
 	return sink;
 }
 
-static gboolean demo_client_backend_bus_watch(GstBus* bus, GstMessage* msg, gpointer data) {
+static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg, gpointer data) {
         switch (GST_MESSAGE_TYPE(msg)) {
             case GST_MESSAGE_ERROR:
             {
@@ -348,7 +348,7 @@ static gboolean demo_client_backend_bus_watch(GstBus* bus, GstMessage* msg, gpoi
                 gtk_dialog_run (GTK_DIALOG (dialog));
                 gtk_widget_destroy (dialog);
 
-                demo_client_on_btn_Disconnect_clicked(NULL, NULL);
+                gst_ipcam_client_on_btn_Disconnect_clicked(NULL, NULL);
                 g_free(debug);
 
                 g_warning("Pipeline error: %s", error->message);
@@ -362,7 +362,7 @@ static gboolean demo_client_backend_bus_watch(GstBus* bus, GstMessage* msg, gpoi
 	return TRUE;
 }
 
-static void demo_client_backend_print_gst_message(GstMessage* message) {
+static void gst_ipcam_client_backend_print_gst_message(GstMessage* message) {
 	switch (GST_MESSAGE_TYPE(message)) {
 		case GST_MESSAGE_ERROR:
 		case GST_MESSAGE_INFO:

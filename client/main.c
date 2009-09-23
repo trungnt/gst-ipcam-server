@@ -11,9 +11,9 @@
 
 #include <gtk/gtk.h>
 
-#include "demo-client-interface.h"
-#include "demo-client-support.h"
-#include "demo-client-backend.h"
+#include "gst-ipcam-client-interface.h"
+#include "gst-ipcam-client-support.h"
+#include "gst-ipcam-client-backend.h"
 
 int
 main (int argc, char *argv[])
@@ -28,7 +28,7 @@ main (int argc, char *argv[])
 
   gtk_set_locale ();
   gtk_init (&argc, &argv);
-  demo_client_backend_init (&argc, &argv);
+  gst_ipcam_client_backend_init (&argc, &argv);
   //add_pixmap_directory (PACKAGE_DATA_DIR "/" PACKAGE "/pixmaps");
 
   /*
@@ -36,7 +36,7 @@ main (int argc, char *argv[])
    * (except popup menus), just so that you see something after building
    * the project. Delete any components that you don't want shown initially.
    */
-  mainWindow = demo_client_create_mainWindow ();
+  mainWindow = gst_ipcam_client_create_mainWindow ();
   gtk_widget_show (mainWindow);
   //loop = g_main_loop_new(NULL, FALSE);
   //g_main_loop_run(loop);

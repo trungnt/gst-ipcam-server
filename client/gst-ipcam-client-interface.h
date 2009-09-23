@@ -56,7 +56,7 @@ static gboolean is_connect_button_clicked = FALSE;
  *
  * @return nothing
  */
-GtkWidget* demo_client_create_mainWindow (void);
+GtkWidget* gst_ipcam_client_create_mainWindow (void);
 
 /**
  * create the connection dialog
@@ -65,4 +65,4 @@ GtkWidget* demo_client_create_mainWindow (void);
  *
  * @return nothing
  */
-GtkWidget* demo_client_create_connectionDialog (void);
+GtkWidget* gst_ipcam_client_create_connectionDialog (void);
