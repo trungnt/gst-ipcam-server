@@ -19,7 +19,8 @@
 
 static gpointer window;
 static GstElement *pipeline;
-
+static gint prewState;
+static gint curtState;
 /**
  * This function will try to find the best suitable video sink used for current window system.
  *
@@ -120,7 +121,7 @@ gst_ipcam_client_backend_create_pipeline(const gchar *pipeline_description) {
 	// set the bus message handling function
 	{
 		GstBus * bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-                gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, NULL);
+                gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, pipeline_description);
 		gst_object_unref(bus);
 	}
 
@@ -150,7 +151,9 @@ gst_ipcam_client_backend_set_window(gpointer window_) {
  */
 gint
 gst_ipcam_client_backend_play() {
-	GstStateChangeReturn stateReturn;
+        prewState = GST_STOP_STATE;
+        curtState = GST_PLAYING_STATE;
+        GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	g_message("Setting to Play.....Done");
@@ -167,6 +170,9 @@ gst_ipcam_client_backend_play() {
  */
 gint
 gst_ipcam_client_backend_pause() {
+        prewState = GST_PLAYING_STATE;
+        curtState = GST_PAUSE_STATE;
+        
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
@@ -184,6 +190,9 @@ gst_ipcam_client_backend_pause() {
  */
 gint
 gst_ipcam_client_backend_stop() {
+        prewState = GST_PLAYING_STATE;
+        curtState = GST_STOP_STATE;
+        
 	gtk_window_resize(GTK_WINDOW(mainWindow), 420, 50);
 	GstStateChangeReturn stateReturn;
 
@@ -202,6 +211,9 @@ gst_ipcam_client_backend_stop() {
  */
 gint
 gst_ipcam_client_backend_resume() {
+        prewState = GST_PAUSE_STATE;
+        curtState = GST_PLAYING_STATE;
+        
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
@@ -336,24 +348,40 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 		GError * error;
                 gst_message_parse_error(msg, &error, &debug);
 
-                g_message("PLAY request could not be sent.");
+                if ((prewState == GST_PAUSE_STATE) && (curtState == GST_PLAYING_STATE))
+                {
+                    gst_ipcam_client_backend_stop();
+                    pipeline = NULL;
+                    gst_ipcam_client_backend_create_pipeline((gchar *)data);
+                    gst_ipcam_client_backend_play();
+
+                    g_message("PLAY request sent.");
+
+                    //Resize the mainwindow to show Video got from server
+                    gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
+                }
+                else
+                {
+                    g_message("PLAY request could not be sent.");
                 
-                GtkWidget *dialog;
-                dialog = gtk_message_dialog_new(NULL,
-                                                GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                GTK_MESSAGE_ERROR,
-                                                GTK_BUTTONS_CLOSE,
-                                                "The connection is failed. Please try again");
+                    GtkWidget *dialog;
+                    dialog = gtk_message_dialog_new(NULL,
+                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                    GTK_MESSAGE_ERROR,
+                                                    GTK_BUTTONS_CLOSE,
+                                                    "The connection is failed. Please try again");
 
-                gtk_dialog_run (GTK_DIALOG (dialog));
-                gtk_widget_destroy (dialog);
+                    gtk_dialog_run (GTK_DIALOG (dialog));
+                    gtk_widget_destroy (dialog);
 
-                gst_ipcam_client_on_btn_Disconnect_clicked(NULL, NULL);
-                g_free(debug);
+                    gst_ipcam_client_on_btn_Disconnect_clicked(NULL, NULL);
+                    g_free(debug);
 
-                g_warning("Pipeline error: %s", error->message);
+                    g_warning("Pipeline error: %s", error->message);
 
-                g_error_free(error);
+                    g_error_free(error);
+                
+                }
             }
                 break;
             default:

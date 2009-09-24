@@ -12,6 +12,10 @@
 extern "C" {
 #endif
 
+#define GST_PLAYING_STATE 0
+#define GST_PAUSE_STATE 1
+#define GST_STOP_STATE 2
+#define GST_RESUME_STATE 3
 /**
  * init for using gstreamer
  * This function is used whenever the main function is created

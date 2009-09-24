@@ -207,8 +207,7 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
 {
     static gint counter = 0;
     is_connect_button_clicked = TRUE;
-    gchar *url;
-    url = gtk_entry_get_text(entry_Url);
+    gchar *url = gtk_entry_get_text(entry_Url);
     URL = g_strconcat("", url, NULL);
     gst_ipcam_client_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
 
@@ -220,7 +219,7 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
         TYPE = 0;
         gst_ipcam_client_backend_create_pipeline(url);
         
-        g_free(url);
+        //g_free(url);
     }
     ///if video stream type is mpeg4
     else if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "Mpeg4 stream") == 0)
@@ -230,7 +229,7 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
         TYPE = 1;
         gst_ipcam_client_backend_create_pipeline(url);
         
-        g_free(url);
+        //g_free(url);
     }
     ///if video stream type is h264
     else if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "H264 stream") == 0)
@@ -240,7 +239,7 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
 	TYPE = 2;
         gst_ipcam_client_backend_create_pipeline(url);
 
-        g_free(url);
+        //g_free(url);
     }
     else
     {
