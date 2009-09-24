@@ -21,6 +21,7 @@
 #include "gst-ipcam-client-callbacks.h"
 #include "gst-ipcam-client-interface.h"
 #include "gst-ipcam-client-support.h"
+#include "gst-ipcam-client-windowid.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -40,7 +41,9 @@ GtkWidget*
 gst_ipcam_client_create_mainWindow (void)
 {
   mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (mainWindow), _("Demo Client"));
+  gchar * main_window_title = gst_ipcam_client_window_create_title(_("Gst Ipcam Client"));
+  gtk_window_set_title (GTK_WINDOW (mainWindow), main_window_title);
+  g_free(main_window_title);
   gtk_window_set_default_size (GTK_WINDOW (mainWindow), 420, 50);
 
   vbox = gtk_vbox_new (FALSE, 0);
@@ -184,7 +187,9 @@ GtkWidget*
 gst_ipcam_client_create_connectionDialog (void)
 {
   connectionDialog = gtk_dialog_new ();
-  gtk_window_set_title (GTK_WINDOW (connectionDialog), _("Connection"));
+  gchar * connection_dialog_title = gst_ipcam_client_window_create_title(_("Connection"));
+  gtk_window_set_title (GTK_WINDOW (connectionDialog), connection_dialog_title);
+  g_free(connection_dialog_title);
   gtk_window_set_resizable (GTK_WINDOW (connectionDialog), FALSE);
   gtk_window_set_type_hint (GTK_WINDOW (connectionDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
