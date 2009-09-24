@@ -1,5 +1,5 @@
 /**
- * \file:   demo-client-backend.c
+ * \file:   gst-ipcam-client-backend.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  * \author: Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com>
  *

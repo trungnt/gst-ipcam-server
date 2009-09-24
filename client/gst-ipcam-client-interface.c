@@ -1,5 +1,5 @@
 /**
- * \file:   demo-client-interface.c
+ * \file:   gst-ipcam-client-interface.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009

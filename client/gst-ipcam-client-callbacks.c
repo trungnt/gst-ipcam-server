@@ -1,5 +1,5 @@
 /**
- * \file:   demo-client-callbacks.c
+ * \file:   gst-ipcam-client-callbacks.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  * \author: Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com>
  *
