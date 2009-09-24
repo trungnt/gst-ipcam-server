@@ -2,7 +2,7 @@
 CC=gcc
 CFLAGS=`pkg-config --cflags gstreamer-0.10 gtk+-2.0` -lgstinterfaces-0.10
 LDFLAGS=`pkg-config --libs gstreamer-0.10 gtk+-2.0` -lgstinterfaces-0.10
-OBJS= main.o gst-ipcam-client-interface.o gst-ipcam-client-callbacks.o gst-ipcam-client-support.o gst-ipcam-client-backend.o
+OBJS= main.o gst-ipcam-client-interface.o gst-ipcam-client-callbacks.o gst-ipcam-client-support.o gst-ipcam-client-backend.o gst-ipcam-client-windowid.o
 TARGET= gst-ipcam-client
 
 all: $(OBJS)

@@ -14,6 +14,7 @@
 #include "gst-ipcam-client-interface.h"
 #include "gst-ipcam-client-support.h"
 #include "gst-ipcam-client-backend.h"
+#include "gst-ipcam-client-windowid.h"
 
 int
 main (int argc, char *argv[])
@@ -29,6 +30,7 @@ main (int argc, char *argv[])
   gtk_set_locale ();
   gtk_init (&argc, &argv);
   gst_ipcam_client_backend_init (&argc, &argv);
+  gst_ipcam_client_process_options(argc, argv);
   //add_pixmap_directory (PACKAGE_DATA_DIR "/" PACKAGE "/pixmaps");
 
   /*

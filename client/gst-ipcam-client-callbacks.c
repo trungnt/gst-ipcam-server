@@ -12,6 +12,7 @@
 
 #include <gtk/gtk.h>
 #include <gst/interfaces/xoverlay.h>
+
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
 
@@ -19,6 +20,7 @@
 #include "gst-ipcam-client-interface.h"
 #include "gst-ipcam-client-support.h"
 #include "gst-ipcam-client-backend.h"
+#include "gst-ipcam-client-windowid.h"
 
 
 /**
@@ -245,6 +247,7 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
     {
         g_message("PLAY request could not be sent.");
         GtkWidget *dialog;
+		gchar * error_title = gst_ipcam_client_window_create_title(_("Error"));
 
         dialog = gtk_message_dialog_new(NULL,
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -252,7 +255,9 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
                                         GTK_BUTTONS_CLOSE,
                                         "The connection is failed. Please try again");
 
+		gtk_window_set_title(dialog, error_title);
         gtk_dialog_run (GTK_DIALOG (dialog));
+		g_free(error_title);
         gtk_widget_destroy (dialog);
 	gtk_widget_set_sensitive(btn_Connect, TRUE);
         //destroy the connection dialog
