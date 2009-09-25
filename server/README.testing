@@ -23,7 +23,7 @@ II. BUILD
 
 III. SOFTWARE DEPENDENCIES
 1. Gstreamers version >= 0.10.24.1, from ppa repository:  
-- Add followings lines to /etc/apt/sources.list:  
+- Add following lines to /etc/apt/sources.list:  
 	deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
 	deb-src http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
  
@@ -43,7 +43,7 @@ III. SOFTWARE DEPENDENCIES
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev 
 
 IV. RUN
-   We have 3 servers for H264, JPEG and MPEG4 inside servers directory with names: 
+   We have 3 servers for H264, JPEG and MPEG4 inside "servers" directory with names: 
     - onesrc-h264 (url: rtsp://ip:8554/h264)
     - onesrc-jpeg (url: rtsp://ip:8554/jpg)
     - onesrc-mpeg4 (url: rtsp://ip:8554/mpeg4)
