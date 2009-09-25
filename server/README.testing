@@ -7,11 +7,11 @@ I. FETCH SOURCE CODE
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
- - To test the development version, use the following command:
+ - To work with the development version, use the following command:
    	$ git checkout --track -b server-development origin/server-development
  - Notes: If the development branch was already fetched, no need to fetch it again. Instead, switch to the branch by the commands:
-	$ git checkout server-development 	# to switch to an existing server-development branch
-	$ git pull 				# to update to the latest revision
+	$ git checkout server-development 	# to switch to an existing server-development branch.
+	$ git pull 				# to update to the latest revision.
 
 II. BUILD
  - NOTE: before building the server, go to section III to check whether all necessary packages are present in your system.
@@ -23,7 +23,7 @@ II. BUILD
 
 III. SOFTWARE DEPENDENCIES
 1. Gstreamers version >= 0.10.24.1, from ppa repository:  
-- Add followings line to /etc/apt/sources.list:  
+- Add followings lines to /etc/apt/sources.list:  
 	deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
 	deb-src http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
  
@@ -32,9 +32,8 @@ III. SOFTWARE DEPENDENCIES
 	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev  
  
 2. MPEG4 and H.264 encoders from FFMPEG  
- + gstreamer0.10-ffmpeg version 0.10.6.2-1ubuntu2 (standard package with Ubuntu 9.04, ppa package may not work)  
- + libavcodec-unstripped-52  
- 
+ + gstreamer0.10-ffmpeg version 0.10.6.2-1ubuntu2 (standard package with Ubuntu 9.04, ppa package may not work).
+ + libavcodec-unstripped-52. 
 	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52  
  
 - After installation, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens if gstreamer0.10-ffmpeg was installed with libavcodec package (which does not include MPEG4 and H.264 encoders). To fix, remove old gstreamer plugins registry file by issuing:  
