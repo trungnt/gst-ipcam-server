@@ -47,7 +47,7 @@ III. SOFTWARE REQUIREMENTS
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
 
 IV. RUN
-   We have 3 server for h264, jpeg and mpeg4 inside servers directory with names: 
+   We have 3 server for H264, JPEG and MPEG4 inside servers directory with names: 
     - onesrc-h264 (url: rtsp://ip:8554/h264)
     - onesrc-jpeg (url: rtsp://ip:8554/jpg)
     - onesrc-mpeg4 (url: rtsp://ip:8554/mpeg4)
