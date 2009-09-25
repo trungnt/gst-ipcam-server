@@ -1,4 +1,4 @@
-This is a brief instruction guide to fetch, build and test gst-ipcam-server DemoClient on Ubuntu 9.04
+This is a brief instruction guide to fetch, build and test gst-ipcam-client on Ubuntu 9.04.
 
 I. FETCH SOURCE CODE
  - Create a new folder on your hard disk to store source code.
@@ -10,12 +10,12 @@ I. FETCH SOURCE CODE
  - To work with the development version, use the following command:
    	$ git checkout --track -b client-development origin/client-development
  - Notes: If the development branch was already fetched, no need to fetch it again. Instead, switch to the branch by the commands:
-	$ git checkout client-development 	# to switch to existing client-development branch
-	$ git pull 				# to update to the latest revision
+	$ git checkout client-development 	# to switch to existing client-development branch.
+	$ git pull 				# to update to the latest revision.
  
 II. BUILD
  - NOTE: before building the client, go to section III to check whether all necessary packages are present in your system.
- - Go to the folder "demo-client"
+ - Go to the folder "demo-client".
  - Build the package:
 	$ make
 
@@ -25,9 +25,8 @@ III. SOFTWARE REQUIREMENTS
 	$ sudo apt-get install libgstreamer0.10-dev gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
 
 2. MPEG4 and H.264 encoders from FFMPEG  
- + gstreamer0.10-ffmpeg version 0.10.6.2-1ubuntu2 (standard package with Ubuntu 9.04, ppa package may not work)  
- + libavcodec-unstripped-52  
- 
+ + gstreamer0.10-ffmpeg version 0.10.6.2-1ubuntu2 (standard package with Ubuntu 9.04, ppa package may not work).
+ + libavcodec-unstripped-52. 
 	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52  
  
 - After installation, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens if gstreamer0.10-ffmpeg was installed with libavcodec package (which does not include MPEG4 and H.264 encoders). To fix, remove old gstreamer plugins registry file by issuing:  
@@ -37,8 +36,8 @@ III. SOFTWARE REQUIREMENTS
     $ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
 
 IV. RUN
- - run command
+ - run command:
    	$ ./demo-client
- - Usage: the client is simple, investigate and try it yourself 
+ - Usage: the client is simple, investigate and try it yourself.
  
 
