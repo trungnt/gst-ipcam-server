@@ -7,7 +7,7 @@ I. FETCH SOURCE CODE
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
- - To test the development version, use the following command:
+ - To work with the development version, use the following command:
    	$ git checkout --track -b client-development origin/client-development
  - Notes: If the development branch was already fetched, no need to fetch it again. Instead, switch to the branch by the commands:
 	$ git checkout client-development 	# to switch to existing client-development branch
