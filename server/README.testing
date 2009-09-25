@@ -36,7 +36,7 @@ III. SOFTWARE DEPENDENCIES
  + libavcodec-unstripped-52. 
 	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52  
  
-- After installation, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens if gstreamer0.10-ffmpeg was installed with libavcodec package (which does not include MPEG4 and H.264 encoders). To fix, remove old gstreamer plugins registry file by issuing:  
+- After installation, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens if gstreamer0.10-ffmpeg was installed with libavcodec package (which does not include MPEG4 and H.264 encoders). To fix, remove old gstreamer plugin registry files by issuing:  
 	$ rm ~/.gstreamer-0.10/registry.*  
  
 3. Build tools, if not installed yet:  
