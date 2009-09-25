@@ -1,4 +1,4 @@
-This is a brief instruction guide to fetch, build and test gst-ipcam-server DemoClient on Ubuntu 9.04.
+This is a brief instruction guide to fetch, build and test gst-ipcam-server client on Ubuntu 9.04.
 
 I. FETCH SOURCE CODE
  - Create a new folder on your hard disk to store source code.
@@ -20,7 +20,7 @@ II. BUILD
 	$ make
 
 III. SOFTWARE REQUIREMENTS
-1.Basic gstreamer packages
+1. Basic gstreamer packages
  - Run following command to install required basic gstreamer packages:
 	$ sudo apt-get install libgstreamer0.10-dev gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
 
