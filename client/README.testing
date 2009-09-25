@@ -1,46 +1,44 @@
-This is the brief instruction guide to fetch, build and test gst-ipcam-server DemoClient on Ubuntu 9.04
+This is a brief instruction guide to fetch, build and test gst-ipcam-server DemoClient on Ubuntu 9.04
 
 I. FETCH SOURCE CODE
- - Create a new folder to store source code.
+ - Create a new folder on your hard disk to store source code.
  - Go to that folder and fetch the code with this command:
   	$ git clone git://github.com/trungnt/gst-ipcam-server.git
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
- - To test the development version, using the following command:
+ - To test the development version, use the following command:
    	$ git checkout --track -b client-development origin/client-development
- - In the case that you've fetch developing code before, you don't need to checkout repository or branch from server.
-Otherwise, run following commands:
-	$ git checkout client-development 	# to switch to existed client-development branch
-	$ git pull 				# to update to the latest version
+ - Notes: If the development branch was already fetched, no need to fetch it again. Instead, switch to the branch by the commands:
+	$ git checkout client-development 	# to switch to existing client-development branch
+	$ git pull 				# to update to the latest revision
  
 II. BUILD
- - NOTE: before building the client, go to section III to check whether your system meet necessary packages.
+ - NOTE: before building the client, go to section III to check whether all necessary packages are present in your system.
  - Go to the folder "client"
  - Build the package:
 	$ make
 
 III. SOFTWARE REQUIREMENTS
 1.Basic gstreamer packages
- - In order to build and run the demo client, we need the following gstreamer packages: libgstreamer0.10-dev, gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, gstreamer0.10-plugins-bad. Run following command to install:
+ - Run following command to install required basic gstreamer packages:
 	$ sudo apt-get install libgstreamer0.10-dev gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
 
-2. MPEG4 and H.264 encoders
- - We need MPEG4 and H.264 encoder from FFMPEG packages. To get these encoders, install the following packages:
-	+ gstreamer0.10-ffmpeg version 6.02 (NOTE: must use version 6.02: this's the standard Ubuntu package, ppa package may not work)
-	+ libavcodec-unstripped-52
-
-	$sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52
- - After installing, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens when you install gstreamer0.10-ffmpeg with libavcodec package before (which does not come with MPEG4 and H.264 encoders). So, to use them, you must remove old gstreamer plugins registry file by using this command:
+2. MPEG4 and H.264 encoders from FFMPEG  
+ + gstreamer0.10-ffmpeg version 0.10.6.2-1ubuntu2 (standard package with Ubuntu 9.04, ppa package may not work)  
+ + libavcodec-unstripped-52  
+ 
+	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52  
+ 
+- After installation, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens if gstreamer0.10-ffmpeg was installed with libavcodec package (which does not include MPEG4 and H.264 encoders). To fix, remove old gstreamer plugins registry file by issuing:  
 	$ rm ~/.gstreamer-0.10/registry.*
  
-3.Other requirements to build client:
- - Run following command to install other packages to build the demo client:
-	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
+3. Build tools, if not installed yet:  
+    $ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
 
 IV. RUN
  - run command
    	$ ./gst-ipcam-client
- - Using: the client is simple, investigate and try yourself 
+ - Usage: the client is simple, investigate and try it yourself 
  
 
