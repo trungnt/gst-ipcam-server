@@ -35,7 +35,6 @@ GtkWidget *toolitem_Quit;
 GtkWidget *btn_Quit;
 GtkWidget *hbox_VideoPrew;
 GtkWidget *prw_GuestVideo;
-///GtkWidget *prw_HostVideo;
 GtkWidget *statusBar;
 
 ///For Connection Dialog
@@ -44,8 +43,6 @@ GtkWidget *dialog_vbox;
 GtkWidget *tbl_ConInfo;
 GtkWidget *lbl_Url;
 GtkWidget *entry_Url;
-GtkWidget *lbl_VideoStreamType;
-GtkWidget *cbx_VideoStreamType;
 GtkWidget *dialog_action_area;
 GtkWidget *btn_ConnectDialog;
 static gboolean is_connect_button_clicked = FALSE;

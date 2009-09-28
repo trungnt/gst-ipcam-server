@@ -196,7 +196,7 @@ gst_ipcam_client_create_connectionDialog (void)
   dialog_vbox = GTK_DIALOG (connectionDialog)->vbox;
   gtk_widget_show (dialog_vbox);
 
-  tbl_ConInfo = gtk_table_new (2, 2, FALSE);
+  tbl_ConInfo = gtk_table_new (1, 2, FALSE);
   gtk_widget_show (tbl_ConInfo);
   gtk_box_pack_start (GTK_BOX (dialog_vbox), tbl_ConInfo, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (tbl_ConInfo), 3);
@@ -216,22 +216,6 @@ gst_ipcam_client_create_connectionDialog (void)
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (entry_Url), 9679);
-
-  lbl_VideoStreamType = gtk_label_new (_("Video stream type"));
-  gtk_widget_show (lbl_VideoStreamType);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_VideoStreamType, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_VideoStreamType), 0, 0.5);
-
-  cbx_VideoStreamType = gtk_combo_box_entry_new_text ();
-  gtk_widget_show (cbx_VideoStreamType);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), cbx_VideoStreamType, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Jpeg stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Mpeg4 stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264 stream"));
 
   dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
   gtk_widget_show (dialog_action_area);
@@ -264,8 +248,6 @@ gst_ipcam_client_create_connectionDialog (void)
   GLADE_HOOKUP_OBJECT (connectionDialog, tbl_ConInfo, "tbl_ConInfo");
   GLADE_HOOKUP_OBJECT (connectionDialog, lbl_Url, "lbl_Url");
   GLADE_HOOKUP_OBJECT (connectionDialog, entry_Url, "entry_Url");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_VideoStreamType, "lbl_VideoStreamType");
-  GLADE_HOOKUP_OBJECT (connectionDialog, cbx_VideoStreamType, "cbx_VideoStreamType");
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_action_area, "dialog_action_area");
   GLADE_HOOKUP_OBJECT (connectionDialog, btn_ConnectDialog, "btn_ConnectDialog");
 

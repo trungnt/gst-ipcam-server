@@ -103,25 +103,30 @@ gst_ipcam_client_backend_init(int *argc,
  * @return nothing
  */
 void
-gst_ipcam_client_backend_create_pipeline(const gchar *pipeline_description) {
-	GstElement * connector;
-	GstElement * videosink;
+gst_ipcam_client_backend_create_pipeline(const gchar *url) {
+	//GstElement * connector;
+	GstElement *videosink;
 	g_message("SETUP request is sending...");
-	g_debug("the pipeline is :%s", pipeline_description);
-	pipeline = gst_parse_launch(pipeline_description, NULL);
+	g_debug("the pipeline is :%s", url);
+
+	//pipeline = gst_parse_launch(pipeline_description, NULL);
+        pipeline = gst_element_factory_make ("playbin", "client");
+        g_object_set (G_OBJECT (pipeline), "uri", url, NULL);
 	g_message("SETUP request sent.");
 
 	videosink = gst_ipcam_client_backend_find_best_video_sink();
-	connector = gst_bin_get_by_name(GST_BIN(pipeline), "connector");
-	gst_bin_add(GST_BIN(pipeline), videosink);
-	gst_element_link(connector, videosink);
-	g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
-	gst_object_unref(connector);
+        //videosink = gst_element_factory_make("xvimagesink", "videosink");
+	//connector = gst_bin_get_by_name(GST_BIN(pipeline), "connector");
+        //playbin = gst_bin_get_by_name(GST_BIN(pipeline), "playbin0");
+	//gst_bin_add(GST_BIN(pipeline), videosink);
+	//gst_element_link(connector, videosink);
+        g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
+        g_object_set(G_OBJECT(pipeline), "video-sink", videosink, NULL);
 
 	// set the bus message handling function
 	{
 		GstBus * bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-                gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, pipeline_description);
+                gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, url);
 		gst_object_unref(bus);
 	}
 

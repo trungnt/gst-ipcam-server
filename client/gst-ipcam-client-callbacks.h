@@ -9,8 +9,6 @@
 
 //store the url in the current session
 static gchar *URL;
-//store the gstream type in the current session
-static gint TYPE = 4;
 /**
  * Handle the event when clicking on Connect button in the main window.
  * The button will change to Disconnect button and the connection dialog will appear
