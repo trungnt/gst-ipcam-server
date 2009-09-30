@@ -16,6 +16,7 @@ Avaiable commands:
 	- list						list all running clients
 	- add number_of_clients				to add number_of_clients clients
 	- remove [client ids]				quit clients with given ids in the list
+	- remove all					quit all maanged clients
 	- connect url [client ids]			connect given clients to given url
 	- disconnect [client ids]			disconnect clients with given ids in the list
 	- pause [client ids]				pause connected clients with given ids
@@ -33,9 +34,14 @@ def get_client_ids(command_args, start_pos):
 	''' process the command args and get client ids, start from start_pos '''
 	ids = []
 	for i in range(len(command_args) - start_pos):
-		id = int(command_args[i + start_pos])
-		if id > 0:
-			ids.append(id)
+		try:
+			id = int(command_args[i + start_pos])
+			if id > 0:
+				ids.append(id)
+		except:
+			pass
+	if len(ids) <= 0:
+		print "Wrong ids list format ! (must be integer)."
 	return ids
 
 def process_input(cmd):
@@ -72,6 +78,9 @@ def process_input(cmd):
 		if len(command_args) < 2:
 			print "remove command require client id(s) to removed"
 			return -1
+		if (command_args[1] == "all"):
+			manager.remove_clients()
+			return 1
 		ids = get_client_ids(command_args, 1)
 		manager.remove_clients(ids)
 		return 1
