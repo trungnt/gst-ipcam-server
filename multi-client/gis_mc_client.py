@@ -30,7 +30,14 @@ class gisMcClient:
 		self.url = ""
 		self.stream_type = ""
 		self.current_state = gisMcClient.STATE_DISCONNECTED
-		#ret = onwindowcreate(self.error_dialog_title, self.on_connection_error)
+		try:
+			ret = onwindowcreate(self.error_dialog_title, self.on_connection_error)
+			if ret == 1:
+				# ok
+				pass
+		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
+			pass
 		#print "Error dialog name is ", self.error_dialog_title
 
 	def launch(self):
@@ -70,11 +77,12 @@ class gisMcClient:
 			settextvalue(self.connection_dialog_title, "txt0", self.url)
 			#settextvalue(self.connection_dialog_title, "txt0", self.stream_type)
 			click(self.connection_dialog_title, "btnConnect")
-			ret = waittillguiexist(self.error_dialog_title)
-			if ret == 1:
-				self.on_connection_error()
+			#ret = waittillguiexist(self.error_dialog_title)
+			#if ret == 1:
+			#	self.on_connection_error()
 			self.set_state(gisMcClient.STATE_CONNECTING)
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			pass
 
 	def disconnect(self):
@@ -84,6 +92,7 @@ class gisMcClient:
 			click(self.main_window_title, "btnDisconnect")
 			self.set_state(gisMcClient.STATE_DISCONNECTED)
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			pass
 
 	def play(self):
@@ -94,6 +103,7 @@ class gisMcClient:
 			click(self.main_window_title, "btnResume")
 			self.set_state(gisMcClient.STATE_CONNECTING)
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			pass
 
 	def pause(self):
@@ -103,6 +113,7 @@ class gisMcClient:
 			click(self.main_window_title, "btnPause")
 			self.set_state(gisMcClient.STATE_PAUSED)
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			pass
 
 	def quit(self):
@@ -112,6 +123,7 @@ class gisMcClient:
 			#print "quiting ...", self.main_window_title
 			click(self.main_window_title, "btnQuit")
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			pass
 
 	def set_client_path(cls, path):
@@ -136,6 +148,7 @@ class gisMcClient:
 			getwindowsize(self.main_window_title)
 			return True
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			return False
 
 	def on_connection_error(self):
@@ -144,8 +157,10 @@ class gisMcClient:
 			click(self.error_dialog_title, "btnOK")
 			#self.set_state(gisMcClient.STATE_DISCONNECTED)
 			#print "Can not connect to: ", self.url
+			waittillguinotexist(self.error_dialog_title)
 			self.check_state()
 		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
 			pass
 
 	def is_button_ready(self, btnObjectName, window = None):
@@ -179,4 +194,13 @@ class gisMcClient:
 		return gisMcClient.client_path
 	get_client_path = classmethod(get_client_path)
 
+	def process_ldtp_exception(self, e):
+		if str(e) == 'Server aborted':
+			try:
+				ret = onwindowcreate(self.error_dialog_title, self.on_connection_error)
+				if ret == 1:
+					# ok
+					pass
+			except:
+				pass
 
