@@ -91,6 +91,7 @@ gst_ipcam_client_on_btn_Disconnect_clicked              (GtkButton       *button
 
     gtk_widget_set_sensitive(btn_Pause, FALSE);
     gst_ipcam_client_backend_stop();
+    gst_ipcam_client_set_status_text("");
 }
 
 /**
@@ -352,4 +353,20 @@ gst_ipcam_client_on_connectionDialog_key_press_event        (GtkWidget       *wi
      }
 
     return FALSE;
+}
+
+/**
+ * Handle the event when clicking on the Change button in the main window.
+ * the video will change fps and bitrate followed the input from users
+ *
+ * @param button GtkButton *
+ * @param user_data gpointer
+ *
+ * @return nothing
+ */
+void
+gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
 }

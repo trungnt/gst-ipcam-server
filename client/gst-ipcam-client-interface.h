@@ -33,9 +33,41 @@ GtkWidget *toolitem_About;
 GtkWidget *btn_About;
 GtkWidget *toolitem_Quit;
 GtkWidget *btn_Quit;
+//GtkWidget *hbox1;
+GtkWidget *vbox2;
+GtkWidget *toolbar1;
+GtkWidget *toolitem6;
+GtkWidget *lbl_fps;
+GtkWidget *toolitem8;
+GtkObject *spinbtn_fps_n_adj;
+GtkWidget *spinbtn_fps_n;
+GtkWidget *toolitem7;
+GtkWidget *lbl__;
+GtkWidget *toolitem9;
+GtkObject *spinbtn_fps_d_adj;
+GtkWidget *spinbtn_fps_d;
+GtkWidget *toolitem15;
+GtkWidget *alignment2;
+GtkWidget *toolitem10;
+GtkWidget *btn_change_fps;
+GtkWidget *toolitem11;
+GtkWidget *vseparator1;
+GtkWidget *toolitem12;
+GtkWidget *lbl_bitrate;
+GtkWidget *toolitem13;
+GtkObject *spinbtn_bitrate_adj;
+GtkWidget *spinbtn_bitrate;
+GtkWidget *toolitem14;
+GtkWidget *btn_change;
 GtkWidget *hbox_VideoPrew;
 GtkWidget *prw_GuestVideo;
 GtkWidget *statusBar;
+GtkWidget * statusBar_vBox; // the vbox used in the statusbar. This widget will be return in the Init function. Infact, it contains a hseparator and a hbox.
+GtkWidget * statusBar_hBox; // this hbox will contains all of the labels;
+GtkWidget * statusBar_labelStatus; // the label for the status text
+GtkWidget * statusBar_labelVideoType;
+GtkWidget * statusBar_labelAudioType;
+GtkWidget * statusBar_labelProperties; // the label for Properties displaying
 
 ///For Connection Dialog
 GtkWidget *connectionDialog;
@@ -45,6 +77,7 @@ GtkWidget *lbl_Url;
 GtkWidget *entry_Url;
 GtkWidget *dialog_action_area;
 GtkWidget *btn_ConnectDialog;
+
 static gboolean is_connect_button_clicked = FALSE;
 /**
  * create the main window
@@ -63,3 +96,26 @@ GtkWidget* gst_ipcam_client_create_mainWindow (void);
  * @return nothing
  */
 GtkWidget* gst_ipcam_client_create_connectionDialog (void);
+
+/**
+ * init the statusbar widget
+ */
+GtkWidget* gst_ipcam_client_init_status_bar();
+
+/**
+ *  set the status text on the status bar
+ *
+ * @param void
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_text(const gchar* text);
+
+/**
+ * show the properties
+ *
+ * @param void
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_properties(const gchar* name);

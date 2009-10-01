@@ -114,15 +114,97 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_widget_show (btn_Quit);
   gtk_container_add (GTK_CONTAINER (toolitem_Quit), btn_Quit);
 
+  //hbox1 = gtk_hbox_new (FALSE, 0);
+  //gtk_widget_show (hbox1);
+  //gtk_box_pack_start (GTK_BOX (vbox), hbox1, TRUE, TRUE, 0);
+
+  vbox2 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox2);
+  gtk_box_pack_start (GTK_BOX (vbox), vbox2, TRUE, TRUE, 0);
+
+  toolbar1 = gtk_toolbar_new ();
+  gtk_widget_show (toolbar1);
+  gtk_box_pack_start (GTK_BOX (vbox2), toolbar1, FALSE, FALSE, 0);
+  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH);
+  tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar1));
+
+  toolitem6 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem6);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem6);
+
+  lbl_fps = gtk_label_new (_("Frame rate:"));
+  gtk_widget_show (lbl_fps);
+  gtk_container_add (GTK_CONTAINER (toolitem6), lbl_fps);
+
+  toolitem8 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem8);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem8);
+
+  spinbtn_fps_n_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  spinbtn_fps_n = gtk_spin_button_new (GTK_ADJUSTMENT (spinbtn_fps_n_adj), 1, 0);
+  gtk_widget_show (spinbtn_fps_n);
+  gtk_container_add (GTK_CONTAINER (toolitem8), spinbtn_fps_n);
+
+  toolitem7 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem7);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem7);
+
+  lbl__ = gtk_label_new (_("/"));
+  gtk_widget_show (lbl__);
+  gtk_container_add (GTK_CONTAINER (toolitem7), lbl__);
+
+  toolitem9 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem9);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem9);
+
+  spinbtn_fps_d_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  spinbtn_fps_d = gtk_spin_button_new (GTK_ADJUSTMENT (spinbtn_fps_d_adj), 1, 0);
+  gtk_widget_show (spinbtn_fps_d);
+  gtk_container_add (GTK_CONTAINER (toolitem9), spinbtn_fps_d);
+
+  toolitem15 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem15);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem15);
+
+  alignment2 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment2);
+  gtk_container_add (GTK_CONTAINER (toolitem15), alignment2);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment2), 0, 0, 41, 0);
+
+  toolitem12 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem12);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem12);
+
+  lbl_bitrate = gtk_label_new (_("Bit rate:"));
+  gtk_widget_show (lbl_bitrate);
+  gtk_container_add (GTK_CONTAINER (toolitem12), lbl_bitrate);
+
+  toolitem13 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem13);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem13);
+
+  spinbtn_bitrate_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  spinbtn_bitrate = gtk_spin_button_new (GTK_ADJUSTMENT (spinbtn_bitrate_adj), 1, 0);
+  gtk_widget_show (spinbtn_bitrate);
+  gtk_container_add (GTK_CONTAINER (toolitem13), spinbtn_bitrate);
+
+  toolitem14 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem14);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem14);
+
+  btn_change = gtk_button_new_with_mnemonic (_("Change"));
+  gtk_widget_show (btn_change);
+  gtk_container_add (GTK_CONTAINER (toolitem14), btn_change);
+
   hbox_VideoPrew = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox_VideoPrew);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox_VideoPrew, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox2), hbox_VideoPrew, TRUE, TRUE, 0);
 
   prw_GuestVideo = gtk_drawing_area_new ();//gtk_preview_new (GTK_PREVIEW_COLOR);
   gtk_widget_show (prw_GuestVideo);
   gtk_box_pack_start (GTK_BOX (hbox_VideoPrew), prw_GuestVideo, TRUE, TRUE, 0);
 
-  statusBar = gtk_statusbar_new ();
+  statusBar = gst_ipcam_client_init_status_bar();
   gtk_widget_show (statusBar);
   gtk_box_pack_start (GTK_BOX (vbox), statusBar, FALSE, FALSE, 0);
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (statusBar), FALSE);
@@ -152,6 +234,9 @@ gst_ipcam_client_create_mainWindow (void)
   g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
                             G_CALLBACK (gst_ipcam_client_on_mainWindow_destroy),
                             GTK_OBJECT (NULL));
+  /*g_signal_connect_swapped ((gpointer) btn_change, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_Change_clicked),
+                            GTK_OBJECT (NULL));*/
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainWindow, mainWindow, "mainWindow");
@@ -252,4 +337,112 @@ gst_ipcam_client_create_connectionDialog (void)
   GLADE_HOOKUP_OBJECT (connectionDialog, btn_ConnectDialog, "btn_ConnectDialog");
 
   return connectionDialog;
+}
+
+/**
+ * init the statusbar widget
+ * 
+ * @param void
+ *
+ * @return the statusbar widget
+ */
+GtkWidget* gst_ipcam_client_init_status_bar()
+{
+    GtkWidget * separator;
+
+    // init the outside containter
+    statusBar_vBox = gtk_vbox_new(FALSE, 0);
+    gtk_widget_show(statusBar_vBox);
+
+    separator = gtk_hseparator_new();
+
+    gtk_widget_show(separator);
+    gtk_box_pack_start(GTK_BOX(statusBar_vBox), separator, FALSE, FALSE, 0);
+
+    // init the inside containter
+    statusBar_hBox = gtk_hbox_new(FALSE, 0);
+    gtk_widget_show(statusBar_hBox);
+
+    gtk_widget_set_size_request(statusBar_hBox, 500, 25);
+    gtk_box_pack_start(GTK_BOX(statusBar_vBox), statusBar_hBox, FALSE, FALSE, 0);
+
+    // init the status label
+    statusBar_labelStatus = gtk_label_new("");
+    gtk_widget_show(statusBar_labelStatus);
+
+    gtk_widget_set_size_request(statusBar_labelStatus, 60, -1);
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelStatus, FALSE, TRUE, 5);
+
+    // separator
+    separator = gtk_vseparator_new();
+    gtk_widget_show(separator);
+    
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
+
+    // time label
+    /*
+        __statusBar_labelTime = gtk_label_new("0:00/0:00");
+        gtk_widget_set_size_request(__statusBar_labelTime, 80, -1);
+        gtk_box_pack_start(GTK_BOX(__statusBar_hBox), __statusBar_labelTime, FALSE, FALSE, 5);
+     */
+    {
+        // Video type
+        statusBar_labelVideoType = gtk_label_new("Video type: H264");
+        gtk_widget_show(statusBar_labelVideoType);
+        
+        gtk_widget_set_size_request(statusBar_labelVideoType, 120, -1);
+        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
+        // the text "/"
+        {
+            GtkWidget * label = gtk_label_new("/");
+            gtk_widget_show(label);
+            
+            gtk_box_pack_start(GTK_BOX(statusBar_hBox), label, FALSE, FALSE, 0);
+        }
+        // Audio type
+        statusBar_labelAudioType = gtk_label_new("Audio type: aac");
+        gtk_widget_show(statusBar_labelAudioType);
+        
+        gtk_widget_set_size_request(statusBar_labelAudioType, 120, -1);
+        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelAudioType, FALSE, FALSE, 0);
+    }
+
+    // separator
+    separator = gtk_vseparator_new();
+    gtk_widget_show(separator);
+
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
+
+    // Properties label
+    statusBar_labelProperties = gtk_label_new("");
+    gtk_widget_show(statusBar_labelProperties);
+    
+    //    gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
+
+    return statusBar_vBox;
+}
+
+/**
+ *  set the status text on the status bar
+ * 
+ * @param void
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_text(const gchar* text)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelStatus), text);
+}
+
+/**
+ * show the properties
+ * 
+ * @param void
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_properties(const gchar* name)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelProperties), name);
 }
