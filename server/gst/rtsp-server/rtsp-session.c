@@ -22,7 +22,7 @@
 
 #undef DEBUG
 
-#define DEFAULT_TIMEOUT	60
+#define DEFAULT_TIMEOUT	300
 
 enum
 {

@@ -36,6 +36,7 @@ timeout (GstRTSPServer *server, gboolean ignored)
 
   pool = gst_rtsp_server_get_session_pool (server);
   gst_rtsp_session_pool_cleanup (pool);
+  g_message ("Server timeout");
   g_object_unref (pool);
 
   return TRUE;
@@ -76,7 +77,6 @@ main (int argc, char *argv[])
 	  /* we can set some common server parameter by using functions in server-profile.h
 	   * but default values will be used here
 	   */
-	  gst_rtsp_pipeline_profile_video_set_height(profile_video, 500);
 	  pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
      pipeline_str = pipeline_video_str;
 
@@ -120,7 +120,7 @@ main (int argc, char *argv[])
   /* attach the server to the default maincontext */
   gst_rtsp_server_attach (server, NULL);
 
-  g_timeout_add_seconds (2, (GSourceFunc) timeout, server); 
+  g_timeout_add_seconds (15, (GSourceFunc) timeout, server); 
 
   /* start serving */
   g_main_loop_run (loop);
