@@ -210,7 +210,7 @@ gst_bit_rate_base_init(gpointer gclass) {
 
 	gst_element_class_set_details_simple(element_class,
 			"BitRate",
-			"FIXME:Generic",
+			"Effect/Video/Bitrate",
 			"Runtime adjust video encoder's bitrate",
 			"Duong Chien Thang <duongchien.thang@nomovok.com> & Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com>");
 
