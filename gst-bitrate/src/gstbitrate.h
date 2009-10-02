@@ -1,4 +1,4 @@
-/*
+/**
  * GStreamer
  * Copyright (C) 2005 Thomas Vander Stichele <thomas@apestaart.org>
  * Copyright (C) 2005 Ronald S. Bultje <rbultje@ronald.bitfreak.net>
@@ -63,31 +63,46 @@ G_BEGIN_DECLS
 #define GST_IS_BITRATE_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_BITRATE))
 
-typedef struct _GstBitRate      GstBitRate;
+typedef struct _GstBitRate GstBitRate;
 typedef struct _GstBitRateClass GstBitRateClass;
 
-struct _GstBitRate
-{
-  GstElement element;
-
-  GstPad *sinkpad, *srcpad;
-
-  gboolean silent;
-
-  gchar * encoder_name;
-  GstElement * encoder;
-  gulong waiting_bitrate;
-  gboolean is_bitrate_waiting;
-  gchar * waiting_encoder_name;
-  gboolean is_encoder_name_waiting;
+/**
+ * Define structure for BitRate element.
+ * This element can change encoder bitrate at runtime.
+ *
+ * To use this element, we need to set 2 properties:
+ * - encoder-name: name of the encoder we want to control bitrate
+ * - bitrate: the bitrate to set to
+ *
+ * This element will pause the pipeline then set bitrate, after that, resume the pipeline
+ */
+struct _GstBitRate {
+	/** bitrate element */
+	GstElement element;
+	/** sink pad and src pad */
+	GstPad *sinkpad, *srcpad;
+	/** name of the encoder we want to control. NULL mean we won't control any thing */
+	gchar * encoder_name;
+	/** the encoder we want to control, for faster reference */
+	GstElement * encoder;
+	/** The bitrate value wait to be set */
+	gulong waiting_bitrate;
+	/** if there's a bitrate value wait to be set */
+	gboolean is_bitrate_waiting;
+	/** the encoder name wait to be set */
+	gchar * waiting_encoder_name;
+	/** if there's an encoder name wait to be set */
+	gboolean is_encoder_name_waiting;
 };
 
-struct _GstBitRateClass 
-{
-  GstElementClass parent_class;
+/**
+ * Define GObject class for our GstBitRate element
+ */
+struct _GstBitRateClass {
+	GstElementClass parent_class;
 };
 
-GType gst_bit_rate_get_type (void);
+GType gst_bit_rate_get_type(void);
 
 G_END_DECLS
 
