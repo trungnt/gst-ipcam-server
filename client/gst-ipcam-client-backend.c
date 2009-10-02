@@ -478,31 +478,27 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
                 
                 }
             }
+            break;
             case GST_MESSAGE_STATE_CHANGED:
             {
                 GstState oldState, newState, pending;
                 gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
                 switch (newState) {
                     case GST_STATE_PLAYING:
-                        g_message("Playing state!");
                         //set_playing_status(nameSongTemp, icon);
                         gst_ipcam_client_set_status_text("Playing");
                         //get_stream_info_objects_for_type ();
-                        read_video_props();
                         break;
                     case GST_STATE_PAUSED:
-                        g_message("Pause state!");
                         gst_ipcam_client_set_status_text("Paused");
                         //get_stream_info_objects_for_type ();
                         break;
                     case GST_STATE_NULL:
-                        g_message("Stoping!");
                         gst_ipcam_client_set_status_text("Stopped");
                         //gtk_range_set_value(GTK_RANGE(scale_int), 0 );
                         //UI_SetStatusTimePosition(0);
                         break;
                     case GST_STATE_READY:
-                        g_message("ok, in ready state!");
                         break;
                     default:
                         g_message("Unknow state : %d!", newState);
@@ -593,151 +589,151 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     
     g_message("Stream type : %s\n", stream_type);
     g_message("Pad name %s\n", c);
+    gst_element_set_state (pipeline, GST_STATE_PAUSED);
     if (g_strrstr (c, "video"))
     {
         videosink = gst_ipcam_client_backend_find_best_video_sink();
     	if (g_strrstr (stream_type, "H264"))
         {
-    		gst_element_set_state (pipeline, GST_STATE_PAUSED);
-    		v_depay_h264 = gst_element_factory_make ("rtph264depay", "depay_h264");
+            gst_ipcam_client_set_status_Video_Type("Video type: H264");
+            
+            v_depay_h264 = gst_element_factory_make ("rtph264depay", "depay_h264");
 
-    		v_decoder_h264 = gst_element_factory_make ("ffdec_h264", "decoder_h264");
+            v_decoder_h264 = gst_element_factory_make ("ffdec_h264", "decoder_h264");
 
-    		v_filter_h264 = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_h264");
-    		//v_sink_h264     = gst_element_factory_make ("autovideosink", "Video Renderer h264");
+            v_filter_h264 = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_h264");
+            //v_sink_h264     = gst_element_factory_make ("autovideosink", "Video Renderer h264");
 
-    		gst_bin_add_many (GST_BIN (pipeline), v_depay_h264, v_decoder_h264, v_filter_h264, videosink, NULL);
-    		(gst_element_link (v_depay_h264, v_decoder_h264));
-    		(gst_element_link (v_decoder_h264, v_filter_h264));
-    		(gst_element_link (v_filter_h264, videosink));
-    		g_debug ("Linking video pad %s", stream_type);
-    		// Link it actually
-    		GstPad *targetsink = gst_element_get_pad (v_depay_h264, "sink");
-    		g_assert (targetsink != NULL);
-    		gst_pad_link (pad, targetsink);
-    		gst_object_unref (targetsink);
-    		gst_element_set_state (pipeline, GST_STATE_PLAYING);
+            gst_bin_add_many (GST_BIN (pipeline), v_depay_h264, v_decoder_h264, v_filter_h264, videosink, NULL);
+            (gst_element_link (v_depay_h264, v_decoder_h264));
+            (gst_element_link (v_decoder_h264, v_filter_h264));
+            (gst_element_link (v_filter_h264, videosink));
+            g_debug ("Linking video pad %s", stream_type);
+            // Link it actually
+            GstPad *targetsink = gst_element_get_pad (v_depay_h264, "sink");
+            g_assert (targetsink != NULL);
+            gst_pad_link (pad, targetsink);
+            gst_object_unref (targetsink);
     	}
         else if (g_strrstr (stream_type, "MP4V-ES"))
         {
-    		gst_element_set_state (pipeline, GST_STATE_PAUSED);
-    		v_depay_mp4 = gst_element_factory_make ("rtpmp4vdepay", "depay_mp4");
+            gst_ipcam_client_set_status_Video_Type("Video type: mpeg4");
 
-   			v_decoder_mp4 = gst_element_factory_make ("ffdec_mpeg4", "decoder_mp4");
+            v_depay_mp4 = gst_element_factory_make ("rtpmp4vdepay", "depay_mp4");
 
-   			v_filter_mp4 = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_mp4");
-   			//v_sink_mp4     = gst_element_factory_make ("autovideosink", "Video Renderer Mp4");
+            v_decoder_mp4 = gst_element_factory_make ("ffdec_mpeg4", "decoder_mp4");
 
-   			gst_bin_add_many (GST_BIN (pipeline), v_depay_mp4, v_decoder_mp4, v_filter_mp4, videosink, NULL);
+            v_filter_mp4 = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_mp4");
+            //v_sink_mp4     = gst_element_factory_make ("autovideosink", "Video Renderer Mp4");
 
-   			(gst_element_link (v_depay_mp4, v_decoder_mp4));
-   			(gst_element_link (v_decoder_mp4, v_filter_mp4));
-   			(gst_element_link (v_filter_mp4, videosink));
+            gst_bin_add_many (GST_BIN (pipeline), v_depay_mp4, v_decoder_mp4, v_filter_mp4, videosink, NULL);
 
-    		g_debug ("Linking video pad %s", stream_type);
-    		// Link it actually
-    		GstPad *targetsink = gst_element_get_pad (v_depay_mp4, "sink");
-    		g_assert (targetsink != NULL);
-    		gst_pad_link (pad, targetsink);
-    		gst_object_unref (targetsink);
-    		gst_element_set_state (pipeline, GST_STATE_PLAYING);
+            (gst_element_link (v_depay_mp4, v_decoder_mp4));
+            (gst_element_link (v_decoder_mp4, v_filter_mp4));
+            (gst_element_link (v_filter_mp4, videosink));
+            g_debug ("Linking video pad %s", stream_type);
+            // Link it actually
+            GstPad *targetsink = gst_element_get_pad (v_depay_mp4, "sink");
+            g_assert (targetsink != NULL);
+            gst_pad_link (pad, targetsink);
+            gst_object_unref (targetsink);
     	}
         else if (g_strrstr (stream_type, "JPEG"))
         {
-    		gst_element_set_state (pipeline, GST_STATE_PAUSED);
-    		v_depay_jpg = gst_element_factory_make ("rtpjpegdepay", "depay_jpg");
+            gst_ipcam_client_set_status_Video_Type("Video type: jpeg");
 
-    		v_decoder_jpg = gst_element_factory_make ("jpegdec", "decoder_jpg");
-    		v_filter_jpg = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_jpg");
-    		//v_sink_jpg     = gst_element_factory_make ("autovideosink", "Video Renderer Jpg");
+            v_depay_jpg = gst_element_factory_make ("rtpjpegdepay", "depay_jpg");
 
-    		gst_bin_add_many (GST_BIN (pipeline), v_depay_jpg, v_decoder_jpg, v_filter_jpg, videosink, NULL);
+            v_decoder_jpg = gst_element_factory_make ("jpegdec", "decoder_jpg");
+            v_filter_jpg = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_jpg");
+            //v_sink_jpg     = gst_element_factory_make ("autovideosink", "Video Renderer Jpg");
 
-    		(gst_element_link (v_depay_jpg, v_decoder_jpg));
-    		(gst_element_link (v_decoder_jpg, v_filter_jpg));
-    		(gst_element_link (v_filter_jpg, videosink));
+            gst_bin_add_many (GST_BIN (pipeline), v_depay_jpg, v_decoder_jpg, v_filter_jpg, videosink, NULL);
 
-    		g_debug ("Linking video pad %s", stream_type);
+            (gst_element_link (v_depay_jpg, v_decoder_jpg));
+            (gst_element_link (v_decoder_jpg, v_filter_jpg));
+            (gst_element_link (v_filter_jpg, videosink));
+
+            g_debug ("Linking video pad %s", stream_type);
     		// Link it actually
-    		GstPad *targetsink = gst_element_get_pad (v_depay_jpg, "sink");
-    		g_assert (targetsink != NULL);
-    		gst_pad_link (pad, targetsink);
-    		gst_object_unref (targetsink);
-    		gst_element_set_state (pipeline, GST_STATE_PLAYING);
+            GstPad *targetsink = gst_element_get_pad (v_depay_jpg, "sink");
+            g_assert (targetsink != NULL);
+            gst_pad_link (pad, targetsink);
+            gst_object_unref (targetsink);
     	}
     }
     else if (g_strrstr (c, "audio"))
     {
     	if (g_strrstr (stream_type, "G726-16"))
         {
-    		gst_element_set_state (pipeline, GST_STATE_PAUSED);
-    		a_depay_g726 = gst_element_factory_make ("rtpg726depay", "adepay-g726");
-    		a_decoder_g726 = gst_element_factory_make ("ffdec_g726", "adecoder-g726");
-    		a_filter_g726 = gst_element_factory_make ("audioconvert", "audioconvert-g726");
-    		a_resample_g726 = gst_element_factory_make("audioresample", "audioresample-g726");
-    		a_sink_g726     = gst_element_factory_make ("autoaudiosink", "audio sink g726");
-    		gst_bin_add_many (GST_BIN (pipeline), a_depay_g726, a_decoder_g726, a_filter_g726, a_resample_g726, a_sink_g726, NULL);
-    		(gst_element_link (a_depay_g726, a_decoder_g726));
-    		(gst_element_link (a_decoder_g726, a_filter_g726));
-    		(gst_element_link (a_filter_g726, a_resample_g726));
-    		(gst_element_link (a_resample_g726, a_sink_g726));
-    		g_debug ("Linking audio pad %s", stream_type);
-    		// Link it actually
-    		GstPad *targetsink = gst_element_get_pad (a_depay_g726, "sink");
-    		g_assert (targetsink != NULL);
-    		gst_pad_link (pad, targetsink);
-    		gst_object_unref (targetsink);
-    		gst_element_set_state (pipeline, GST_STATE_PLAYING);
+            gst_ipcam_client_set_status_Audio_Type("/Audio type: G726");
+
+            a_depay_g726 = gst_element_factory_make ("rtpg726depay", "adepay-g726");
+            a_decoder_g726 = gst_element_factory_make ("ffdec_g726", "adecoder-g726");
+            a_filter_g726 = gst_element_factory_make ("audioconvert", "audioconvert-g726");
+            a_resample_g726 = gst_element_factory_make("audioresample", "audioresample-g726");
+            a_sink_g726     = gst_element_factory_make ("autoaudiosink", "audio sink g726");
+            gst_bin_add_many (GST_BIN (pipeline), a_depay_g726, a_decoder_g726, a_filter_g726, a_resample_g726, a_sink_g726, NULL);
+            (gst_element_link (a_depay_g726, a_decoder_g726));
+            (gst_element_link (a_decoder_g726, a_filter_g726));
+            (gst_element_link (a_filter_g726, a_resample_g726));
+            (gst_element_link (a_resample_g726, a_sink_g726));
+            g_debug ("Linking audio pad %s", stream_type);
+            // Link it actually
+            GstPad *targetsink = gst_element_get_pad (a_depay_g726, "sink");
+            g_assert (targetsink != NULL);
+            gst_pad_link (pad, targetsink);
+            gst_object_unref (targetsink);
     	}
         else if (g_strrstr (stream_type, "PCMA"))
         {
-    		gst_element_set_state (pipeline, GST_STATE_PAUSED);
-    		a_depay_g711 = gst_element_factory_make ("rtppcmadepay", "adepay-g711");
-    		a_decoder_g711 = gst_element_factory_make ("alawdec", "adecoder-g711");
-    		a_filter_g711 = gst_element_factory_make ("audioconvert", "audioconvert-g711");
-    		a_resample_g711 = gst_element_factory_make("audioresample", "audioresample-g711");
-    		a_sink_g711     = gst_element_factory_make ("autoaudiosink", "audio sink g711");
+            gst_ipcam_client_set_status_Audio_Type("/Audio type: G711");
+            
+            a_depay_g711 = gst_element_factory_make ("rtppcmadepay", "adepay-g711");
+            a_decoder_g711 = gst_element_factory_make ("alawdec", "adecoder-g711");
+            a_filter_g711 = gst_element_factory_make ("audioconvert", "audioconvert-g711");
+            a_resample_g711 = gst_element_factory_make("audioresample", "audioresample-g711");
+            a_sink_g711     = gst_element_factory_make ("autoaudiosink", "audio sink g711");
 
-    		gst_bin_add_many (GST_BIN (pipeline), a_depay_g711, a_decoder_g711, a_filter_g711, a_resample_g711, a_sink_g711, NULL);
+            gst_bin_add_many (GST_BIN (pipeline), a_depay_g711, a_decoder_g711, a_filter_g711, a_resample_g711, a_sink_g711, NULL);
 
-    		(gst_element_link (a_depay_g711, a_decoder_g711));
-    		(gst_element_link (a_decoder_g711, a_filter_g711));
-    		(gst_element_link (a_filter_g711, a_resample_g711));
-    		(gst_element_link (a_resample_g711, a_sink_g711));
-    		g_debug ("Linking audio pad %s", stream_type);
-    		// Link it actually
-    		GstPad *targetsink = gst_element_get_pad (a_depay_g711, "sink");
-    		g_assert (targetsink != NULL);
-    		gst_pad_link (pad, targetsink);
-    		gst_object_unref (targetsink);
-    		gst_element_set_state (pipeline, GST_STATE_PLAYING);
+            (gst_element_link (a_depay_g711, a_decoder_g711));
+            (gst_element_link (a_decoder_g711, a_filter_g711));
+            (gst_element_link (a_filter_g711, a_resample_g711));
+            (gst_element_link (a_resample_g711, a_sink_g711));
+            g_debug ("Linking audio pad %s", stream_type);
+            // Link it actually
+            GstPad *targetsink = gst_element_get_pad (a_depay_g711, "sink");
+            g_assert (targetsink != NULL);
+            gst_pad_link (pad, targetsink);
+            gst_object_unref (targetsink);
     	}
         else if (g_strrstr (stream_type, "MP4A-LATM"))
         {
-    		gst_element_set_state (pipeline, GST_STATE_PAUSED);
-    		a_depay_aac = gst_element_factory_make ("rtpmp4adepay", "adepay_aac");
-    		a_decoder_aac = gst_element_factory_make ("faad", "adecoder_aac");
-    		a_filter_aac = gst_element_factory_make ("audioconvert", "audioconvert_aac");
-    		a_resample_aac = gst_element_factory_make("audioresample", "audioresample_aac");
-    		a_sink_aac     = gst_element_factory_make ("autoaudiosink", "audio sink aac");
+            gst_ipcam_client_set_status_Audio_Type("/Audio type: acc");
+            
+            a_depay_aac = gst_element_factory_make ("rtpmp4adepay", "adepay_aac");
+            a_decoder_aac = gst_element_factory_make ("faad", "adecoder_aac");
+            a_filter_aac = gst_element_factory_make ("audioconvert", "audioconvert_aac");
+            a_resample_aac = gst_element_factory_make("audioresample", "audioresample_aac");
+            a_sink_aac     = gst_element_factory_make ("autoaudiosink", "audio sink aac");
 
-    		gst_bin_add_many (GST_BIN (pipeline), a_depay_aac, a_decoder_aac, a_filter_aac, a_resample_aac, a_sink_aac, NULL);
+            gst_bin_add_many (GST_BIN (pipeline), a_depay_aac, a_decoder_aac, a_filter_aac, a_resample_aac, a_sink_aac, NULL);
 
-    		(gst_element_link (a_depay_aac, a_decoder_aac));
-    		(gst_element_link (a_decoder_aac, a_filter_aac));
-    		(gst_element_link (a_filter_aac, a_resample_aac));
-    		(gst_element_link (a_resample_aac, a_sink_aac));
+            (gst_element_link (a_depay_aac, a_decoder_aac));
+            (gst_element_link (a_decoder_aac, a_filter_aac));
+            (gst_element_link (a_filter_aac, a_resample_aac));
+            (gst_element_link (a_resample_aac, a_sink_aac));
 
-    		g_debug ("Linking audio pad %s", stream_type);
-    		// Link it actually
-    		GstPad *targetsink = gst_element_get_pad (a_depay_aac, "sink");
-    		g_assert (targetsink != NULL);
-    		gst_pad_link (pad, targetsink);
-    		gst_object_unref (targetsink);
-    		gst_element_set_state (pipeline, GST_STATE_PLAYING);
+            g_debug ("Linking audio pad %s", stream_type);
+            // Link it actually
+            GstPad *targetsink = gst_element_get_pad (a_depay_aac, "sink");
+            g_assert (targetsink != NULL);
+            gst_pad_link (pad, targetsink);
+            gst_object_unref (targetsink);
     	}
     }
-
+    gst_element_set_state (pipeline, GST_STATE_PLAYING);
     g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
 
     if (GST_IS_X_OVERLAY(videosink))
@@ -783,25 +779,4 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
     g_print("Goi cai nay sau ------------\n");
 
     gst_bin_add_many (GST_BIN (pipeline), rtspsrc, NULL);
-
-    /* run */
-    ret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
-    
-    if (ret == GST_STATE_CHANGE_FAILURE)
-    {
-        GstMessage *msg;
-        g_print ("Failed to start up pipeline!\n");
-        /* check if there is an error message with details on the bus */
-        msg = gst_bus_poll (bus, GST_MESSAGE_ERROR, 0);
-        if (msg)
-        {
-            GError *err = NULL;
-            gst_message_parse_error (msg, &err, NULL);
-            g_print ("ERROR: %s\n", err->message);
-            g_error_free (err);
-            gst_message_unref (msg);
-        }
-        return -1;
-    }
-    return 0;
 }

@@ -33,7 +33,7 @@ GtkWidget *toolitem_About;
 GtkWidget *btn_About;
 GtkWidget *toolitem_Quit;
 GtkWidget *btn_Quit;
-//GtkWidget *hbox1;
+GtkWidget *hbox1;
 GtkWidget *vbox2;
 GtkWidget *toolbar1;
 GtkWidget *toolitem6;
@@ -119,3 +119,21 @@ void gst_ipcam_client_set_status_text(const gchar* text);
  * @return nothing
  */
 void gst_ipcam_client_set_status_properties(const gchar* name);
+
+/**
+ * show the video type
+ *
+ * @param type_name const gchar* the video type
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_Video_Type(const gchar* type_name);
+
+/**
+ * show the audio type
+ *
+ * @param type_name const gchar* the audio type
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_Audio_Type(const gchar* type_name);

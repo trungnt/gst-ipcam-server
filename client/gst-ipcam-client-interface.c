@@ -114,13 +114,14 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_widget_show (btn_Quit);
   gtk_container_add (GTK_CONTAINER (toolitem_Quit), btn_Quit);
 
-  //hbox1 = gtk_hbox_new (FALSE, 0);
-  //gtk_widget_show (hbox1);
-  //gtk_box_pack_start (GTK_BOX (vbox), hbox1, TRUE, TRUE, 0);
+  hbox1 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox1);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox1, TRUE, TRUE, 0);
 
   vbox2 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox2);
-  gtk_box_pack_start (GTK_BOX (vbox), vbox2, TRUE, TRUE, 0);
+  gtk_widget_set_sensitive(vbox2, FALSE);
+  gtk_box_pack_start (GTK_BOX (hbox1), vbox2, TRUE, TRUE, 0);
 
   toolbar1 = gtk_toolbar_new ();
   gtk_widget_show (toolbar1);
@@ -387,20 +388,14 @@ GtkWidget* gst_ipcam_client_init_status_bar()
      */
     {
         // Video type
-        statusBar_labelVideoType = gtk_label_new("Video type: H264");
+        statusBar_labelVideoType = gtk_label_new("");
         gtk_widget_show(statusBar_labelVideoType);
         
-        gtk_widget_set_size_request(statusBar_labelVideoType, 120, -1);
+        gtk_widget_set_size_request(statusBar_labelVideoType, 130, -1);
         gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
-        // the text "/"
-        {
-            GtkWidget * label = gtk_label_new("/");
-            gtk_widget_show(label);
-            
-            gtk_box_pack_start(GTK_BOX(statusBar_hBox), label, FALSE, FALSE, 0);
-        }
+        
         // Audio type
-        statusBar_labelAudioType = gtk_label_new("Audio type: aac");
+        statusBar_labelAudioType = gtk_label_new("");
         gtk_widget_show(statusBar_labelAudioType);
         
         gtk_widget_set_size_request(statusBar_labelAudioType, 120, -1);
@@ -438,11 +433,35 @@ void gst_ipcam_client_set_status_text(const gchar* text)
 /**
  * show the properties
  * 
- * @param void
+ * @param name const gchar* the status name
  *
  * @return nothing
  */
 void gst_ipcam_client_set_status_properties(const gchar* name)
 {
     gtk_label_set_text(GTK_LABEL(statusBar_labelProperties), name);
+}
+
+/**
+ * show the video type
+ * 
+ * @param type_name const gchar* the video type
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_Video_Type(const gchar* type_name)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelVideoType), type_name);
+}
+
+/**
+ * show the audio type
+ *
+ * @param type_name const gchar* the audio type
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_Audio_Type(const gchar* type_name)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelAudioType), type_name);
 }
