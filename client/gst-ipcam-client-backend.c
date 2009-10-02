@@ -18,6 +18,8 @@
 #include "gst-ipcam-client-callbacks.h"
 
 static gpointer window;
+gchar *videoType;
+gchar *audioType;
 GstElement *pipeline, *rtspsrc,
 		*v_depay_jpg, *v_decoder_jpg, *v_filter_jpg, *videosink,
 		*v_depay_h264, *v_decoder_h264, *v_filter_h264,
@@ -487,6 +489,8 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
                     case GST_STATE_PLAYING:
                         //set_playing_status(nameSongTemp, icon);
                         gst_ipcam_client_set_status_text("Playing");
+                        gst_ipcam_client_set_status_Video_Type(videoType);
+                        gst_ipcam_client_set_status_Audio_Type(audioType);
                         //get_stream_info_objects_for_type ();
                         break;
                     case GST_STATE_PAUSED:
@@ -575,7 +579,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     g_debug ("Signal: pad-added");
     GstCaps *caps;
     GstStructure *str;
-    g_print("Vao day khong---------------------------------------\n");
     caps = gst_pad_get_caps (pad);
     g_assert (caps != NULL);
     str = gst_caps_get_structure (caps, 0);
@@ -595,7 +598,8 @@ static void on_pad_added (GstElement *element, GstPad *pad)
         videosink = gst_ipcam_client_backend_find_best_video_sink();
     	if (g_strrstr (stream_type, "H264"))
         {
-            gst_ipcam_client_set_status_Video_Type("Video type: H264");
+            /*gst_ipcam_client_set_status_Video_Type("Video type: H264");*/
+            videoType = g_strconcat("", "Video type: H264", NULL);
             
             v_depay_h264 = gst_element_factory_make ("rtph264depay", "depay_h264");
 
@@ -617,7 +621,8 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4V-ES"))
         {
-            gst_ipcam_client_set_status_Video_Type("Video type: mpeg4");
+            /*gst_ipcam_client_set_status_Video_Type("Video type: mpeg4");*/
+            videoType = g_strconcat("", "Video type: mpeg4", NULL);
 
             v_depay_mp4 = gst_element_factory_make ("rtpmp4vdepay", "depay_mp4");
 
@@ -640,7 +645,8 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "JPEG"))
         {
-            gst_ipcam_client_set_status_Video_Type("Video type: jpeg");
+            /*gst_ipcam_client_set_status_Video_Type("Video type: jpeg");*/
+            videoType = g_strconcat("", "Video type: jpeg", NULL);
 
             v_depay_jpg = gst_element_factory_make ("rtpjpegdepay", "depay_jpg");
 
@@ -662,11 +668,12 @@ static void on_pad_added (GstElement *element, GstPad *pad)
             gst_object_unref (targetsink);
     	}
     }
-    else if (g_strrstr (c, "audio"))
+    if (g_strrstr (c, "audio"))
     {
     	if (g_strrstr (stream_type, "G726-16"))
         {
-            gst_ipcam_client_set_status_Audio_Type("/Audio type: G726");
+            /*gst_ipcam_client_set_status_Audio_Type("/Audio type: G726");*/
+            audioType = g_strconcat("", "/Audio type: G726", NULL);
 
             a_depay_g726 = gst_element_factory_make ("rtpg726depay", "adepay-g726");
             a_decoder_g726 = gst_element_factory_make ("ffdec_g726", "adecoder-g726");
@@ -687,7 +694,8 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "PCMA"))
         {
-            gst_ipcam_client_set_status_Audio_Type("/Audio type: G711");
+            /*gst_ipcam_client_set_status_Audio_Type("/Audio type: G711");*/
+            audioType = g_strconcat("", "/Audio type: G711", NULL);
             
             a_depay_g711 = gst_element_factory_make ("rtppcmadepay", "adepay-g711");
             a_decoder_g711 = gst_element_factory_make ("alawdec", "adecoder-g711");
@@ -710,7 +718,8 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4A-LATM"))
         {
-            gst_ipcam_client_set_status_Audio_Type("/Audio type: acc");
+            /*gst_ipcam_client_set_status_Audio_Type("/Audio type: acc");*/
+            audioType = g_strconcat("", "/Audio type: G711", NULL);
             
             a_depay_aac = gst_element_factory_make ("rtpmp4adepay", "adepay_aac");
             a_decoder_aac = gst_element_factory_make ("faad", "adecoder_aac");
@@ -761,7 +770,6 @@ void g_ass(gboolean b)
 void
 gst_ipcam_client_backend_create_pipeline(const gchar *url)
 {
-    GstStateChangeReturn ret;
     GstBus *bus;
 
     /* create elements */
@@ -776,7 +784,6 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
     g_object_set (G_OBJECT (rtspsrc), "location", url, NULL);
     g_object_set (G_OBJECT (rtspsrc), "debug", TRUE, NULL);
     g_signal_connect (rtspsrc, "pad-added", G_CALLBACK (on_pad_added), NULL);
-    g_print("Goi cai nay sau ------------\n");
 
     gst_bin_add_many (GST_BIN (pipeline), rtspsrc, NULL);
 }

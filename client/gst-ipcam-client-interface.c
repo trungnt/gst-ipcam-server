@@ -391,9 +391,9 @@ GtkWidget* gst_ipcam_client_init_status_bar()
         statusBar_labelVideoType = gtk_label_new("");
         gtk_widget_show(statusBar_labelVideoType);
         
-        gtk_widget_set_size_request(statusBar_labelVideoType, 130, -1);
-        //gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, TRUE, TRUE, 0);
-        gtk_box_pack_start_defaults(GTK_BOX(statusBar_hBox), statusBar_labelVideoType);
+        gtk_widget_set_size_request(statusBar_labelVideoType, 120, -1);
+        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
+        /*gtk_box_pack_start_defaults(GTK_BOX(statusBar_hBox), statusBar_labelVideoType);*/
         
         // Audio type
         statusBar_labelAudioType = gtk_label_new("");
