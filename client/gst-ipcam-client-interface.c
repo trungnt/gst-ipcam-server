@@ -124,7 +124,7 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_box_pack_start (GTK_BOX (hbox1), vbox2, TRUE, TRUE, 0);
 
   toolbar1 = gtk_toolbar_new ();
-  gtk_widget_show (toolbar1);
+  /*gtk_widget_show (toolbar1);*/
   gtk_box_pack_start (GTK_BOX (vbox2), toolbar1, FALSE, FALSE, 0);
   gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH);
   tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar1));
@@ -380,12 +380,6 @@ GtkWidget* gst_ipcam_client_init_status_bar()
     
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
 
-    // time label
-    /*
-        __statusBar_labelTime = gtk_label_new("0:00/0:00");
-        gtk_widget_set_size_request(__statusBar_labelTime, 80, -1);
-        gtk_box_pack_start(GTK_BOX(__statusBar_hBox), __statusBar_labelTime, FALSE, FALSE, 5);
-     */
     {
         // Video type
         statusBar_labelVideoType = gtk_label_new("");
