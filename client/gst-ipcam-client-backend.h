@@ -103,4 +103,3 @@ gst_ipcam_client_backend_deinit();
 #endif
 
 #endif	/* _gst_ipcam_client_BACKEND_H */
-

@@ -210,89 +210,35 @@ void
 gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data)
 {
-    //static gint counter = 0;
+    /* static gint counter = 0;*/
     is_connect_button_clicked = TRUE;
     gchar *url = gtk_entry_get_text(entry_Url);
     URL = g_strconcat("", url, NULL);
     gst_ipcam_client_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
 
-    ///if video stream type is JPEG
-    //if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "Jpeg stream") == 0)
-    //{
-        ///set url and create the pipeline to get jpeg stream
-
-    //pipeline = gst_element_factory_make ("playbin", "client");
-
-    //url = g_strconcat("playbin uri=", "\"", url, "\"", " name=playbin0", NULL);
     gst_ipcam_client_backend_create_pipeline(url);
-        
-        //g_free(url);
-    //}
-    ///if video stream type is mpeg4
-    //else if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "Mpeg4 stream") == 0)
-    //{
-        ///set url and create the pipeline to get mpeg4 stream
-    //    url = g_strconcat("rtspsrc location=", url, " ! rtpmp4vdepay ! ffdec_mpeg4 ! queue ! ffmpegcolorspace ! identity name=connector", NULL);
-    //    TYPE = 1;
-    //    gst_ipcam_client_backend_create_pipeline(url);
-        
-        //g_free(url);
-    //}
-    ///if video stream type is h264
-    //else if (g_strcmp0(gtk_combo_box_get_active_text(cbx_VideoStreamType), "H264 stream") == 0)
-    //{
-        ///set url and create the pipeline to get h264 stream
-    //   url = g_strconcat("rtspsrc location=", url, " ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! identity name=connector", NULL);
-    //	TYPE = 2;
-    //    gst_ipcam_client_backend_create_pipeline(url);
 
-        //g_free(url);
-    //}
-    //else
-    //{
-    //    g_message("PLAY request could not be sent.");
-    //    GtkWidget *dialog;
-    //		gchar * error_title = gst_ipcam_client_window_create_title(_("Error"));
-
-    //    dialog = gtk_message_dialog_new(NULL,
-    //                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-    //                                    GTK_MESSAGE_ERROR,
-    //                                    GTK_BUTTONS_CLOSE,
-    //                                    "The connection is failed. Please try again");
-
-    //		gtk_window_set_title(dialog, error_title);
-    //    gtk_dialog_run (GTK_DIALOG (dialog));
-    //		g_free(error_title);
-    //    gtk_widget_destroy (dialog);
-    //	gtk_widget_set_sensitive(btn_Connect, TRUE);
-        //destroy the connection dialog
-    //    gtk_widget_destroy(connectionDialog);
-    //    is_connect_button_clicked = FALSE;
-        
-    //    return;
-    //}
     g_message("PLAY request is sending...");
-    ///set pipeline to playing status
+    /*set pipeline to playing status*/
     gst_ipcam_client_backend_play ();
 
     g_message("PLAY request sent.");
 
-    //Resize the mainwindow to show Video got from server
+    /*Resize the mainwindow to show Video got from server*/
     gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
 
-    ///remove btn_Connect button from toolitem_Connect
+    /*remove btn_Connect button from toolitem_Connect*/
     gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
-    //btn_Disconnect = g_object_ref(btn_Connect);
 
-    ///add btn_Disconnect to toolitem_Connect
+    /*add btn_Disconnect to toolitem_Connect*/
     gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
     gtk_widget_show (btn_Disconnect);
 
-    //Get the Pause button and Disconnect button to be sensitive;
+    /*Get the Pause button and Disconnect button to be sensitive;*/
     gtk_widget_set_sensitive(btn_Pause, TRUE);
     gtk_widget_set_sensitive(btn_Disconnect, TRUE);
 
-    //destroy the connection dialog
+    /*destroy the connection dialog*/
     gtk_widget_destroy(connectionDialog);
     is_connect_button_clicked = FALSE;
 }

@@ -454,7 +454,7 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 
                     g_message("PLAY request sent.");
 
-                    //Resize the mainwindow to show the video got from server
+                    /*Resize the mainwindow to show the video got from server*/
                     gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
                 }
                 else
@@ -487,20 +487,15 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
                 gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
                 switch (newState) {
                     case GST_STATE_PLAYING:
-                        //set_playing_status(nameSongTemp, icon);
                         gst_ipcam_client_set_status_text("Playing");
                         gst_ipcam_client_set_status_Video_Type(videoType);
                         gst_ipcam_client_set_status_Audio_Type(audioType);
-                        //get_stream_info_objects_for_type ();
                         break;
                     case GST_STATE_PAUSED:
                         gst_ipcam_client_set_status_text("Paused");
-                        //get_stream_info_objects_for_type ();
                         break;
                     case GST_STATE_NULL:
                         gst_ipcam_client_set_status_text("Stopped");
-                        //gtk_range_set_value(GTK_RANGE(scale_int), 0 );
-                        //UI_SetStatusTimePosition(0);
                         break;
                     case GST_STATE_READY:
                         break;
@@ -543,8 +538,15 @@ static void gst_ipcam_client_backend_print_gst_message(GstMessage* message) {
 	}
 }
 
+/**
+ * Read the video properties
+ *
+ * @param caps GstPad *
+ *
+ * @return nothing
+ */
 void
-read_video_props (GstCaps *caps)
+gst_ipcam_client_read_video_props (GstCaps *caps)
 {
     gint width, height;
     gchar *media_type;
@@ -561,20 +563,28 @@ read_video_props (GstCaps *caps)
     g_message ("The video size of this set of capabilities is %dx%d\n",
     width, height);
 
-    gint fps_n, fps_d;//, width, height;
+    gint fps_n, fps_d;
 
     gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
     gst_structure_get_int(str, "width", &width);
     gst_structure_get_int(str, "height", &height);
-    //codec = gst_structure_get_string(ss, "video-codec");
+    /*codec = gst_structure_get_string(ss, "video-codec");*/
 
     g_message ("frame rate %d/%d",fps_n,fps_d);
 
     g_message("Media type: %s \n", media_type);
-    //gst_structure_set_value(str, "clock-rate", 8000);
+    /*st_structure_set_value(str, "clock-rate", 8000);*/
 }
 
-static void on_pad_added (GstElement *element, GstPad *pad)
+/**
+ * Handle the event when the signal pad-added is called
+ *
+ * @param element GstElement *
+ * @param pad GstPad *
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
 {
     g_debug ("Signal: pad-added");
     GstCaps *caps;
@@ -584,11 +594,10 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     str = gst_caps_get_structure (caps, 0);
     g_assert (str != NULL);
 
-    //const gchar *c = gst_structure_get_name(str);
     const gchar *c = gst_structure_get_string(str, "media");
     const gchar *stream_type = gst_structure_get_string(str, "encoding-name");
 
-    //read_video_props(caps);
+    /*gst_ipcam_client_read_video_props(caps);*/
     
     g_message("Stream type : %s\n", stream_type);
     g_message("Pad name %s\n", c);
@@ -598,7 +607,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
         videosink = gst_ipcam_client_backend_find_best_video_sink();
     	if (g_strrstr (stream_type, "H264"))
         {
-            /*gst_ipcam_client_set_status_Video_Type("Video type: H264");*/
             videoType = g_strconcat("", "Video type: H264", NULL);
             
             v_depay_h264 = gst_element_factory_make ("rtph264depay", "depay_h264");
@@ -606,14 +614,13 @@ static void on_pad_added (GstElement *element, GstPad *pad)
             v_decoder_h264 = gst_element_factory_make ("ffdec_h264", "decoder_h264");
 
             v_filter_h264 = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_h264");
-            //v_sink_h264     = gst_element_factory_make ("autovideosink", "Video Renderer h264");
 
             gst_bin_add_many (GST_BIN (pipeline), v_depay_h264, v_decoder_h264, v_filter_h264, videosink, NULL);
             (gst_element_link (v_depay_h264, v_decoder_h264));
             (gst_element_link (v_decoder_h264, v_filter_h264));
             (gst_element_link (v_filter_h264, videosink));
             g_debug ("Linking video pad %s", stream_type);
-            // Link it actually
+            /* Link it actually*/
             GstPad *targetsink = gst_element_get_pad (v_depay_h264, "sink");
             g_assert (targetsink != NULL);
             gst_pad_link (pad, targetsink);
@@ -621,7 +628,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4V-ES"))
         {
-            /*gst_ipcam_client_set_status_Video_Type("Video type: mpeg4");*/
             videoType = g_strconcat("", "Video type: mpeg4", NULL);
 
             v_depay_mp4 = gst_element_factory_make ("rtpmp4vdepay", "depay_mp4");
@@ -637,7 +643,7 @@ static void on_pad_added (GstElement *element, GstPad *pad)
             (gst_element_link (v_decoder_mp4, v_filter_mp4));
             (gst_element_link (v_filter_mp4, videosink));
             g_debug ("Linking video pad %s", stream_type);
-            // Link it actually
+            /* Link it actually*/
             GstPad *targetsink = gst_element_get_pad (v_depay_mp4, "sink");
             g_assert (targetsink != NULL);
             gst_pad_link (pad, targetsink);
@@ -645,7 +651,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "JPEG"))
         {
-            /*gst_ipcam_client_set_status_Video_Type("Video type: jpeg");*/
             videoType = g_strconcat("", "Video type: jpeg", NULL);
 
             v_depay_jpg = gst_element_factory_make ("rtpjpegdepay", "depay_jpg");
@@ -661,7 +666,7 @@ static void on_pad_added (GstElement *element, GstPad *pad)
             (gst_element_link (v_filter_jpg, videosink));
 
             g_debug ("Linking video pad %s", stream_type);
-    		// Link it actually
+            /* Link it actually*/
             GstPad *targetsink = gst_element_get_pad (v_depay_jpg, "sink");
             g_assert (targetsink != NULL);
             gst_pad_link (pad, targetsink);
@@ -672,7 +677,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     {
     	if (g_strrstr (stream_type, "G726-16"))
         {
-            /*gst_ipcam_client_set_status_Audio_Type("/Audio type: G726");*/
             audioType = g_strconcat("", "/Audio type: G726", NULL);
 
             a_depay_g726 = gst_element_factory_make ("rtpg726depay", "adepay-g726");
@@ -694,7 +698,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "PCMA"))
         {
-            /*gst_ipcam_client_set_status_Audio_Type("/Audio type: G711");*/
             audioType = g_strconcat("", "/Audio type: G711", NULL);
             
             a_depay_g711 = gst_element_factory_make ("rtppcmadepay", "adepay-g711");
@@ -718,7 +721,6 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4A-LATM"))
         {
-            /*gst_ipcam_client_set_status_Audio_Type("/Audio type: acc");*/
             audioType = g_strconcat("", "/Audio type: G711", NULL);
             
             a_depay_aac = gst_element_factory_make ("rtpmp4adepay", "adepay_aac");
@@ -751,19 +753,11 @@ static void on_pad_added (GstElement *element, GstPad *pad)
     }
     gst_caps_unref (caps);
 }
-void g_ass(gboolean b)
-{
-    if(!b)
-        g_debug("Error");
-    else
-        g_debug("OK");
-}
-
 
 /**
  * create the pipeline to get the data from the rtsp server
  *
- * @param pipeline_description const gchar * the pipeline description
+ * @param url const gchar * the url of server
  *
  * @return nothing
  */
@@ -783,7 +777,7 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
 
     g_object_set (G_OBJECT (rtspsrc), "location", url, NULL);
     g_object_set (G_OBJECT (rtspsrc), "debug", TRUE, NULL);
-    g_signal_connect (rtspsrc, "pad-added", G_CALLBACK (on_pad_added), NULL);
+    g_signal_connect (rtspsrc, "pad-added", G_CALLBACK (gst_ipcam_client_on_pad_added), NULL);
 
     gst_bin_add_many (GST_BIN (pipeline), rtspsrc, NULL);
 }
