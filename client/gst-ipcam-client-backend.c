@@ -18,9 +18,9 @@
 #include "gst-ipcam-client-callbacks.h"
 
 static gpointer window;
-gchar *videoType;
-gchar *audioType;
-GstElement *pipeline, *rtspsrc,
+static gchar *videoType;
+static gchar *audioType;
+static GstElement *pipeline, *rtspsrc,
 		*v_depay_jpg, *v_decoder_jpg, *v_filter_jpg, *videosink,
 		*v_depay_h264, *v_decoder_h264, *v_filter_h264,
 		*v_depay_mp4, *v_decoder_mp4, *v_filter_mp4,
@@ -296,6 +296,8 @@ gst_ipcam_client_backend_stop() {
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
 	g_message("Setting to Stop.....Done");
 
+        videoType = NULL;
+        audioType = NULL;
 	return stateReturn;
 }
 
@@ -487,6 +489,8 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
                 gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
                 switch (newState) {
                     case GST_STATE_PLAYING:
+                        if (videosink != NULL)
+                            gst_ipcam_client_read_video_props(videosink);
                         gst_ipcam_client_set_status_text("Playing");
                         gst_ipcam_client_set_status_Video_Type(videoType);
                         gst_ipcam_client_set_status_Audio_Type(audioType);
@@ -539,44 +543,6 @@ static void gst_ipcam_client_backend_print_gst_message(GstMessage* message) {
 }
 
 /**
- * Read the video properties
- *
- * @param caps GstPad *
- *
- * @return nothing
- */
-void
-gst_ipcam_client_read_video_props1 (GstCaps *caps)
-{
-    gint width, height;
-    gchar *media_type;
-    const GstStructure *str;
-    g_return_if_fail (gst_caps_is_fixed (caps));
-    str = gst_caps_get_structure (caps, 0);
-    if (!gst_structure_get_int (str, "payload", &width) ||
-    !gst_structure_get_int (str, "clock-rate", &height))
-    {
-        g_message ("No width/height available\n");
-        return;
-    }
-    media_type = gst_structure_get_string(str, "media");
-    g_message ("The video size of this set of capabilities is %dx%d\n",
-    width, height);
-
-    gint fps_n, fps_d;
-
-    gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
-    gst_structure_get_int(str, "width", &width);
-    gst_structure_get_int(str, "height", &height);
-    /*codec = gst_structure_get_string(ss, "video-codec");*/
-
-    g_message ("frame rate %d/%d",fps_n,fps_d);
-
-    g_message("Media type: %s \n", media_type);
-    /*st_structure_set_value(str, "clock-rate", 8000);*/
-}
-
-/**
  * Handle the event when the signal pad-added is called
  *
  * @param element GstElement *
@@ -596,8 +562,6 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
 
     const gchar *c = gst_structure_get_string(str, "media");
     const gchar *stream_type = gst_structure_get_string(str, "encoding-name");
-
-    /*gst_ipcam_client_read_video_props(caps);*/
     
     g_message("Stream type : %s\n", stream_type);
     g_message("Pad name %s\n", c);
@@ -628,14 +592,13 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4V-ES"))
         {
-            videoType = g_strconcat("", "Video type: mpeg4", NULL);
+            videoType = g_strconcat("", "Video type: MPEG4", NULL);
 
             v_depay_mp4 = gst_element_factory_make ("rtpmp4vdepay", "depay_mp4");
 
             v_decoder_mp4 = gst_element_factory_make ("ffdec_mpeg4", "decoder_mp4");
 
             v_filter_mp4 = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_mp4");
-            //v_sink_mp4     = gst_element_factory_make ("autovideosink", "Video Renderer Mp4");
 
             gst_bin_add_many (GST_BIN (pipeline), v_depay_mp4, v_decoder_mp4, v_filter_mp4, videosink, NULL);
 
@@ -651,13 +614,12 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "JPEG"))
         {
-            videoType = g_strconcat("", "Video type: jpeg", NULL);
+            videoType = g_strconcat("", "Video type: JPEG", NULL);
 
             v_depay_jpg = gst_element_factory_make ("rtpjpegdepay", "depay_jpg");
 
             v_decoder_jpg = gst_element_factory_make ("jpegdec", "decoder_jpg");
             v_filter_jpg = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcsp_jpg");
-            //v_sink_jpg     = gst_element_factory_make ("autovideosink", "Video Renderer Jpg");
 
             gst_bin_add_many (GST_BIN (pipeline), v_depay_jpg, v_decoder_jpg, v_filter_jpg, videosink, NULL);
 
@@ -721,7 +683,7 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4A-LATM"))
         {
-            audioType = g_strconcat("", "/Audio type: aac", NULL);
+            audioType = g_strconcat("", "/Audio type: AAC", NULL);
             
             a_depay_aac = gst_element_factory_make ("rtpmp4adepay", "adepay_aac");
             a_decoder_aac = gst_element_factory_make ("faad", "adecoder_aac");
@@ -729,7 +691,8 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
             a_resample_aac = gst_element_factory_make("audioresample", "audioresample_aac");
             a_sink_aac     = gst_element_factory_make ("autoaudiosink", "audio sink aac");
 
-            gst_bin_add_many (GST_BIN (pipeline), a_depay_aac, a_decoder_aac, a_filter_aac, a_resample_aac, a_sink_aac, NULL);
+            gst_bin_add_many (GST_BIN (pipeline), a_depay_aac, a_decoder_aac, a_filter_aac,
+                              a_resample_aac, a_sink_aac, NULL);
 
             (gst_element_link (a_depay_aac, a_decoder_aac));
             (gst_element_link (a_decoder_aac, a_filter_aac));
@@ -751,7 +714,6 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     {
 	gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
     }
-    gst_ipcam_client_read_video_props(videosink);
     gst_caps_unref (caps);
 }
 
@@ -800,6 +762,10 @@ gst_ipcam_client_read_video_props (GstElement *videosink)
     GstCaps *caps;
 
     pad = gst_element_get_static_pad(videosink, "sink");
+    if (pad == NULL)
+    {
+        return;
+    }
     caps = gst_pad_get_negotiated_caps (pad);
 
     g_return_if_fail (gst_caps_is_fixed (caps));
@@ -809,7 +775,7 @@ gst_ipcam_client_read_video_props (GstElement *videosink)
     gst_structure_get_int(str, "width", &width);
     gst_structure_get_int(str, "height", &height);
 
-    g_message ("frame rate %d/%d",fps_n,fps_d);
-    g_message ("The video size of this set of capabilities is %dx%d\n",
+    g_message ("frame rate %d/%d", fps_n, fps_d);
+    g_message ("The video size of this set of capabilities is %dx%d",
     width, height);
 }

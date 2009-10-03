@@ -47,10 +47,6 @@ gst_ipcam_client_on_btn_Connect_clicked                 (GtkButton       *button
     gtk_widget_set_sensitive(btn_Connect, FALSE);
     connectionDialog = gst_ipcam_client_create_connectionDialog(); 
 
-    /*if (TYPE != 4)
-    {
-	gtk_combo_box_set_active(cbx_VideoStreamType, TYPE);
-    }*/
     if (URL != NULL)
     {
 	gtk_entry_set_text(GTK_ENTRY(entry_Url), URL);
@@ -91,12 +87,10 @@ gst_ipcam_client_on_btn_Disconnect_clicked              (GtkButton       *button
 
     gtk_widget_set_sensitive(btn_Pause, FALSE);
     gst_ipcam_client_backend_stop();
+    
     gst_ipcam_client_set_status_text("");
     gst_ipcam_client_set_status_Video_Type("");
     gst_ipcam_client_set_status_Audio_Type("");
-
-    videoType = NULL;
-    audioType = NULL;
 }
 
 /**
@@ -147,24 +141,6 @@ gst_ipcam_client_on_btn_Resume_clicked                  (GtkButton       *button
     gtk_widget_show (btn_Pause);
     gst_ipcam_client_backend_resume();
 }
-
-/**
- * Handle the event when clicking on the Options button.
- * Show the options dialog
- *
- * @param button GtkButton *
- * @param user_data gpointer
- *
- * @return nothing
- */
-/*void
-gst_ipcam_client_on_btn_Options_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *optionDialog;
-    optionDialog = gst_ipcam_client_create_optionDialog();
-    gtk_widget_show(optionDialog);
-}*/
 
 /**
  * Handle the event when clicking on the About button
