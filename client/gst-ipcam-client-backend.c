@@ -802,7 +802,7 @@ gst_ipcam_client_read_video_props (GstElement *videosink)
     pad = gst_element_get_static_pad(videosink, "sink");
     caps = gst_pad_get_negotiated_caps (pad);
 
-    /* g_return_if_fail (gst_caps_is_fixed (caps));*/
+    g_return_if_fail (gst_caps_is_fixed (caps));
     str = gst_caps_get_structure (caps, 0);
 
     gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);

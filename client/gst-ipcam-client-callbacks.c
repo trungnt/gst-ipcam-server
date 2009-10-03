@@ -94,6 +94,9 @@ gst_ipcam_client_on_btn_Disconnect_clicked              (GtkButton       *button
     gst_ipcam_client_set_status_text("");
     gst_ipcam_client_set_status_Video_Type("");
     gst_ipcam_client_set_status_Audio_Type("");
+
+    videoType = NULL;
+    audioType = NULL;
 }
 
 /**
