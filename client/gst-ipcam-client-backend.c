@@ -546,7 +546,7 @@ static void gst_ipcam_client_backend_print_gst_message(GstMessage* message) {
  * @return nothing
  */
 void
-gst_ipcam_client_read_video_props (GstCaps *caps)
+gst_ipcam_client_read_video_props1 (GstCaps *caps)
 {
     gint width, height;
     gchar *media_type;
@@ -721,7 +721,7 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     	}
         else if (g_strrstr (stream_type, "MP4A-LATM"))
         {
-            audioType = g_strconcat("", "/Audio type: G711", NULL);
+            audioType = g_strconcat("", "/Audio type: aac", NULL);
             
             a_depay_aac = gst_element_factory_make ("rtpmp4adepay", "adepay_aac");
             a_decoder_aac = gst_element_factory_make ("faad", "adecoder_aac");
@@ -751,6 +751,7 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     {
 	gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
     }
+    gst_ipcam_client_read_video_props(videosink);
     gst_caps_unref (caps);
 }
 
@@ -780,4 +781,35 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
     g_signal_connect (rtspsrc, "pad-added", G_CALLBACK (gst_ipcam_client_on_pad_added), NULL);
 
     gst_bin_add_many (GST_BIN (pipeline), rtspsrc, NULL);
+}
+
+/**
+ * Read the video properties
+ *
+ * @param caps GstPad *
+ *
+ * @return nothing
+ */
+void
+gst_ipcam_client_read_video_props (GstElement *videosink)
+{
+    gint fps_n, fps_d;
+    gint width, height;
+    GstStructure *str = NULL;
+    GstPad *pad;
+    GstCaps *caps;
+
+    pad = gst_element_get_static_pad(videosink, "sink");
+    caps = gst_pad_get_negotiated_caps (pad);
+
+    /* g_return_if_fail (gst_caps_is_fixed (caps));*/
+    str = gst_caps_get_structure (caps, 0);
+
+    gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
+    gst_structure_get_int(str, "width", &width);
+    gst_structure_get_int(str, "height", &height);
+
+    g_message ("frame rate %d/%d",fps_n,fps_d);
+    g_message ("The video size of this set of capabilities is %dx%d\n",
+    width, height);
 }
