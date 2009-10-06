@@ -20,13 +20,13 @@
 static gpointer window;
 static gchar *videoType;
 static gchar *audioType;
-static GstElement *pipeline, *rtspsrc,
-		*v_depay_jpg, *v_decoder_jpg, *v_filter_jpg, *videosink,
-		*v_depay_h264, *v_decoder_h264, *v_filter_h264,
-		*v_depay_mp4, *v_decoder_mp4, *v_filter_mp4,
-		*a_depay_aac, *a_decoder_aac, *a_filter_aac, *a_resample_aac, *a_sink_aac,
-		*a_depay_g726, *a_decoder_g726, *a_filter_g726, *a_resample_g726, *a_sink_g726,
-		*a_depay_g711, *a_decoder_g711, *a_filter_g711, *a_resample_g711, *a_sink_g711;
+static GstElement   *pipeline, *rtspsrc,
+                    *v_depay_jpg, *v_decoder_jpg, *v_filter_jpg, *videosink,
+                    *v_depay_h264, *v_decoder_h264, *v_filter_h264,
+                    *v_depay_mp4, *v_decoder_mp4, *v_filter_mp4,
+                    *a_depay_aac, *a_decoder_aac, *a_filter_aac, *a_resample_aac, *a_sink_aac,
+                    *a_depay_g726, *a_decoder_g726, *a_filter_g726, *a_resample_g726, *a_sink_g726,
+                    *a_depay_g711, *a_decoder_g711, *a_filter_g711, *a_resample_g711, *a_sink_g711;
 static gint prewState;
 static gint curtState;
 /**
@@ -104,47 +104,6 @@ gst_ipcam_client_backend_init(int *argc,
 }
 
 /**
- * create the pipeline to get the data from the rtsp server
- *
- * @param pipeline_description const gchar * the pipeline description
- *
- * @return nothing
- */
-/*
-void
-gst_ipcam_client_backend_create_pipeline(const gchar *url) {
-	//GstElement * connector;
-	GstElement *videosink;
-	g_message("SETUP request is sending...");
-	g_debug("the pipeline is :%s", url);
-
-	//pipeline = gst_parse_launch(pipeline_description, NULL);
-        pipeline = gst_element_factory_make ("playbin", "client");
-        g_object_set (G_OBJECT (pipeline), "uri", url, NULL);
-	g_message("SETUP request sent.");
-
-	videosink = gst_ipcam_client_backend_find_best_video_sink();
-        //videosink = gst_element_factory_make("xvimagesink", "videosink");
-	//connector = gst_bin_get_by_name(GST_BIN(pipeline), "connector");
-        //playbin = gst_bin_get_by_name(GST_BIN(pipeline), "playbin0");
-	//gst_bin_add(GST_BIN(pipeline), videosink);
-	//gst_element_link(connector, videosink);
-        g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
-        g_object_set(G_OBJECT(pipeline), "video-sink", videosink, NULL);
-
-	// set the bus message handling function
-	{
-		GstBus * bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
-                gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, url);
-		gst_object_unref(bus);
-	}
-
-	if (GST_IS_X_OVERLAY(videosink)) {
-		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
-	}
-}*/
-
-/**
  * Set the pointer window
  *
  * @param window_ gpointer the pointer to show video region in the main window
@@ -173,89 +132,6 @@ gst_ipcam_client_backend_play() {
 	g_message("Setting to Play.....Done");
         
 	return stateReturn;
-}
-
-
-//static GList *
-void
-get_stream_info_objects_for_type ()//(GstElement *play)//, const gchar *typestr)
-{
-        GValueArray *info_arr = NULL;
-        GstElement *source;
-        GstElementFactory *factory;
-        //GList *ret = NULL;
-        guint ii;
-
-        if (pipeline == NULL)
-                return ;
-        g_object_get(G_OBJECT(pipeline), "stream-info-value-array", &info_arr, NULL);
-        g_object_get(G_OBJECT(pipeline), "source", &source, NULL);
-
-        g_message("source name %s", gst_element_get_name(source));
-        factory = gst_element_get_factory(source);
-        g_message("factory description %s", gst_element_factory_get_description(factory));
-        if (info_arr == NULL)
-                return ;
-
-        g_message (" get info %d",info_arr->n_values);
-        for (ii = 0; ii < info_arr->n_values; ++ii)
-        {
-                GObject *info_obj;
-                GValue *val;
-
-                val = g_value_array_get_nth(info_arr, ii);
-                info_obj = g_value_get_object(val);
-                if (info_obj)
-                {
-                        //GParamSpec *pspec;
-                        //GEnumValue *value;
-                        GstCaps *caps;
-                        GstPad * pad;
-                        gint type = -1;
-                        gchar *codec;
-
-                        g_object_get(info_obj, "type", &type, NULL);
-                        g_object_get(info_obj, "object", &pad, NULL);
-                        g_object_get(info_obj, "encoding-name", &codec, NULL);
-                        g_message("codec %s",codec);
-                        g_message("type %d",type);
-                        GstStructure *ss=NULL;
-
-                        caps = gst_pad_get_negotiated_caps(pad);
-
-                        codec = gst_caps_to_string (caps);
-
-                        g_message ("codec: %s",codec);
-                        ss = gst_caps_get_structure(caps, 0);
-                        if (ss)
-                        {
-                            gint fps_n, fps_d, width, height;
-
-
-                            gst_structure_get_fraction(ss, "framerate", &fps_n, &fps_d);
-                            gst_structure_get_int(ss, "width", &width);
-                            gst_structure_get_int(ss, "height", &height);
-                            //codec = gst_structure_get_string(ss, "video-codec");
-
-                            g_message ("frame rate %d/%d",fps_n,fps_d);
-                            //g_message ("codec: %s",codec);
-                        }
-                        /*pspec = g_object_class_find_property(
-                                                G_OBJECT_GET_CLASS (info_obj), "type");
-                        value = g_enum_get_value(
-                                                G_PARAM_SPEC_ENUM (pspec)->enum_class, type);
-                        if (value)
-                        {
-                                if (g_ascii_strcasecmp (value->value_nick, typestr) == 0 ||
-                                        g_ascii_strcasecmp (value->value_name, typestr) == 0)
-                                {
-                                        ret = g_list_prepend (ret, g_object_ref (info_obj));
-                                }
-                        }*/
-                }
-        } 
-        g_value_array_free (info_arr);
-        //return g_list_reverse (ret);
 }
 
 /**
@@ -339,7 +215,6 @@ gst_ipcam_client_backend_deinit() {
 static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 	GList *list, *item;
 	GstElement *choice = NULL;
-//	GstMessage *message = NULL;
 	GSList *errors = NULL;
 	GstBus *bus = gst_bus_new();
 
@@ -382,7 +257,6 @@ static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 			/* FIXME: we forward the first error for now; but later on it might make
 			 * sense to actually analyse them */
 			gst_message_ref(GST_MESSAGE(errors->data));
-			//g_warning("reposting message %s", errors->data);
 			gst_ipcam_client_backend_print_gst_message(errors->data);
 			gst_message_unref(GST_MESSAGE(errors->data));
 		} else {
@@ -446,7 +320,6 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 		gchar * debug;
 		GError * error;
                 gst_message_parse_error(msg, &error, &debug);
-
                 if ((prewState == GST_PAUSE_STATE) && (curtState == GST_PLAYING_STATE))
                 {
                     gst_ipcam_client_backend_stop();
@@ -557,6 +430,7 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
     GstStructure *str;
     caps = gst_pad_get_caps (pad);
     g_assert (caps != NULL);
+
     str = gst_caps_get_structure (caps, 0);
     g_assert (str != NULL);
 
@@ -652,7 +526,7 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
             (gst_element_link (a_filter_g726, a_resample_g726));
             (gst_element_link (a_resample_g726, a_sink_g726));
             g_debug ("Linking audio pad %s", stream_type);
-            // Link it actually
+            /* Link it actually*/
             GstPad *targetsink = gst_element_get_pad (a_depay_g726, "sink");
             g_assert (targetsink != NULL);
             gst_pad_link (pad, targetsink);
@@ -728,14 +602,14 @@ void
 gst_ipcam_client_backend_create_pipeline(const gchar *url)
 {
     GstBus *bus;
-
     /* create elements */
     pipeline = gst_pipeline_new ("pipeline");
     /* watch for messages on the pipeline's bus (note that this will only
     * work like this when a GLib main loop is running) */
     bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
-    gst_bus_add_watch (bus, gst_ipcam_client_backend_bus_watch, url);
+    gst_bus_add_watch (bus, gst_ipcam_client_backend_bus_watch, g_strdup(url));
     gst_object_unref (bus);
+    
     rtspsrc = gst_element_factory_make ("rtspsrc", "rtspsource");
 
     g_object_set (G_OBJECT (rtspsrc), "location", url, NULL);
@@ -748,7 +622,7 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
 /**
  * Read the video properties
  *
- * @param caps GstPad *
+ * @param videosink GstElement *
  *
  * @return nothing
  */
@@ -757,6 +631,8 @@ gst_ipcam_client_read_video_props (GstElement *videosink)
 {
     gint fps_n, fps_d;
     gint width, height;
+    gint datarate;
+    gchar *capsInfor;
     GstStructure *str = NULL;
     GstPad *pad;
     GstCaps *caps;
@@ -771,9 +647,21 @@ gst_ipcam_client_read_video_props (GstElement *videosink)
     g_return_if_fail (gst_caps_is_fixed (caps));
     str = gst_caps_get_structure (caps, 0);
 
+    if (str == NULL)
+    {
+        return;
+    }
+
+    capsInfor = gst_caps_to_string (caps);
+    g_message ("caps Infor: %s", capsInfor);
+    
     gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
     gst_structure_get_int(str, "width", &width);
     gst_structure_get_int(str, "height", &height);
+
+    gst_structure_get_int(str, "datarate", &datarate);
+
+    g_message("The datarate is : %d\n", datarate);
 
     g_message ("frame rate %d/%d", fps_n, fps_d);
     g_message ("The video size of this set of capabilities is %dx%d",

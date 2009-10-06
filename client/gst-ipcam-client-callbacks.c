@@ -36,14 +36,6 @@ void
 gst_ipcam_client_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
-    ///remove btn_Connect button from toolitem_Connect
-    //gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
-    //btn_Connect = g_object_ref(btn_Connect);
-
-    ///add btn_Disconnect button to toolitem_Connect
-    //gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
-    ///show the button
-    //gtk_widget_show (btn_Disconnect);
     gtk_widget_set_sensitive(btn_Connect, FALSE);
     connectionDialog = gst_ipcam_client_create_connectionDialog(); 
 
@@ -69,18 +61,16 @@ void
 gst_ipcam_client_on_btn_Disconnect_clicked              (GtkButton       *button,
                                            gpointer         user_data)
 {
-    ///remove btn_Disconnect button from toolitem_Connect
+    /*remove btn_Disconnect button from toolitem_Connect*/
     gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
-    //btn_Disconnect = g_object_ref(btn_Disconnect);
 
     gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Resume);
-    //btn_Resume = g_object_ref(btn_Resume);
 
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
     gtk_widget_show (btn_Pause);
 
 
-    ///add btn_Connect to toolitem_Connect and stop the pipeline
+    /*add btn_Connect to toolitem_Connect and stop the pipeline*/
     gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
     gtk_widget_set_sensitive(btn_Connect, TRUE);
     gtk_widget_show (btn_Connect);
@@ -107,11 +97,10 @@ void
 gst_ipcam_client_on_btn_Pause_clicked                   (GtkButton       *button,
                                             gpointer         user_data)
 {
-    ///remove btn_Pause from toolitem_Pause
+    /*remove btn_Pause from toolitem_Pause*/
     gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Pause);
-    //btn_Pause = g_object_ref(btn_Pause);
 
-    ///add btn_Resume to toolitem_Pause and pause the pipeline
+    /*add btn_Resume to toolitem_Pause and pause the pipeline*/
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Resume);
     gtk_widget_show(btn_Resume);
     gtk_widget_set_sensitive(btn_Resume, TRUE);
@@ -132,11 +121,10 @@ void
 gst_ipcam_client_on_btn_Resume_clicked                  (GtkButton       *button,
                                             gpointer         user_data)
 {
-    ///remove btn_Resume from toolitem_Pause
+    /*remove btn_Resume from toolitem_Pause*/
     gtk_container_remove (GTK_CONTAINER (toolitem_Pause), btn_Resume);
-    //btn_Resume = g_object_ref(btn_Resume);
 
-    ///add btn_Pause to toolitem_Pause and resume playing video
+    /*add btn_Pause to toolitem_Pause and resume playing video*/
     gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
     gtk_widget_show (btn_Pause);
     gst_ipcam_client_backend_resume();
@@ -195,7 +183,7 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
     URL = g_strconcat("", url, NULL);
     gst_ipcam_client_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_GuestVideo->window)));
 
-    gst_ipcam_client_backend_create_pipeline(url);
+    gst_ipcam_client_backend_create_pipeline(URL);
 
     g_message("PLAY request is sending...");
     /*set pipeline to playing status*/
@@ -237,7 +225,7 @@ gst_ipcam_client_on_connectionDialog_destroy                (GtkObject       *ob
 {
     if (!is_connect_button_clicked)
     {
-        //Active the Connect button and Inactive the Pause button
+        /*Active the Connect button and Inactive the Pause button*/
         gtk_widget_set_sensitive(btn_Pause, FALSE);
         gtk_widget_set_sensitive(btn_Connect, TRUE);
     }

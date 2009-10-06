@@ -351,7 +351,7 @@ GtkWidget* gst_ipcam_client_init_status_bar()
 {
     GtkWidget * separator;
 
-    // init the outside containter
+    /* init the outside containter*/
     statusBar_vBox = gtk_vbox_new(FALSE, 0);
     gtk_widget_show(statusBar_vBox);
 
@@ -360,36 +360,36 @@ GtkWidget* gst_ipcam_client_init_status_bar()
     gtk_widget_show(separator);
     gtk_box_pack_start(GTK_BOX(statusBar_vBox), separator, FALSE, FALSE, 0);
 
-    // init the inside containter
+    /* init the inside containter*/
     statusBar_hBox = gtk_hbox_new(FALSE, 0);
     gtk_widget_show(statusBar_hBox);
 
     gtk_widget_set_size_request(statusBar_hBox, 500, 25);
     gtk_box_pack_start(GTK_BOX(statusBar_vBox), statusBar_hBox, FALSE, FALSE, 0);
 
-    // init the status label
+    /* init the status label*/
     statusBar_labelStatus = gtk_label_new("");
     gtk_widget_show(statusBar_labelStatus);
 
     gtk_widget_set_size_request(statusBar_labelStatus, 60, -1);
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelStatus, FALSE, TRUE, 5);
 
-    // separator
+    /* separator*/
     separator = gtk_vseparator_new();
     gtk_widget_show(separator);
     
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
 
     {
-        // Video type
+        /* Video type*/
         statusBar_labelVideoType = gtk_label_new("");
         gtk_widget_show(statusBar_labelVideoType);
         
-        gtk_widget_set_size_request(statusBar_labelVideoType, 120, -1);
+        gtk_widget_set_size_request(statusBar_labelVideoType, 130, -1);
         gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
         /*gtk_box_pack_start_defaults(GTK_BOX(statusBar_hBox), statusBar_labelVideoType);*/
         
-        // Audio type
+        /* Audio type*/
         statusBar_labelAudioType = gtk_label_new("");
         gtk_widget_show(statusBar_labelAudioType);
         
@@ -397,17 +397,17 @@ GtkWidget* gst_ipcam_client_init_status_bar()
         gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelAudioType, FALSE, FALSE, 0);
     }
 
-    // separator
+    /* separator*/
     separator = gtk_vseparator_new();
-    //gtk_widget_show(separator);
+    /*gtk_widget_show(separator);*/
 
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
 
-    // Properties label
+    /* Properties label*/
     statusBar_labelProperties = gtk_label_new("");
-    //gtk_widget_show(statusBar_labelProperties);
+    /*gtk_widget_show(statusBar_labelProperties);*/
     
-    //    gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);
+    /*    gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);*/
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
 
     return statusBar_vBox;
