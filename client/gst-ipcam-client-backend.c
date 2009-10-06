@@ -9,8 +9,6 @@
 
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
-#include <gstreamer-0.10/gst/gststructure.h>
-#include <gstreamer-0.10/gst/gstutils.h>
 
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -20,17 +18,42 @@
 #include "gst-ipcam-client-callbacks.h"
 
 static gpointer window;
-static gchar *videoType;
-static gchar *audioType;
+static gchar *video_type;
+static gchar *audio_type;
 static GstElement *pipeline, *rtspsrc, *videosink;
 static GstElement *video_decoder = NULL;
 static GstElement *audio_decoder = NULL;
 static gint prewState;
 static gint curtState;
 
+/**
+ * Create the video branch for the pipeline
+ *
+ * @param pipeline GstElement* the pipeline to insert elements to
+ *
+ * @return gboolean TRUE if everything is ok, FALSE if something wrong (can create an element, ... )
+ */
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement * pipeline);
+
+/**
+ * Create the audio branch for the pipeline
+ *
+ * @param pipeline GstElement* the pipeline to insert elements to
+ *
+ * @return gboolean TRUE if everything is ok, FALSE if something wrong (can create an element, ... )
+ */
 static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement * pipeline);
 
+/**
+ * callback when the video_decoder/audio_decoder create new src pad.
+ *
+ * @param decoder GstElement* the decoder that emit the signal
+ * @param pad GstPad* newly added pad by the decoder
+ * @param last gboolean unused
+ * @param next_element gpointer pointer to the next element to link the decoder to
+ *
+ * @return None
+ */
 static void gst_ipcam_client_backend_decoder_on_pad_add(GstElement * decoder, GstPad * pad, gboolean last, gpointer next_element );
 
 /**
@@ -176,8 +199,8 @@ gst_ipcam_client_backend_stop() {
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
 	g_message("Setting to Stop.....Done");
 
-        videoType = NULL;
-        audioType = NULL;
+        video_type = NULL;
+        audio_type = NULL;
 	return stateReturn;
 }
 
@@ -369,8 +392,8 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
                         if (videosink != NULL)
                             gst_ipcam_client_read_video_props(videosink);
                         gst_ipcam_client_set_status_text("Playing");
-                        gst_ipcam_client_set_status_Video_Type(videoType);
-                        gst_ipcam_client_set_status_Audio_Type(audioType);
+                        gst_ipcam_client_set_status_Video_Type(video_type);
+                        gst_ipcam_client_set_status_Audio_Type(audio_type);
                         break;
                     case GST_STATE_PAUSED:
                         gst_ipcam_client_set_status_text("Paused");
@@ -437,15 +460,15 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
 
     str = gst_caps_get_structure (caps, 0);
     g_assert (str != NULL);
-
-	g_warning("The structure I got: %s", gst_structure_to_string(str));
-
-    const gchar *c = gst_structure_get_string(str, "media");
+	
+	/* get the media type, which will show us this's video or audio stream */
+	gchar *media_type = g_strdup(gst_structure_get_string(str, "media"));
+	/* get the stream type, which will show us the codec of the stream */
     gchar *stream_type = g_strdup(gst_structure_get_string(str, "encoding-name"));
     
     g_message("Stream type : %s\n", stream_type);
 	{
-		/* preprocess audio type */
+		/* preprocess stream type */
 		if (g_strcmp0(stream_type, "MP4V-ES") == 0) {
 			g_free(stream_type);
 			stream_type = g_strdup("MPEG4");
@@ -460,40 +483,55 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
 			stream_type = g_strdup("G711");
 		}
 	}
-    g_message("Pad name %s\n", c);
-	if (g_strrstr(c, "video") != NULL) {
-		// got video stream
-		if (videoType != NULL) {
-			g_free(videoType);
+	gst_caps_unref(caps);
+    g_message("Pad name %s\n", media_type);
+
+	if (g_strrstr(media_type, "video") != NULL) {
+		/* got video stream */
+		GstPad * video_decoder_sink_pad;
+
+		g_free(media_type);
+		
+		if (video_type != NULL) {
+			g_free(video_type);
 		}
-		videoType = g_strdup_printf("Video type: %s", stream_type);
-		GstPad * video_decoder_sink_pad = gst_element_get_static_pad(video_decoder, "sink");
+		video_type = g_strdup_printf("Video type: %s", stream_type);
+		g_free(stream_type);
+		
+		video_decoder_sink_pad = gst_element_get_static_pad(video_decoder, "sink");
 		if (GST_PAD_IS_LINKED(video_decoder_sink_pad)) {
 			gst_object_unref(video_decoder_sink_pad);
 			return;
 		}
 
+		/* link rtspsrc to video decoder */
 		gst_pad_link(pad, video_decoder_sink_pad);
-		gst_caps_unref(caps);
+		gst_object_unref(video_decoder_sink_pad);
 
 		if (GST_IS_X_OVERLAY(videosink)) {
 			gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
 		}
-	} else if (g_strrstr(c, "audio") != NULL) {
-		// got audio stream
-		if (audioType != NULL) {
-			g_free(audioType);
-		}
-		audioType = g_strdup_printf("/Audio type: %s", stream_type);
+	} else if (g_strrstr(media_type, "audio") != NULL) {
+		/* got audio stream */
+		GstPad * audio_decoder_sink_pad;
 
-		GstPad * audio_decoder_sink_pad = gst_element_get_static_pad(audio_decoder, "sink");
+		g_free(media_type);
+
+		if (audio_type != NULL) {
+			g_free(audio_type);
+		}
+		audio_type = g_strdup_printf("/Audio type: %s", stream_type);
+		g_free(stream_type);
+
+		audio_decoder_sink_pad = gst_element_get_static_pad(audio_decoder, "sink");
 		if (GST_PAD_IS_LINKED(audio_decoder_sink_pad)) {
 			gst_object_unref(audio_decoder_sink_pad);
 			return;
 		}
 
+		/* link rtspsrc to audio_decoder */
 		gst_pad_link(pad, audio_decoder_sink_pad);
-		gst_caps_unref(caps);
+		gst_object_unref(audio_decoder_sink_pad);
 	}
 }
 
@@ -519,10 +557,11 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
     rtspsrc = gst_element_factory_make ("rtspsrc", "rtspsource");
 
     g_object_set (G_OBJECT (rtspsrc), "location", url, NULL);
-    //g_object_set (G_OBJECT (rtspsrc), "debug", TRUE, NULL);
+    g_object_set (G_OBJECT (rtspsrc), "debug", TRUE, NULL);
     g_signal_connect (rtspsrc, "pad-added", G_CALLBACK (gst_ipcam_client_on_pad_added), NULL);
 
 	gst_bin_add_many (GST_BIN (pipeline), rtspsrc, NULL);
+	
 	gst_ipcam_client_backend_create_video_branch(pipeline);
 	gst_ipcam_client_backend_create_audio_branch(pipeline);
 }
@@ -577,17 +616,19 @@ gst_ipcam_client_read_video_props (GstElement *videosink)
 }
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline) {
-	//GstElement * video_decoder;
 	GstElement * video_queue;
 	GstElement * video_converter;
-	//GstElement * videosink;
 	g_return_val_if_fail(pipeline != NULL, FALSE);
+
 	video_decoder = gst_element_factory_make("decodebin", "video_decoder");
 	g_assert(video_decoder);
+
 	video_queue = gst_element_factory_make("queue", "video_queue");
 	g_assert(video_queue);
+
 	video_converter = gst_element_factory_make("ffmpegcolorspace", "video_converter");
 	g_assert(video_converter);
+
 	videosink = gst_ipcam_client_backend_find_best_video_sink();
 	g_assert(videosink);
 	g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
@@ -600,13 +641,12 @@ static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipelin
 }
 
 static void gst_ipcam_client_backend_decoder_on_pad_add(GstElement* decoder, GstPad* pad, gboolean last, gpointer data) {
-	g_assert(decoder);
 	GstElement * next_element = GST_ELEMENT(data);
-
 	GstPad * next_sink;
 
-	g_debug("******** new decoded pad **********");
-
+	/* for now, we do not check media type for our pad
+	 * do not really need to check though
+	 */
 	next_sink = gst_element_get_static_pad(next_element, "sink");
 	if (GST_PAD_IS_LINKED(next_sink)) {
 		gst_object_unref(next_sink);
@@ -622,12 +662,16 @@ static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement* pipelin
 	GstElement * audio_sink;
 	
 	g_return_val_if_fail(pipeline != NULL, FALSE);
+
 	audio_decoder = gst_element_factory_make("decodebin", "audio_decoder");
 	g_assert(audio_decoder);
+
 	audio_queue = gst_element_factory_make("queue", "audio_queue");
 	g_assert(audio_queue);
+
 	audio_converter = gst_element_factory_make("audioconvert", "audio_converter");
 	g_assert(audio_converter);
+
 	audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");
 	g_assert(audio_sink);
 
