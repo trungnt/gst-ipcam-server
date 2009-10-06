@@ -32,7 +32,14 @@ III. SOFTWARE REQUIREMENTS
  - After installing, gst-inspect may not found ffenc_mpeg4 and ffenc_libx264. This case often happens when you install gstreamer0.10-ffmpeg before with libavcodec package (which does not come with MPEG4 and H.264 encoders). So, to use them, you must remove old gstreamer plugins registry file by using this command:
 	$ rm ~/.gstreamer-0.10/registry.*
 
-2. Basic gstreamer packages
+2. Basic gstreamer packages version > 0.10.23 from ppa
+ - Add following lines to /etc/apt/sources.list:  
+	deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
+	deb-src http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
+ 
+ - Then:  
+	$ sudo apt-get update  
+
  - Our server require some gstreamer packages: libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev. Install them by using the following command:
  	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
  
