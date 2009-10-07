@@ -27,6 +27,15 @@ static gint prewState;
 static gint curtState;
 
 /**
+ * Get the string representation for GstStreamStatusType
+ *
+ * @param type GstStreamStatusType the type we want to get string form
+ *
+ * @return string form of given value
+ */
+static const gchar * gst_ipcam_client_backend_stream_status_get_name(GstStreamStatusType type);
+
+/**
  * Create the video branch for the pipeline
  *
  * @param pipeline GstElement* the pipeline to insert elements to
@@ -54,7 +63,7 @@ static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement * pipeli
  *
  * @return None
  */
-static void gst_ipcam_client_backend_decoder_on_pad_add(GstElement * decoder, GstPad * pad, gboolean last, gpointer next_element );
+static void gst_ipcam_client_backend_decoder_on_pad_add(GstElement * decoder, GstPad * pad, gboolean last, gpointer next_element);
 
 /**
  * This function will try to find the best suitable video sink used for current window system.
@@ -151,13 +160,13 @@ gst_ipcam_client_backend_set_window(gpointer window_) {
  */
 gint
 gst_ipcam_client_backend_play() {
-        prewState = GST_STOP_STATE;
-        curtState = GST_PLAYING_STATE;
-        GstStateChangeReturn stateReturn;
+	prewState = GST_STOP_STATE;
+	curtState = GST_PLAYING_STATE;
+	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	g_message("Setting to Play.....Done");
-        
+
 	return stateReturn;
 }
 
@@ -170,9 +179,9 @@ gst_ipcam_client_backend_play() {
  */
 gint
 gst_ipcam_client_backend_pause() {
-        prewState = GST_PLAYING_STATE;
-        curtState = GST_PAUSE_STATE;
-        
+	prewState = GST_PLAYING_STATE;
+	curtState = GST_PAUSE_STATE;
+
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
@@ -190,17 +199,17 @@ gst_ipcam_client_backend_pause() {
  */
 gint
 gst_ipcam_client_backend_stop() {
-        prewState = GST_PLAYING_STATE;
-        curtState = GST_STOP_STATE;
-        
+	prewState = GST_PLAYING_STATE;
+	curtState = GST_STOP_STATE;
+
 	gtk_window_resize(GTK_WINDOW(mainWindow), 420, 50);
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
 	g_message("Setting to Stop.....Done");
 
-        video_type = NULL;
-        audio_type = NULL;
+	video_type = NULL;
+	audio_type = NULL;
 	return stateReturn;
 }
 
@@ -213,9 +222,9 @@ gst_ipcam_client_backend_stop() {
  */
 gint
 gst_ipcam_client_backend_resume() {
-        prewState = GST_PAUSE_STATE;
-        curtState = GST_PLAYING_STATE;
-        
+	prewState = GST_PAUSE_STATE;
+	curtState = GST_PLAYING_STATE;
+
 	GstStateChangeReturn stateReturn;
 
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
@@ -262,17 +271,17 @@ static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 			ret = gst_element_set_state(el, GST_STATE_READY);
 			if (ret == GST_STATE_CHANGE_SUCCESS) {
 				choice = el;
-				g_debug("We are using '%s'", GST_PLUGIN_FEATURE (f)->name);
+				g_debug("We are using '%s'", GST_PLUGIN_FEATURE(f)->name);
 				break;
 			}
 
 			/* collect all error messages */
-/*
-			while ((message = gst_bus_pop_filtered(bus, GST_MESSAGE_ERROR))) {
-				g_warning("error message %" GST_PTR_FORMAT, message);
-				errors = g_slist_append(errors, message);
-			}
-*/
+			/*
+						while ((message = gst_bus_pop_filtered(bus, GST_MESSAGE_ERROR))) {
+							g_warning("error message %" GST_PTR_FORMAT, message);
+							errors = g_slist_append(errors, message);
+						}
+			 */
 
 			gst_element_set_state(el, GST_STATE_NULL);
 			gst_object_unref(el);
@@ -289,7 +298,7 @@ static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 		} else {
 			/* send warning message to application and use a fakesink */
 			g_warning("Failed to find a usable video sink");
-			choice = sink;//gst_element_factory_make("fakesink", "fake-video-sink");
+			choice = sink; //gst_element_factory_make("fakesink", "fake-video-sink");
 			if (g_object_class_find_property(G_OBJECT_GET_CLASS(choice), "sync"))
 				g_object_set(choice, "sync", TRUE, NULL);
 			gst_element_set_state(choice, GST_STATE_READY);
@@ -341,103 +350,144 @@ static GstElement * gst_ipcam_client_backend_create_sink(GstElementFactory* fact
 }
 
 static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg, gpointer data) {
-        switch (GST_MESSAGE_TYPE(msg)) {
-            case GST_MESSAGE_ERROR:
-            {
-		gchar * debug;
-		GError * error;
-                gst_message_parse_error(msg, &error, &debug);
-                if ((prewState == GST_PAUSE_STATE) && (curtState == GST_PLAYING_STATE))
-                {
-                    gst_ipcam_client_backend_stop();
-                    pipeline = NULL;
-                    gst_ipcam_client_backend_create_pipeline((gchar *)data);
-                    gst_ipcam_client_backend_play();
+	switch (GST_MESSAGE_TYPE(msg)) {
+		case GST_MESSAGE_ERROR:
+		{
+			gchar * debug;
+			GError * error;
+			gst_message_parse_error(msg, &error, &debug);
+			if ((prewState == GST_PAUSE_STATE) && (curtState == GST_PLAYING_STATE)) {
+				gst_ipcam_client_backend_stop();
+				pipeline = NULL;
+				gst_ipcam_client_backend_create_pipeline((gchar *) data);
+				gst_ipcam_client_backend_play();
 
-                    g_message("PLAY request sent.");
+				g_message("PLAY request sent.");
 
-                    /*Resize the mainwindow to show the video got from server*/
-                    gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
-                }
-                else
-                {
-                    g_message("PLAY request could not be sent.");
-                
-                    GtkWidget *dialog;
-                    dialog = gtk_message_dialog_new(NULL,
-                                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                    GTK_MESSAGE_ERROR,
-                                                    GTK_BUTTONS_CLOSE,
-                                                    "The connection is failed. Please try again");
+				/*Resize the mainwindow to show the video got from server*/
+				gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
+			} else {
+				g_message("PLAY request could not be sent.");
 
-                    gtk_dialog_run (GTK_DIALOG (dialog));
-                    gtk_widget_destroy (dialog);
+				GtkWidget *dialog;
+				dialog = gtk_message_dialog_new(NULL,
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_CLOSE,
+						"The connection is failed. Please try again");
 
-                    gst_ipcam_client_on_btn_Disconnect_clicked(NULL, NULL);
-                    g_free(debug);
+				gtk_dialog_run(GTK_DIALOG(dialog));
+				gtk_widget_destroy(dialog);
 
-                    g_warning("Pipeline error: %s", error->message);
+				gst_ipcam_client_on_btn_Disconnect_clicked(NULL, NULL);
+				g_free(debug);
 
-                    g_error_free(error);
-                
-                }
-            }
-            break;
-            case GST_MESSAGE_STATE_CHANGED:
-            {
-                GstState oldState, newState, pending;
-                gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
-                switch (newState) {
-                    case GST_STATE_PLAYING:
-                        if (videosink != NULL)
-                            gst_ipcam_client_read_video_props(videosink);
-                        gst_ipcam_client_set_status_text("Playing");
-                        gst_ipcam_client_set_status_Video_Type(video_type);
-                        gst_ipcam_client_set_status_Audio_Type(audio_type);
-                        break;
-                    case GST_STATE_PAUSED:
-                        gst_ipcam_client_set_status_text("Paused");
-                        break;
-                    case GST_STATE_NULL:
-                        gst_ipcam_client_set_status_text("Stopped");
-                        break;
-                    case GST_STATE_READY:
-                        break;
-                    default:
-                        g_message("Unknow state : %d!", newState);
-                        gst_ipcam_client_set_status_text("Stopped");
-                        break;
-                }
-                break;
-            }
-                break;
-            default:
-		break;
-        }
+				g_warning("Pipeline error: %s", error->message);
+
+				g_error_free(error);
+
+			}
+		}
+			break;
+		case GST_MESSAGE_STATE_CHANGED:
+		{
+			GstState oldState, newState, pending;
+			gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
+			switch (newState) {
+				case GST_STATE_PLAYING:
+					if (videosink != NULL)
+						gst_ipcam_client_read_video_props(videosink);
+					gst_ipcam_client_set_status_text("Playing");
+					gst_ipcam_client_set_status_Video_Type(video_type);
+					gst_ipcam_client_set_status_Audio_Type(audio_type);
+					break;
+				case GST_STATE_PAUSED:
+					gst_ipcam_client_set_status_text("Paused");
+					break;
+				case GST_STATE_NULL:
+					gst_ipcam_client_set_status_text("Stopped");
+					break;
+				case GST_STATE_READY:
+					break;
+				default:
+					g_message("Unknow state : %d!", newState);
+					gst_ipcam_client_set_status_text("Stopped");
+					break;
+			}
+			break;
+		}
+			break;
+		default:
+			gst_ipcam_client_backend_print_gst_message(msg);
+			break;
+	}
 	return TRUE;
 }
 
 static void gst_ipcam_client_backend_print_gst_message(GstMessage* message) {
 	switch (GST_MESSAGE_TYPE(message)) {
 		case GST_MESSAGE_ERROR:
-		case GST_MESSAGE_INFO:
-		case GST_MESSAGE_WARNING:
 		{
 			gchar * debug;
 			GError * error;
 			gst_message_parse_error(message, &error, &debug);
 
 			if (debug != NULL) {
+				g_debug("Error Debug: %s", debug);
 				g_free(debug);
 			}
 
 			if (error != NULL) {
-				g_warning("Backend message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_warning("Backend error message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
 				g_error_free(error);
 			}
 		}
 			break;
+		case GST_MESSAGE_INFO:
+		{
+			gchar * debug;
+			GError * error;
+			gst_message_parse_info(message, &error, &debug);
+
+			if (debug != NULL) {
+				g_debug("Info Debug: %s", debug);
+				g_free(debug);
+			}
+
+			if (error != NULL) {
+				g_warning("Backend info message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_error_free(error);
+			}
+		}
+			break;
+		case GST_MESSAGE_WARNING:
+		{
+			gchar * debug;
+			GError * error;
+			gst_message_parse_warning(message, &error, &debug);
+
+			if (debug != NULL) {
+				g_debug("Warning Debug: %s", debug);
+				g_free(debug);
+			}
+
+			if (error != NULL) {
+				g_warning("Backend warning message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_error_free(error);
+			}
+		}
+			break;
+		case GST_MESSAGE_STREAM_STATUS:
+		{
+			GstElement * owner;
+			GstStreamStatusType type;
+			gst_message_parse_stream_status(message, &type, &owner);
+
+			g_message("Got status %s from element %s", gst_ipcam_client_backend_stream_status_get_name(type), gst_element_get_name(owner));
+		}
+			break;
 		default:
+			g_message("got the message of type %s", gst_message_type_get_name(GST_MESSAGE_TYPE(message)));
 			break;
 	}
 }
@@ -450,23 +500,22 @@ static void gst_ipcam_client_backend_print_gst_message(GstMessage* message) {
  *
  * @return nothing
  */
-void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
-{
-    g_debug ("Signal: pad-added");
-    GstCaps *caps;
-    GstStructure *str;
-    caps = gst_pad_get_caps (pad);
-    g_assert (caps != NULL);
+void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad) {
+	g_debug("Signal: pad-added");
+	GstCaps *caps;
+	GstStructure *str;
+	caps = gst_pad_get_caps(pad);
+	g_assert(caps != NULL);
 
-    str = gst_caps_get_structure (caps, 0);
-    g_assert (str != NULL);
-	
+	str = gst_caps_get_structure(caps, 0);
+	g_assert(str != NULL);
+
 	/* get the media type, which will show us this's video or audio stream */
 	gchar *media_type = g_strdup(gst_structure_get_string(str, "media"));
 	/* get the stream type, which will show us the codec of the stream */
-    gchar *stream_type = g_strdup(gst_structure_get_string(str, "encoding-name"));
-    
-    g_message("Stream type : %s\n", stream_type);
+	gchar *stream_type = g_strdup(gst_structure_get_string(str, "encoding-name"));
+
+	g_message("Stream type : %s\n", stream_type);
 	{
 		/* preprocess stream type */
 		if (g_strcmp0(stream_type, "MP4V-ES") == 0) {
@@ -484,20 +533,22 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
 		}
 	}
 	gst_caps_unref(caps);
-    g_message("Pad name %s\n", media_type);
+	g_message("Pad name %s\n", media_type);
 
 	if (g_strrstr(media_type, "video") != NULL) {
 		/* got video stream */
 		GstPad * video_decoder_sink_pad;
 
+		g_warning("New video channel");
+
 		g_free(media_type);
-		
+
 		if (video_type != NULL) {
 			g_free(video_type);
 		}
 		video_type = g_strdup_printf("Video type: %s", stream_type);
 		g_free(stream_type);
-		
+
 		video_decoder_sink_pad = gst_element_get_static_pad(video_decoder, "sink");
 		if (GST_PAD_IS_LINKED(video_decoder_sink_pad)) {
 			gst_object_unref(video_decoder_sink_pad);
@@ -515,6 +566,7 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
 		/* got audio stream */
 		GstPad * audio_decoder_sink_pad;
 
+		g_warning("New audio channel");
 		g_free(media_type);
 
 		if (audio_type != NULL) {
@@ -543,25 +595,24 @@ void gst_ipcam_client_on_pad_added (GstElement *element, GstPad *pad)
  * @return nothing
  */
 void
-gst_ipcam_client_backend_create_pipeline(const gchar *url)
-{
-    GstBus *bus;
-    /* create elements */
-    pipeline = gst_pipeline_new ("pipeline");
-    /* watch for messages on the pipeline's bus (note that this will only
-    * work like this when a GLib main loop is running) */
-    bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
-    gst_bus_add_watch (bus, gst_ipcam_client_backend_bus_watch, g_strdup(url));
-    gst_object_unref (bus);
-    
-    rtspsrc = gst_element_factory_make ("rtspsrc", "rtspsource");
+gst_ipcam_client_backend_create_pipeline(const gchar *url) {
+	GstBus *bus;
+	/* create elements */
+	pipeline = gst_pipeline_new("pipeline");
+	/* watch for messages on the pipeline's bus (note that this will only
+	 * work like this when a GLib main loop is running) */
+	bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
+	gst_bus_add_watch(bus, gst_ipcam_client_backend_bus_watch, g_strdup(url));
+	gst_object_unref(bus);
 
-    g_object_set (G_OBJECT (rtspsrc), "location", url, NULL);
-    g_object_set (G_OBJECT (rtspsrc), "debug", TRUE, NULL);
-    g_signal_connect (rtspsrc, "pad-added", G_CALLBACK (gst_ipcam_client_on_pad_added), NULL);
+	rtspsrc = gst_element_factory_make("rtspsrc", "rtspsource");
 
-	gst_bin_add_many (GST_BIN (pipeline), rtspsrc, NULL);
-	
+	g_object_set(G_OBJECT(rtspsrc), "location", url, NULL);
+	/*g_object_set(G_OBJECT(rtspsrc), "debug", TRUE, NULL);*/
+	g_signal_connect(rtspsrc, "pad-added", G_CALLBACK(gst_ipcam_client_on_pad_added), NULL);
+
+	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, NULL);
+
 	gst_ipcam_client_backend_create_video_branch(pipeline);
 	gst_ipcam_client_backend_create_audio_branch(pipeline);
 }
@@ -574,45 +625,43 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
  * @return nothing
  */
 void
-gst_ipcam_client_read_video_props (GstElement *videosink)
-{
-    gint fps_n, fps_d;
-    gint width, height;
-    gint datarate;
-    gchar *capsInfor;
-    GstStructure *str = NULL;
-    GstPad *pad;
-    GstCaps *caps;
+gst_ipcam_client_read_video_props(GstElement *videosink) {
+	return;
+	gint fps_n, fps_d;
+	gint width, height;
+	gint datarate;
+	gchar *capsInfor;
+	GstStructure *str = NULL;
+	GstPad *pad;
+	GstCaps *caps;
 
-    pad = gst_element_get_static_pad(videosink, "sink");
-    if (pad == NULL)
-    {
-        return;
-    }
-    caps = gst_pad_get_negotiated_caps (pad);
+	pad = gst_element_get_static_pad(videosink, "sink");
+	if (pad == NULL) {
+		return;
+	}
+	caps = gst_pad_get_negotiated_caps(pad);
 
-    g_return_if_fail (gst_caps_is_fixed (caps));
-    str = gst_caps_get_structure (caps, 0);
+	g_return_if_fail(gst_caps_is_fixed(caps));
+	str = gst_caps_get_structure(caps, 0);
 
-    if (str == NULL)
-    {
-        return;
-    }
+	if (str == NULL) {
+		return;
+	}
 
-    capsInfor = gst_caps_to_string (caps);
-    g_message ("caps Infor: %s", capsInfor);
-    
-    gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
-    gst_structure_get_int(str, "width", &width);
-    gst_structure_get_int(str, "height", &height);
+	capsInfor = gst_caps_to_string(caps);
+	g_message("caps Infor: %s", capsInfor);
 
-    gst_structure_get_int(str, "datarate", &datarate);
+	gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
+	gst_structure_get_int(str, "width", &width);
+	gst_structure_get_int(str, "height", &height);
 
-    g_message("The datarate is : %d\n", datarate);
+	gst_structure_get_int(str, "datarate", &datarate);
 
-    g_message ("frame rate %d/%d", fps_n, fps_d);
-    g_message ("The video size of this set of capabilities is %dx%d",
-    width, height);
+	g_message("The datarate is : %d\n", datarate);
+
+	g_message("frame rate %d/%d", fps_n, fps_d);
+	g_message("The video size of this set of capabilities is %dx%d",
+			width, height);
 }
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline) {
@@ -660,7 +709,7 @@ static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement* pipelin
 	GstElement * audio_queue;
 	GstElement * audio_converter;
 	GstElement * audio_sink;
-	
+
 	g_return_val_if_fail(pipeline != NULL, FALSE);
 
 	audio_decoder = gst_element_factory_make("decodebin", "audio_decoder");
@@ -676,8 +725,28 @@ static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement* pipelin
 	g_assert(audio_sink);
 
 	gst_bin_add_many(GST_BIN(pipeline), audio_decoder, audio_queue, audio_converter, audio_sink, NULL);
-	gst_element_link_many(audio_converter, audio_queue, audio_sink, NULL);
-	g_signal_connect(audio_decoder, "new-decoded-pad", G_CALLBACK(gst_ipcam_client_backend_decoder_on_pad_add), audio_converter);
+	gst_element_link_many(audio_queue, audio_converter, audio_sink, NULL);
+	g_signal_connect(audio_decoder, "new-decoded-pad", G_CALLBACK(gst_ipcam_client_backend_decoder_on_pad_add), audio_queue);
 
 	return TRUE;
+}
+
+static const gchar * gst_ipcam_client_backend_stream_status_get_name(GstStreamStatusType type) {
+	switch (type) {
+		case GST_STREAM_STATUS_TYPE_CREATE:
+			return "GST_STREAM_STATUS_TYPE_CREATE";
+		case GST_STREAM_STATUS_TYPE_ENTER:
+			return "GST_STREAM_STATUS_TYPE_ENTER";
+		case GST_STREAM_STATUS_TYPE_LEAVE:
+			return "GST_STREAM_STATUS_TYPE_LEAVE";
+		case GST_STREAM_STATUS_TYPE_DESTROY:
+			return "GST_STREAM_STATUS_TYPE_DESTROY";
+		case GST_STREAM_STATUS_TYPE_START:
+			return "GST_STREAM_STATUS_TYPE_START";
+		case GST_STREAM_STATUS_TYPE_PAUSE:
+			return "GST_STREAM_STATUS_TYPE_PAUSE";
+		case GST_STREAM_STATUS_TYPE_STOP:
+			return "GST_STREAM_STATUS_TYPE_STOP";
+	}
+	return "Unknow Stream status type";
 }
