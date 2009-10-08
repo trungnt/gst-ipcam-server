@@ -165,5 +165,5 @@ gst_ipcam_client_on_connectionDialog_key_press_event        (GtkWidget       *wi
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_Connect_clicked                 (GtkButton       *button,
+gst_ipcam_client_on_btn_Connect_clicked                     (GtkButton       *button,
                                         gpointer         user_data);

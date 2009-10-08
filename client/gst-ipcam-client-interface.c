@@ -260,9 +260,9 @@ gst_ipcam_client_create_mainWindow (void)
   g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
                             G_CALLBACK (gst_ipcam_client_on_mainWindow_destroy),
                             GTK_OBJECT (NULL));
-  /*g_signal_connect_swapped ((gpointer) btn_change, "clicked",
+  g_signal_connect_swapped ((gpointer) btn_change, "clicked",
                             G_CALLBACK (gst_ipcam_client_on_btn_Change_clicked),
-                            GTK_OBJECT (NULL));*/
+                            GTK_OBJECT (NULL));
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainWindow, mainWindow, "mainWindow");

@@ -284,5 +284,13 @@ void
 gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(NULL,
+                		GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_ERROR,
+                        	GTK_BUTTONS_CLOSE,
+                                "In Here");
 
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
