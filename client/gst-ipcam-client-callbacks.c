@@ -192,7 +192,8 @@ gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button
     g_message("PLAY request sent.");
 
     /*Resize the mainwindow to show Video got from server*/
-    gtk_window_resize(GTK_WINDOW(mainWindow), 420, 400);
+    gtk_window_resize(GTK_WINDOW(mainWindow), 550, 500);
+    gtk_widget_set_sensitive(vbox2, TRUE);
 
     /*remove btn_Connect button from toolitem_Connect*/
     gtk_container_remove (GTK_CONTAINER (toolitem_Connect), btn_Connect);
