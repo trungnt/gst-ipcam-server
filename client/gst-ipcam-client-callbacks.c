@@ -284,13 +284,33 @@ void
 gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
                                         gpointer         user_data)
 {
-    GtkWidget *dialog;
-    dialog = gtk_message_dialog_new(NULL,
-                		GTK_DIALOG_DESTROY_WITH_PARENT,
-				GTK_MESSAGE_ERROR,
-                        	GTK_BUTTONS_CLOSE,
-                                "In Here");
+    gchar *url_fps;
+    gchar *url_fsize;
 
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
+    gst_ipcam_client_backend_stop();
+    if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fps), "") != 0)
+    {
+        url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
+    }
+    else
+    {
+        url_fps = "";
+    }
+
+    if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fsize), "") != 0)
+    {
+        url_fsize = g_strconcat("", "?framesize=", gtk_combo_box_get_active_text(cbx_entry_fsize), NULL);
+    }
+    else
+    {
+        url_fsize = "";
+    }
+
+    gst_ipcam_client_backend_create_pipeline(g_strconcat("", URL, url_fps, url_fsize, NULL));
+    gst_ipcam_client_backend_play();
+
+    g_message("PLAY request sent.");
+    /*Resize the mainwindow to show the video got from server*/
+    gtk_window_resize(GTK_WINDOW(mainWindow), 550, 500);
+    gtk_widget_set_sensitive(vbox2, TRUE);
 }

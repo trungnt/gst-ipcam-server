@@ -167,3 +167,16 @@ gst_ipcam_client_on_connectionDialog_key_press_event        (GtkWidget       *wi
 void
 gst_ipcam_client_on_btn_Connect_clicked                     (GtkButton       *button,
                                         gpointer         user_data);
+
+/**
+ * Handle the event when clicking on the Change button in the main window.
+ * the video will change fps and bitrate followed the input from users
+ *
+ * @param button GtkButton *
+ * @param user_data gpointer
+ *
+ * @return nothing
+ */
+void
+gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
+                                        gpointer         user_data);

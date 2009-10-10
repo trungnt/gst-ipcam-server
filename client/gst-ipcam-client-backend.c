@@ -9,6 +9,7 @@
 
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
+#include <glib-2.0/glib/gstrfuncs.h>
 
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -628,42 +629,52 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url) {
  */
 void
 gst_ipcam_client_read_video_props(GstElement *videosink) {
-	return;
-	gint fps_n, fps_d;
-	gint width, height;
-	gint datarate;
-	gchar *capsInfor;
-	GstStructure *str = NULL;
-	GstPad *pad;
-	GstCaps *caps;
+    gint fps_n, fps_d;
+    gint width, height;
+    gint datarate;
+    gchar *capsInfor;
+    gchar *status_props;
+    GstStructure *str = NULL;
+    GstPad *pad;
+    GstCaps *caps;
 
-	pad = gst_element_get_static_pad(videosink, "sink");
-	if (pad == NULL) {
-		return;
-	}
-	caps = gst_pad_get_negotiated_caps(pad);
+    pad = gst_element_get_static_pad(videosink, "sink");
+    if (pad == NULL)
+    {
+        return;
+    }
+    caps = gst_pad_get_negotiated_caps(pad);
 
-	g_return_if_fail(gst_caps_is_fixed(caps));
-	str = gst_caps_get_structure(caps, 0);
+    g_return_if_fail(gst_caps_is_fixed(caps));
+    str = gst_caps_get_structure(caps, 0);
 
-	if (str == NULL) {
-		return;
-	}
+    if (str == NULL)
+    {
+        return;
+    }
 
-	capsInfor = gst_caps_to_string(caps);
-	g_message("caps Infor: %s", capsInfor);
+    capsInfor = gst_caps_to_string(caps);
+    g_message("caps Infor: %s", capsInfor);
 
-	gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
-	gst_structure_get_int(str, "width", &width);
-	gst_structure_get_int(str, "height", &height);
+    gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
+    gst_structure_get_int(str, "width", &width);
+    gst_structure_get_int(str, "height", &height);
 
-	gst_structure_get_int(str, "datarate", &datarate);
+    gst_structure_get_int(str, "datarate", &datarate);
 
-	g_message("The datarate is : %d\n", datarate);
+    g_message("The datarate is : %d\n", datarate);
 
-	g_message("frame rate %d/%d", fps_n, fps_d);
-	g_message("The video size of this set of capabilities is %dx%d",
+    g_message("frame rate %d/%d", fps_n, fps_d);
+
+    g_message("The video size of this set of capabilities is %dx%d",
 			width, height);
+    status_props = g_strconcat("", "Fps:", g_strdup_printf("%d", fps_n),
+                               "/", g_strdup_printf("%d", fps_d), NULL);
+
+    status_props = g_strconcat(status_props, " Frame size:", g_strdup_printf("%d", width),
+                               "x", g_strdup_printf("%d", height), NULL);
+
+    gst_ipcam_client_set_status_properties(status_props);
 }
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline) {

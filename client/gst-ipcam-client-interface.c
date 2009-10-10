@@ -181,11 +181,11 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_container_add (GTK_CONTAINER (alignment2), cbx_entry_fsize);
   gtk_widget_set_size_request (cbx_entry_fsize, 90, -1);
 
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("QVGA"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("VGA"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("720P"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("Quad-VGA"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("SXGA"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("320x240"));/*QVGA*/
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("640x480"));/*VGA*/
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("1280x720"));/*720P*/
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("1280x960"));/*Quad-VGA*/
+  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_entry_fsize), _("1280x1024"));/*SXGA*/
 
   toolitem9 = (GtkWidget*) gtk_tool_item_new ();
   gtk_widget_show (toolitem9);
@@ -424,13 +424,13 @@ GtkWidget* gst_ipcam_client_init_status_bar()
 
     /* separator*/
     separator = gtk_vseparator_new();
-    /*gtk_widget_show(separator);*/
+    gtk_widget_show(separator);
 
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
 
     /* Properties label*/
     statusBar_labelProperties = gtk_label_new("");
-    /*gtk_widget_show(statusBar_labelProperties);*/
+    gtk_widget_show(statusBar_labelProperties);
     
     /*gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);*/
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
