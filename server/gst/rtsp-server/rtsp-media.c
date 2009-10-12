@@ -1469,7 +1469,6 @@ gst_rtsp_media_set_state (GstRTSPMedia *media, GstState state, GArray *transport
     /* we need a transport */
     if (!(trans = tr->transport))
       continue;
-
     /* get the stream and add the destinations */
     stream = gst_rtsp_media_get_stream (media, tr->idx);
     switch (trans->lower_transport) {
@@ -1482,9 +1481,11 @@ gst_rtsp_media_set_state (GstRTSPMedia *media, GstState state, GArray *transport
 	dest = trans->destination;
 	min = trans->client_port.min;
 	max = trans->client_port.max;
-
+	
 	if (add && !tr->active) {
           g_message ("adding %s:%d-%d", dest, min, max);
+          gst_element_set_state (stream->udpsink[0], GST_STATE_PLAYING);
+          gst_element_set_state (stream->udpsink[1], GST_STATE_PLAYING);
           g_signal_emit_by_name (stream->udpsink[0], "add", dest, min, NULL);
           g_signal_emit_by_name (stream->udpsink[1], "add", dest, max, NULL);
 	  stream->transports = g_list_prepend (stream->transports, tr);
@@ -1492,6 +1493,8 @@ gst_rtsp_media_set_state (GstRTSPMedia *media, GstState state, GArray *transport
 	  media->active++;
 	} else if (remove && tr->active) {
           g_message ("removing %s:%d-%d", dest, min, max);
+          gst_element_set_state (stream->udpsink[0], GST_STATE_PAUSED);
+          gst_element_set_state (stream->udpsink[1], GST_STATE_PAUSED);
           g_signal_emit_by_name (stream->udpsink[0], "remove", dest, min, NULL);
           g_signal_emit_by_name (stream->udpsink[1], "remove", dest, max, NULL);
 	  stream->transports = g_list_remove (stream->transports, tr);
