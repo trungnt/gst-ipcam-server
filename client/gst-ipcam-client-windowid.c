@@ -39,13 +39,14 @@ void gst_ipcam_client_process_options(gint argc, char** argv) {
 	while (1) {
 		c = getopt_long(argc, argv, "", my_client_long_options, &option_index);
 
-		// if the process is end
+		/* if the process is end*/
 		if (c == -1) {
 			break;
 		}
 
 		switch (c) {
-			case 'i': // got id option
+                        /* got id option*/
+			case 'i': 
 			{
 				gint id;
 				id = g_ascii_strtod(optarg, NULL);
@@ -60,7 +61,7 @@ void gst_ipcam_client_process_options(gint argc, char** argv) {
 		}
 	}
 
-	// so no id was requested by the user, we'll use process id
+	/* so no id was requested by the user, we'll use process id*/
 	if (is_id_set == FALSE) {
 		pid_t my_pid = getpid();
 		gst_ipcam_client_set_id(my_pid);

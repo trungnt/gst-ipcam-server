@@ -7,7 +7,7 @@
 
 #include <gtk/gtk.h>
 
-///For main Dialog
+/*For main Dialog*/
 GtkWidget *mainWindow;
 GtkWidget *vbox;
 GtkWidget *toolbar;
@@ -62,14 +62,19 @@ GtkWidget *btn_change;
 GtkWidget *hbox_VideoPrew;
 GtkWidget *prw_GuestVideo;
 GtkWidget *statusBar;
-GtkWidget * statusBar_vBox; // the vbox used in the statusbar. This widget will be return in the Init function. Infact, it contains a hseparator and a hbox.
-GtkWidget * statusBar_hBox; // this hbox will contains all of the labels;
-GtkWidget * statusBar_labelStatus; // the label for the status text
+/* the vbox used in the statusbar. This widget will be return in the Init
+   function. Infact, it contains a hseparator and a hbox.*/
+GtkWidget * statusBar_vBox;
+/* this hbox will contains all of the labels;*/
+GtkWidget * statusBar_hBox;
+/* the label for the status text*/
+GtkWidget * statusBar_labelStatus;
 GtkWidget * statusBar_labelVideoType;
 GtkWidget * statusBar_labelAudioType;
-GtkWidget * statusBar_labelProperties; // the label for Properties displaying
+/* the label for Properties displaying*/
+GtkWidget * statusBar_labelProperties;
 
-///For Connection Dialog
+/* For Connection Dialog*/
 GtkWidget *connectionDialog;
 GtkWidget *dialog_vbox;
 GtkWidget *tbl_ConInfo;

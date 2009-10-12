@@ -65,9 +65,7 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
 
   btn_Disconnect = gtk_button_new_from_stock ("gtk-disconnect");
-  //gtk_widget_show (btn_Disconnect);
   gtk_widget_set_sensitive(btn_Disconnect, FALSE);
-  //gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
 
   toolitem_Pause = (GtkWidget*) gtk_tool_item_new ();
   gtk_widget_show (toolitem_Pause);
@@ -79,7 +77,6 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
 
   btn_Resume = gtk_button_new ();
-  //gtk_widget_show (btn_Resume);
   gtk_widget_set_sensitive(btn_Resume, FALSE);
 
   algn_Resume = gtk_alignment_new (0.5, 0.5, 0, 0);
@@ -201,7 +198,7 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_widget_show (hbox_VideoPrew);
   gtk_box_pack_start (GTK_BOX (vbox2), hbox_VideoPrew, TRUE, TRUE, 0);
 
-  prw_GuestVideo = gtk_drawing_area_new ();//gtk_preview_new (GTK_PREVIEW_COLOR);
+  prw_GuestVideo = gtk_drawing_area_new ();
   gtk_widget_show (prw_GuestVideo);
   gtk_box_pack_start (GTK_BOX (hbox_VideoPrew), prw_GuestVideo, TRUE, TRUE, 0);
 
@@ -235,9 +232,6 @@ gst_ipcam_client_create_mainWindow (void)
   g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
                             G_CALLBACK (gst_ipcam_client_on_mainWindow_destroy),
                             GTK_OBJECT (NULL));
-  /*g_signal_connect_swapped ((gpointer) btn_change, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Change_clicked),
-                            GTK_OBJECT (NULL));*/
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (mainWindow, mainWindow, "mainWindow");
@@ -407,7 +401,7 @@ GtkWidget* gst_ipcam_client_init_status_bar()
     statusBar_labelProperties = gtk_label_new("");
     /*gtk_widget_show(statusBar_labelProperties);*/
     
-    /*    gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);*/
+    /*gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);*/
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
 
     return statusBar_vBox;
