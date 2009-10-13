@@ -575,15 +575,21 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad) {
 		audio_type = g_strdup_printf("/Audio type: %s", stream_type);
 		g_free(stream_type);
 
+		gst_ipcam_client_backend_create_audio_branch(pipeline);
 		audio_decoder_sink_pad = gst_element_get_static_pad(audio_decoder, "sink");
+		g_warning("Ok, got audio decoder sink pad");
 		if (GST_PAD_IS_LINKED(audio_decoder_sink_pad)) {
 			gst_object_unref(audio_decoder_sink_pad);
 			return;
 		}
 
+		g_message("and now, we link pad to audio decoder");
 		/* link rtspsrc to audio_decoder */
 		gst_pad_link(pad, audio_decoder_sink_pad);
 		gst_object_unref(audio_decoder_sink_pad);
+
+		/* set state to play to make sure audio branch will run */
+		gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	}
 }
 
@@ -614,7 +620,7 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url) {
 	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, NULL);
 
 	gst_ipcam_client_backend_create_video_branch(pipeline);
-	gst_ipcam_client_backend_create_audio_branch(pipeline);
+	/*gst_ipcam_client_backend_create_audio_branch(pipeline);*/
 }
 
 /**
