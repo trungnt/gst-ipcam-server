@@ -299,7 +299,9 @@ gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
 
     if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fsize), "") != 0)
     {
-        url_fsize = g_strconcat("", "?framesize=", gtk_combo_box_get_active_text(cbx_entry_fsize), NULL);
+        gchar *f_size = gtk_combo_box_get_active_text(cbx_entry_fsize);
+        gchar **__f_size = g_strsplit(f_size, "x", 0);
+        url_fsize = g_strconcat("", "&width=", __f_size[0], "&height=", __f_size[1], NULL);
     }
     else
     {
