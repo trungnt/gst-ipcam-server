@@ -27,7 +27,6 @@
 
 static GMutex *tunnels_lock;
 static GHashTable *tunnels;
-
 enum
 {
   PROP_0,
@@ -160,7 +159,7 @@ send_response (GstRTSPClient * client, GstRTSPSession * session,
     GstRTSPMessage * response)
 {
   gst_rtsp_message_add_header (response, GST_RTSP_HDR_SERVER,
-      "GStreamer RTSP server");
+      "GStreamer IPCam server");
 
   /* remove any previous header */
   gst_rtsp_message_remove_header (response, GST_RTSP_HDR_SESSION, -1);
@@ -182,7 +181,8 @@ send_response (GstRTSPClient * client, GstRTSPSession * session,
   gst_rtsp_message_dump (response);
 #endif
 
-  gst_rtsp_watch_send_message (client->watch, response, NULL);
+//  gst_rtsp_watch_send_message (client->watch, response, NULL);
+  gst_rtsp_watch_queue_message (client->watch, response);
 
   gst_rtsp_message_unset (response);
 }
@@ -257,7 +257,6 @@ find_media (GstRTSPClient * client, GstRTSPUrl * uri, GstRTSPMessage * request)
 
   if (media)
     g_object_ref (media);
-
   return media;
 
   /* ERRORS */
@@ -299,7 +298,8 @@ do_send_data (GstBuffer * buffer, guint8 channel, GstRTSPClient * client)
   size = GST_BUFFER_SIZE (buffer);
   gst_rtsp_message_take_body (&message, data, size);
 
-  gst_rtsp_watch_send_message (client->watch, &message, NULL);
+//  gst_rtsp_watch_send_message (client->watch, &message, NULL);
+  gst_rtsp_watch_queue_message (client->watch, &message);
 
   gst_rtsp_message_steal_body (&message, &data, &size);
   gst_rtsp_message_unset (&message);

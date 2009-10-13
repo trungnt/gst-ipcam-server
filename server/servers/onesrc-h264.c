@@ -36,7 +36,6 @@ timeout (GstRTSPServer *server, gboolean ignored)
 
   pool = gst_rtsp_server_get_session_pool (server);
   gst_rtsp_session_pool_cleanup (pool);
-  g_message ("Server timeout");
   g_object_unref (pool);
 
   return TRUE;
@@ -58,6 +57,8 @@ main (int argc, char *argv[])
 
   /* create a server instance */
   server = gst_rtsp_server_new ();
+  /* set webcam source and port to listen for server */
+  gst_rtsp_server_set_device_source (server, "v4l2src", 3000);
   /* get the mapping for this server, every server has a default mapper object
    * that be used to map uri mount points to media factories */
 
@@ -120,7 +121,7 @@ main (int argc, char *argv[])
   /* attach the server to the default maincontext */
   gst_rtsp_server_attach (server, NULL);
 
-  g_timeout_add_seconds (15, (GSourceFunc) timeout, server); 
+  g_timeout_add_seconds (2, (GSourceFunc) timeout, server); 
 
   /* start serving */
   g_main_loop_run (loop);

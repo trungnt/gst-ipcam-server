@@ -76,7 +76,7 @@ find_media (GstRTSPMediaMapping *mapping, const GstRTSPUrl *url)
   if (result) 
     g_object_ref (result);
 
-  g_message ("found media %p for url abspath %s", result, url->abspath);
+  g_message ("found media %p for url %s", result, url->abspath);
 
   return result;
 }

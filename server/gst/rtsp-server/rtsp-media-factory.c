@@ -352,7 +352,7 @@ default_gen_key (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   gchar *result;
 
   result = gst_rtsp_url_get_request_uri ((GstRTSPUrl *)url);
-
+//  result = g_strdup_printf("rtsp://%s%d%s", url->host,url->port,url->abspath);
   return result;
 }
 
@@ -376,52 +376,91 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   if (url_launch) {
     gchar *framerate = NULL;
     gchar *bitrate = NULL;
+    gchar *width = NULL;
+    gchar *height = NULL;    
     GHashTable *params = NULL;
 	 guint param_number = 0;
   	 gchar ** tmp = NULL, **tmp_0 = NULL, ** tmp_1 = NULL;
+  	 gchar ** tmp_2 = NULL, ** tmp_3 = NULL;
     gchar *tmp_launch = NULL;   	
-
+    guint array_size =0;
     params = g_hash_table_new (g_str_hash, g_str_equal);         
 
 	 if (strstr(url_launch, "&")) {
-  	 	tmp = g_strsplit (url_launch, "&", 2);
-	 	tmp_0 = g_strsplit (tmp[0], "=", 2);
-	 	tmp_1 = g_strsplit (tmp[1], "=", 2); 
+  	 	tmp = g_strsplit (url_launch, "&", -1);
+  	 	array_size = sizeof (tmp)/sizeof (tmp[0]); 
+
 		/* Check values before insert into hashtable */	 	
-	 	if (tmp_0[1]) {
-			g_hash_table_insert (params, g_strdup(tmp_0[0]), g_strdup(tmp_0[1]));
-		}			
-		if (tmp_1[1]) {		
-			g_hash_table_insert (params, g_strdup(tmp_1[0]), g_strdup(tmp_1[1]));
-		}	
+		if (tmp[0] != NULL) {	 	
+	 		tmp_0 = g_strsplit (tmp[0], "=", 2);
+		 	if (tmp_0[1] != NULL) {
+				g_hash_table_insert (params, g_strdup(tmp_0[0]), g_strdup(tmp_0[1]));
+			}
+	 	}
+	 	if (array_size > 1 && tmp[1] != NULL) {
+	 		tmp_1 = g_strsplit (tmp[1], "=", 2);
+			if (tmp_1[1] != NULL) {		
+				g_hash_table_insert (params, g_strdup(tmp_1[0]), g_strdup(tmp_1[1]));
+			}
+	 	}
+	 	if (array_size > 2 && tmp[2] != NULL) {	 
+	 		tmp_2 = g_strsplit (tmp[2], "=", 2);
+	      g_message ("tmp 2 %s",tmp_2[1]);
+			if (tmp_2[1] != NULL) {		
+				g_hash_table_insert (params, g_strdup(tmp_2[0]), g_strdup(tmp_2[1]));
+			}
+	 	}
+	 	if (array_size > 3 && tmp[3] != NULL) {	
+	 		tmp_3 = g_strsplit (tmp[3], "=", 2);
+			if (tmp_3[1] != NULL) {		
+				g_hash_table_insert (params, g_strdup(tmp_3[0]), g_strdup(tmp_3[1]));
+			}
+	 	}	
 	   g_strfreev (tmp_0);
 	   g_strfreev (tmp_1);
+	   g_strfreev (tmp_2);
+	   g_strfreev (tmp_3);
 	 } else {
 		tmp = g_strsplit (url_launch, "=", 2);
 		g_hash_table_insert (params, g_strdup(tmp[0]), g_strdup(tmp[1]));
 	 } 
     g_strfreev (tmp);
-	 
 	 url_launch = g_strdup (factory->launch);
 	 param_number = g_hash_table_size (params);
 	 if (param_number == 0) 
 	 	goto wrong_params; 
     framerate = g_hash_table_lookup (params, "framerate");
 	 bitrate = g_hash_table_lookup (params, "bitrate");
-	 g_message ("Parameters in url framerate=%s, bitrate=%s", framerate, bitrate);
+	 width = g_hash_table_lookup (params, "width");
+	 height = g_hash_table_lookup (params, "height");
+	 g_message ("Parameters in url framerate=%s, bitrate=%s, width=%s, height=%s ", framerate, bitrate, width, height);
 	 
-	 if (param_number == 2) {
+	 if (param_number >= 2) {
 	 	tmp = g_strsplit (url_launch, "framerate=", 2);
+		if (width != NULL) {
+			if (height == NULL) {
+				height = "320";			
+			}
+			tmp_1 = g_strsplit (tmp[0], "width=", 2);		
+		} 	 	
 	 	tmp_0 = g_strsplit (tmp[1], "bitrate=", 2);
 	 	g_message ("Temp launch 1 %s: ", tmp_0[0]);
 	 	g_message ("Temp launch 2 %s: ", tmp_0[1]);
  		gchar * tmp0 = strstr (tmp_0[0], "!") ;
  		gchar * tmp1 = strstr (tmp_0[1], "!") ;  	 
 	 	if (tmp0 && tmp1) {
-		   tmp_launch = g_strdup_printf("%sframerate=%s %s bitrate=%s %s", tmp[0], framerate, tmp0, bitrate, tmp1);
-   	  	g_message ("Temp launch %s: ", tmp_launch);
+	 		if (width != NULL) {
+				tmp_launch = g_strdup_printf("%swidth=%s,height=%s,framerate=%s %s bitrate=%s %s", tmp_1[0], width, height, framerate, tmp0, bitrate, tmp1);	 		
+	 		} else {
+		   	tmp_launch = g_strdup_printf("%sframerate=%s %s bitrate=%s %s", tmp[0], framerate, tmp0, bitrate, tmp1);
+	 		}
+   	  	g_message ("New launch string %s: ", tmp_launch);
+   	} else {
+			tmp_launch = g_strdup_printf("%swidth=%s,height=%s,framerate=%s %s", tmp_1[0], width, height, framerate, tmp[1]);	 		
+   	  	g_message ("New launch string %s: ", tmp_launch);
    	} 
    	g_strfreev (tmp_0);
+   	g_strfreev (tmp_1);
     } else {
 		if (framerate != NULL) {
 			tmp = g_strsplit (url_launch, "framerate=", 2);
@@ -437,7 +476,7 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 			}				
 		}	     
    	g_strfreev (tmp);	
-		g_message ("Temp launch %s: ", tmp_launch);
+		g_message ("New launch string %s: ", tmp_launch);
 	 }
 	 if (tmp_launch != NULL) {	 
        g_free (factory->launch);
@@ -557,7 +596,7 @@ default_construct (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   /* create a new empty media */
   media = gst_rtsp_media_new ();
   media->element = element;
-
+  g_message ("Create MEDIA"); 
   if (!klass->create_pipeline)
     goto no_pipeline;
 

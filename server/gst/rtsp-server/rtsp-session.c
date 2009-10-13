@@ -269,11 +269,9 @@ gst_rtsp_session_get_media (GstRTSPSession *sess, const GstRTSPUrl *url)
   result = NULL;
 
   for (walk = sess->medias; walk; walk = g_list_next (walk)) {
-    result = (GstRTSPSessionMedia *) walk->data; 
-
+    result = (GstRTSPSessionMedia *) walk->data;
     if (strcmp (result->url->abspath, url->abspath) == 0)
-      break;
-
+      break;		
     result = NULL;
   }
   return result;

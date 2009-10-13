@@ -25,6 +25,7 @@
 #define DEFAULT_BACKLOG         5
 #define DEFAULT_PORT            8554
 
+
 enum
 {
   PROP_0,
@@ -120,6 +121,8 @@ gst_rtsp_server_finalize (GObject *object)
 
   g_object_unref (server->session_pool);
   g_object_unref (server->media_mapping);
+  gst_element_set_state (server->v4l2src_pipeline, GST_STATE_NULL);
+  g_object_unref (server->v4l2src_pipeline);
 }
 
 /**
@@ -131,10 +134,55 @@ GstRTSPServer *
 gst_rtsp_server_new (void)
 {
   GstRTSPServer *result;
-
   result = g_object_new (GST_TYPE_RTSP_SERVER, NULL);
 
   return result;
+}
+
+/**
+ * gst_rtsp_server_set_device_source:
+ * @server: a #GstRTSPServer
+ * @v4l2src: v4l2src
+ *
+ * Configure @server to use which v4l2 device.
+ * @v4l2dev v4l2src device=/dev/video0.
+ * @port port to listen
+ *
+ * This function must be called when using 2 webcamera sources.
+ */
+void
+gst_rtsp_server_set_device_source (GstRTSPServer *server, gchar *v4l2dev, gint port)
+{
+  g_return_if_fail (GST_IS_RTSP_SERVER (server));
+  g_return_if_fail (v4l2dev);	
+
+  /* when do this I will create one server to v4l2src :P*/
+  GstCaps *caps;
+  GstElement *pipeline,  *v4l2src,*ffmpegcolorspace, *jpegenc, *tcpserversink;
+  /* setup pipeline */
+  pipeline = gst_pipeline_new ("v4l2src-pipeline");
+  if (v4l2dev) {
+  	 v4l2src = gst_element_factory_make (g_strdup(v4l2dev), "v4l2src");
+  } else {
+	 v4l2src = gst_element_factory_make ("v4l2src", "v4l2src"); 
+  }   	 
+  ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
+  tcpserversink = gst_element_factory_make ("tcpserversink", "tcpserversink");
+  jpegenc = gst_element_factory_make ("jpegenc", "jpegenc");
+  g_object_set (G_OBJECT(tcpserversink), "port", port, NULL);
+//  g_object_set (G_OBJECT(tcpserversink), "timeout", 10000, NULL);
+  gst_bin_add_many (GST_BIN(pipeline), v4l2src, ffmpegcolorspace, jpegenc, tcpserversink, NULL);
+  
+  caps = gst_caps_new_simple ("video/x-raw-yuv",
+      "framerate", GST_TYPE_FRACTION, 30, 1,
+      "width", G_TYPE_INT, 640,
+      "height", G_TYPE_INT, 480,
+      NULL);
+  gst_element_link_filtered (v4l2src, ffmpegcolorspace, caps);   
+  /* link tee with others */
+  gst_element_link_many (ffmpegcolorspace, jpegenc, tcpserversink, NULL);
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);	
+  server->v4l2src_pipeline = pipeline ;  
 }
 
 /**
