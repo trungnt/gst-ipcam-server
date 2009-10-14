@@ -94,7 +94,7 @@ gst_rtsp_media_factory_init (GstRTSPMediaFactory * factory)
   factory->medias_lock = g_mutex_new ();
   factory->medias = g_hash_table_new_full (g_str_hash, g_str_equal,
 		  g_free, g_object_unref);
-  factory->v4l2src_port =2999;		  
+  factory->v4l2src_port = 2999;		  
 }
 
 static void
@@ -494,9 +494,13 @@ wrong_params:
   factory->v4l2src_port += 1;
   tmp =  g_strdup (factory->launch);
   if (strstr(tmp, "(")) {
-    tmp_0 = g_strsplit (tmp, "(", 2);
-	 tmp1 = g_strdup_printf("( udpsrc port=%d ! %s", factory->v4l2src_port ,tmp_0[1]);	  
+    if (strstr(tmp, "udpsrc")) {
+	   tmp_0 = g_strsplit (tmp, "!", 2);
+	 } else {
+	   tmp_0 = g_strsplit (tmp, "(", 2);		
+	 }    
   }
+  tmp1 = g_strdup_printf("( udpsrc port=%d ! %s", factory->v4l2src_port ,tmp_0[1]);
   g_free (tmp);
   g_free (factory->launch);
   factory->launch = g_strdup(tmp1) ;

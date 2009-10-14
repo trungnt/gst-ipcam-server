@@ -72,7 +72,6 @@ struct _GstRTSPServer {
   GstRTSPSessionPool  *session_pool;
   /* use for webcam */
   GstElement *v4l2src_pipeline;
-  GstElement *multiudpsink;
   
   /* port assign to new pipeline start: 5000 */
   guint v4l2src_port;

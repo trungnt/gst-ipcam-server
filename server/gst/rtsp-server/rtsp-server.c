@@ -170,23 +170,22 @@ gst_rtsp_server_set_device_source (GstRTSPServer *server, gchar *v4l2dev, gint p
   ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
   jpegenc = gst_element_factory_make ("jpegenc", "jpegenc");
   multiudpsink = gst_element_factory_make ("multiudpsink", "multiudpsink");
-  tmp_port = "localhost:3000,localhost:3001,localhost:3002,localhost:3003,localhost:3004,localhost:3005,localhost:3006,localhost:3007,localhost:3008,localhost:3009, localhost:3010,localhost:3011,localhost:3012";
+  tmp_port = "10.0.0.166:3000,10.0.0.166:3001,10.0.0.166:3002,10.0.0.166:3003,10.0.0.166:3004,10.0.0.166:3005,10.0.0.166:3006,10.0.0.166:3007,localhost:3008,localhost:3009, localhost:3010,localhost:3011,localhost:3012";
   g_object_set (G_OBJECT (multiudpsink), "closefd", FALSE, NULL);
   g_object_set (G_OBJECT (multiudpsink), "sync", FALSE, NULL);
   g_object_set (G_OBJECT (multiudpsink), "async", FALSE, NULL); 
   g_object_set (G_OBJECT (multiudpsink), "clients", tmp_port, NULL);
   gst_bin_add_many (GST_BIN(pipeline), v4l2src, ffmpegcolorspace, jpegenc, multiudpsink, NULL);
   caps = gst_caps_new_simple ("video/x-raw-yuv",
-      "framerate", GST_TYPE_FRACTION, 30, 1,
+      "framerate", GST_TYPE_FRACTION, 20, 1,
       "width", G_TYPE_INT, 640,
       "height", G_TYPE_INT, 480,
       NULL);
-  gst_element_link_filtered (v4l2src, ffmpegcolorspace, caps); 
+  gst_element_link_filtered (v4l2src, ffmpegcolorspace, caps);  
   /* link all */
   gst_element_link_many (ffmpegcolorspace, jpegenc, multiudpsink, NULL);
   gst_element_set_state (pipeline, GST_STATE_PLAYING);	
   server->v4l2src_pipeline = pipeline ;  
-  server->multiudpsink =  multiudpsink ;
 }
 
 /**
