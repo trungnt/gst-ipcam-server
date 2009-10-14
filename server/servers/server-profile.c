@@ -30,3 +30,4 @@ gboolean gst_rtsp_pipeline_profile_video_set_bitrate(GstRTSPPipelineProfile* pro
 	g_return_val_if_fail(gst_rtsp_pipeline_profile_is_video(profile), FALSE);
 	return gst_rtsp_pipeline_profile_set_int_var(profile, "video-bitrate", bitrate);
 }
+

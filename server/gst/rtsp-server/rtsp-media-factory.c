@@ -94,6 +94,7 @@ gst_rtsp_media_factory_init (GstRTSPMediaFactory * factory)
   factory->medias_lock = g_mutex_new ();
   factory->medias = g_hash_table_new_full (g_str_hash, g_str_equal,
 		  g_free, g_object_unref);
+  factory->v4l2src_port =2999;		  
 }
 
 static void
@@ -370,7 +371,7 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
   /* we need to get framerate and bitrate here*/
   /* url format sent from client like this rtsp://server:port/test?framerate=25/1&bitrate=2048 */
-  /*( v4l2src ! videoscale ! videorate ! video/x-raw-yuv,width=800,height=500,framerate=30/1 ! ffmpegcolorspace ! 
+  /*(  videoscale ! videorate ! video/x-raw-yuv,width=800,height=500,framerate=30/1 ! ffmpegcolorspace ! 
   x264enc bitrate=2048 ! rtph264pay name=pay0 pt=96  alsasrc ! audio/x-raw-int ! faac bitrate=22000 ! 
   rtpmp4apay name=pay1 pt=97 )  */
   if (url_launch) {
@@ -488,10 +489,22 @@ wrong_params:
  	 g_free (url_launch);
 	 g_hash_table_destroy (params);
   }	
- 
+  
+  gchar *tmp, *tmp1=NULL, **tmp_0=NULL;
+  factory->v4l2src_port += 1;
+  tmp =  g_strdup (factory->launch);
+  if (strstr(tmp, "(")) {
+    tmp_0 = g_strsplit (tmp, "(", 2);
+	 tmp1 = g_strdup_printf("( udpsrc port=%d ! %s", factory->v4l2src_port ,tmp_0[1]);	  
+  }
+  g_free (tmp);
+  g_free (factory->launch);
+  factory->launch = g_strdup(tmp1) ;
+  g_free (tmp1); 
+  g_strfreev (tmp_0);  
   /* parse the user provided launch line */
   element = gst_parse_launch (factory->launch, &error);
-
+ 
   if (element == NULL)
     goto parse_error;
 
@@ -596,7 +609,40 @@ default_construct (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   /* create a new empty media */
   media = gst_rtsp_media_new ();
   media->element = element;
-  g_message ("Create MEDIA"); 
+/*  
+  GstElement *pipeline,  *udpsrc;
+  gint ret;
+
+  if ((media->client_sock.fd = socket (AF_INET, SOCK_STREAM, 0)) == -1)
+    g_message ("No udp client socket");
+  ret = 1;
+  if (setsockopt (media->client_sock.fd, SOL_SOCKET, SO_KEEPALIVE,
+          (void *) &ret, sizeof (ret)) < 0)
+    g_message ("Failed to create udp client socket");
+
+  memset (&media->client_sin, 0, sizeof (media->client_sin));
+  media->client_sin.sin_family = AF_INET;        
+  media->client_sin.sin_port = htons (3000);     
+  media->client_sin.sin_addr.s_addr = htonl (INADDR_ANY);       
+  
+  ret = connect(media->client_sock.fd, (struct sockaddr *)&media->client_sin, sizeof (media->client_sin));
+
+  if (ret <0)
+  	 g_message ("Can not connect to server");
+  udpsrc = gst_element_make_from_uri (GST_URI_SRC, "udp://0.0.0.0", NULL);
+
+  g_object_set (G_OBJECT (udpsrc), "sockfd", media->client_sock.fd, NULL);
+  g_object_set (G_OBJECT (udpsrc), "closefd", FALSE, NULL);
+  
+  pipeline = gst_pipeline_new ("client-pipeline");
+  gst_bin_add_many (GST_BIN(pipeline), udpsrc, element, NULL);
+  
+  
+  gst_element_link_many (pipeline, udpsrc, element, NULL);
+  media->element = pipeline;
+*/
+  g_message ("Create MEDIA");
+   
   if (!klass->create_pipeline)
     goto no_pipeline;
 

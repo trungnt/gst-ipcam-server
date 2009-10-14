@@ -60,6 +60,7 @@ struct _GstRTSPMediaFactory {
 
   GMutex       *medias_lock;
   GHashTable   *medias;
+  guint  v4l2src_port ;
 };
 
 /**

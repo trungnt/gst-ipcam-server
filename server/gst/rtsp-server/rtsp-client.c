@@ -182,7 +182,6 @@ send_response (GstRTSPClient * client, GstRTSPSession * session,
 #endif
 
   gst_rtsp_watch_send_message (client->watch, response, NULL);
-
   gst_rtsp_message_unset (response);
 }
 
