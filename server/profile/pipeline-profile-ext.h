@@ -5,11 +5,11 @@
  * Created on September 16, 2009, 11:17 AM
  */
 
-#ifndef _SERVER_PROFILE_H
-#define	_SERVER_PROFILE_H
+#ifndef _PIPELINE_PROFILE_EXT_H
+#define	_PIPELINE_PROFILE_EXT_H
 
-#include "profile/pipeline-profile.h"
-#include "profile/server-configuration.h"
+#include "pipeline-profile.h"
+#include "server-configuration.h"
 
 #ifdef	__cplusplus
 extern "C" {
@@ -36,7 +36,7 @@ extern "C" {
 	 *
 	 * @return gboolean TRUE if everything is ok, FALSE otherwise
 	 */
-	gboolean gst_rtsp_pipeline_profile_video_set_width(GstRTSPPipelineProfile * profile, gint width);
+	gboolean gst_rtsp_pipeline_profile_video_set_width_int(GstRTSPPipelineProfile * profile, gint width);
 
 	/**
 	 * Set the height of video size. All servers have this variable.
@@ -47,7 +47,7 @@ extern "C" {
 	 *
 	 * @return gboolean TRUE if everything is ok, FALSE otherwise
 	 */
-	gboolean gst_rtsp_pipeline_profile_video_set_height(GstRTSPPipelineProfile * profile, gint height);
+	gboolean gst_rtsp_pipeline_profile_video_set_height_int(GstRTSPPipelineProfile * profile, gint height);
 
 	/**
 	 * Set the framerate for the stream. All servers have this variable.
@@ -69,11 +69,14 @@ extern "C" {
 	 *
 	 * @return gboolean TRUE if everything is ok, FALSE otherwise
 	 */
-	gboolean gst_rtsp_pipeline_profile_video_set_bitrate(GstRTSPPipelineProfile * profile, gint bitrate);
-	
+	gboolean gst_rtsp_pipeline_profile_video_set_bitrate_int(GstRTSPPipelineProfile * profile, gint bitrate);
+
+	gboolean gst_rtsp_pipeline_profile_video_set_width(GstRTSPPipelineProfile * profile, const gchar * width);
+	gboolean gst_rtsp_pipeline_profile_video_set_height(GstRTSPPipelineProfile * profile, const gchar * height);
+	gboolean gst_rtsp_pipeline_profile_video_set_bitrate(GstRTSPPipelineProfile * profile, const gchar * bitrate);
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* _SERVER_PROFILE_H */
+#endif	/* _PIPELINE_PROFILE_EXT_H */
 

@@ -131,6 +131,17 @@ static gboolean gst_rtsp_pipeline_profile_load_basic_info(GstRTSPPipelineProfile
  */
 static gboolean gst_rtsp_pipeline_profile_load_vars(GstRTSPPipelineProfile * profile, gchar ** lines, gint * start_line);
 
+static void gst_rtsp_pipeline_profile_var_reset_vars(GstRTSPPipelineProfile * profile);
+/**
+ *
+ * @param key gpointer variable name.
+ * @param value gpointer value of the variable
+ * @param user_data pointer to a string storing pipeline description.
+ *
+ * @return None
+ */
+static void gst_rtsp_pipeline_profile_reset_var_func(gpointer key, gpointer value, gpointer user_data);
+
 static GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_alloc() {
 	GstRTSPPipelineProfile * profile = g_malloc(sizeof (GstRTSPPipelineProfile));
 	g_return_val_if_fail(profile != NULL, NULL);
@@ -138,7 +149,13 @@ static GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_alloc() {
 	profile->pipeline_name = NULL;
 	profile->pipeline_desc = NULL;
 	profile->pipeline_codec = NULL;
-	profile->vars = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	
+	profile->default_vars = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	if (profile->default_vars == NULL) {
+		gst_rtsp_pipeline_profile_free(profile);
+	}
+
+	profile->vars = g_hash_table_new(g_str_hash, g_str_equal);
 	if (profile->vars == NULL) {
 		gst_rtsp_pipeline_profile_free(profile);
 	}
@@ -405,6 +422,9 @@ GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar* name) {
 
 	g_strfreev(lines);
 
+	/* make sure that profile->vars has all variables from profile->default_vars */
+	gst_rtsp_pipeline_profile_var_reset_vars(profile);
+
 	return profile;
 }
 
@@ -454,6 +474,10 @@ void gst_rtsp_pipeline_profile_free(GstRTSPPipelineProfile* profile) {
 			//g_free(profile->vars);
 		}
 
+		if (profile->default_vars != NULL) {
+			g_hash_table_destroy(profile->default_vars);
+		}
+
 		if (profile->vars_name != NULL) {
 			g_list_free(profile->vars_name);
 			//g_free(profile->vars_name);
@@ -497,6 +521,7 @@ gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, con
 		return FALSE;
 	}
 
+	/* begin set var */
 	gchar * var = g_strdup(var_name);
 	g_hash_table_replace(profile->vars, var, g_strdup(value));
 	return TRUE;
@@ -528,7 +553,7 @@ static gboolean gst_rtsp_pipeline_profile_add_var(GstRTSPPipelineProfile * profi
 
 	name = g_strdup(var_name);
 	profile->vars_name = g_list_append(profile->vars_name, name);
-	g_hash_table_insert(profile->vars, name, g_strdup(init_value));
+	g_hash_table_insert(profile->default_vars, name, g_strdup(init_value));
 
 	return TRUE;
 }
@@ -539,6 +564,9 @@ gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profil
 	gchar * pipeline_desc = g_strdup(profile->pipeline_desc);
 	g_hash_table_foreach(profile->vars, gst_rtsp_pipeline_profile_var_replacing_func, &pipeline_desc);
 
+	// reset all variables
+	gst_rtsp_pipeline_profile_var_reset_vars(profile);
+	
 	return pipeline_desc;
 }
 
@@ -588,4 +616,19 @@ gboolean gst_rtsp_server_configuration_should_skip_line(const gchar* line) {
 	}
 
 	return FALSE;
+}
+
+static void gst_rtsp_pipeline_profile_var_reset_vars(GstRTSPPipelineProfile* profile) {
+	g_return_if_fail(profile != NULL);
+
+	g_hash_table_foreach(profile->default_vars, gst_rtsp_pipeline_profile_reset_var_func, profile);
+}
+
+static void gst_rtsp_pipeline_profile_reset_var_func(gpointer key, gpointer value, gpointer user_data) {
+	/* this function is called for profile->default_vars */
+	GstRTSPPipelineProfile * profile = (GstRTSPPipelineProfile*) user_data;
+	g_assert(profile);
+
+	/* replace vars by their default values */
+	g_hash_table_replace(profile->vars, key, value);
 }

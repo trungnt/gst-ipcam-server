@@ -170,7 +170,7 @@ gst_rtsp_server_set_device_source (GstRTSPServer *server, gchar *v4l2dev, gint p
   ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
   jpegenc = gst_element_factory_make ("jpegenc", "jpegenc");
   multiudpsink = gst_element_factory_make ("multiudpsink", "multiudpsink");
-  tmp_port = "10.0.0.166:3000,10.0.0.166:3001,10.0.0.166:3002,10.0.0.166:3003,10.0.0.166:3004,10.0.0.166:3005,10.0.0.166:3006,10.0.0.166:3007,localhost:3008,localhost:3009, localhost:3010,localhost:3011,localhost:3012";
+  tmp_port = "10.0.0.139:3000,10.0.0.139:3001,10.0.0.139:3002,10.0.0.139:3003,10.0.0.139:3004,10.0.0.139:3005,10.0.0.139:3006,10.0.0.139:3007,localhost:3008,localhost:3009, localhost:3010,localhost:3011,localhost:3012";
   g_object_set (G_OBJECT (multiudpsink), "closefd", FALSE, NULL);
   g_object_set (G_OBJECT (multiudpsink), "sync", FALSE, NULL);
   g_object_set (G_OBJECT (multiudpsink), "async", FALSE, NULL); 

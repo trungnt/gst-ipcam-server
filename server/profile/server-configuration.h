@@ -91,9 +91,11 @@ extern "C" {
 	 * The pipeline can be get by index or name using gst_rtsp_server_configuration_get_pipeline*()
 	 */
 	typedef struct GstRTSPServerConfiguration {
-		GList * pipelines_name; /// list of pipelines name
-		GHashTable * pipelines; /// a hash table stored pipelines using pipeline name as key
-		GHashTable * pipelines_by_index; /// same as above but using index as key
+		GList * pipelines_name; /**< list of pipelines name */
+		GHashTable * pipelines; /**< a hash table stored pipelines using pipeline name as key */
+		GHashTable * pipelines_by_index; /**< same as above but using index as key */
+		gchar * default_video_pipeline; /**< name of default video profile */
+		gchar * default_audio_pipelinel; /**< name of default audio profile */
 	} GstRTSPServerConfiguration;
 
 	/**
@@ -151,6 +153,22 @@ extern "C" {
 	 * @return GstRTSPPipelineProfile* the pipeline we want to get or NULL if some thing wrong
 	 */
 	GstRTSPPipelineProfile * gst_rtsp_server_configuration_get_pipeline(const GstRTSPServerConfiguration * config, const gchar * name);
+
+	gboolean gst_rtsp_server_configuration_set_default_video_pipeline(GstRTSPServerConfiguration * config, const gchar * pipeline_name);
+	const gchar * gst_rtsp_server_configuration_get_default_video_profile_name(const GstRTSPServerConfiguration * config);
+
+#define gst_rtsp_server_configuration_get_default_video_profile(config)	{\
+	return gst_rtsp_server_configuration_get_pipeline(config, \
+					gst_rtsp_server_configuration_get_default_video_profile_name(config));\
+}
+
+	gboolean gst_rtsp_server_configuration_set_default_audio_pipeline(GstRTSPServerConfiguration * config, const gchar * pipeline_name);
+	const gchar * gst_rtsp_server_configuration_get_default_audio_profile_name(const GstRTSPServerConfiguration * config);
+
+#define gst_rtsp_server_configuration_get_default_audio_profile(config) {\
+	return gst_rtsp_server_configuration_get_pipeline(config, \
+					gst_rtsp_server_configuration_get_default_audio_profile_name(config));\
+}
 
 #ifdef	__cplusplus
 }

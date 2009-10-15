@@ -20,8 +20,7 @@
 #include <gst/gst.h>
 #include <gst/rtsp-server/rtsp-server.h>
 
-#include "server-profile.h"
-#include "profile/pipeline-profile.h"
+#include "profile/pipeline-profile-ext.h"
 
 // default profile file for this server
 #define DEFAULT_PROFILE_FILE_VIDEO "onesrc-mpeg4.ini"

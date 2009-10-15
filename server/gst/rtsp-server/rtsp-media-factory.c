@@ -19,6 +19,7 @@
 
 #include "rtsp-media-factory.h"
 #include "string.h"
+#include "profile/pipeline-profile-ext.h"
 
 #define DEFAULT_LAUNCH         NULL
 #define DEFAULT_SHARED         FALSE
@@ -88,6 +89,7 @@ static void
 gst_rtsp_media_factory_init (GstRTSPMediaFactory * factory)
 {
   factory->launch = g_strdup (DEFAULT_LAUNCH);
+  factory->server_config = NULL;
   factory->shared = DEFAULT_SHARED;
 
   factory->lock = g_mutex_new ();
@@ -105,6 +107,9 @@ gst_rtsp_media_factory_finalize (GObject * obj)
   g_hash_table_unref (factory->medias);
   g_mutex_free (factory->medias_lock);
   g_free (factory->launch);
+  if (factory->server_config != NULL) {
+    gst_rtsp_server_configuration_free(factory->server_config);
+  }
   g_mutex_free (factory->lock);
 
   G_OBJECT_CLASS (gst_rtsp_media_factory_parent_class)->finalize (obj);
@@ -366,7 +371,8 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
   g_mutex_lock (factory->lock);
   /* we need a parse syntax */
-  if (factory->launch == NULL)
+  /*if (factory->launch == NULL)*/
+  if (factory->server_config == NULL)
     goto no_launch;
 
   /* we need to get framerate and bitrate here*/
@@ -383,7 +389,6 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 	 guint param_number = 0;
   	 gchar ** tmp = NULL, **tmp_0 = NULL, ** tmp_1 = NULL;
   	 gchar ** tmp_2 = NULL, ** tmp_3 = NULL;
-    gchar *tmp_launch = NULL;   	
     guint array_size =0;
     params = g_hash_table_new (g_str_hash, g_str_equal);         
 
@@ -426,7 +431,8 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 		g_hash_table_insert (params, g_strdup(tmp[0]), g_strdup(tmp[1]));
 	 } 
     g_strfreev (tmp);
-	 url_launch = g_strdup (factory->launch);
+	g_free(url_launch);
+	 /*url_launch = g_strdup (factory->launch);*/
 	 param_number = g_hash_table_size (params);
 	 if (param_number == 0) 
 	 	goto wrong_params; 
@@ -435,7 +441,42 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 	 width = g_hash_table_lookup (params, "width");
 	 height = g_hash_table_lookup (params, "height");
 	 g_message ("Parameters in url framerate=%s, bitrate=%s, width=%s, height=%s ", framerate, bitrate, width, height);
-	 
+
+	 /* now, we set variable to our pipeline */
+	 {
+		 /* get the first video pipeline => this tmp here*/
+		 GstRTSPPipelineProfile * profile = NULL;
+		 gint no_profiles = gst_rtsp_server_configuration_get_number_of_pipelines(factory->server_config);
+		 gint i;
+		 for ( i=0 ; i<no_profiles ; i++ ) {
+			 profile = gst_rtsp_server_configuration_get_pipeline_at(factory->server_config, i);
+			 if (gst_rtsp_pipeline_profile_is_video(profile)) {
+				 break;
+			 }
+		 }
+		 if (i == no_profiles) {
+			 goto no_launch;
+		 }
+
+		 if (framerate != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_framerate(profile, framerate);
+		 }
+
+		 if (width != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_width(profile, width);
+		 }
+
+		 if (height != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_height(profile, height);
+		 }
+
+		 if (bitrate != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_bitrate(profile, bitrate);
+		 }
+
+		 factory->launch = gst_rtsp_pipeline_profile_build_pipeline(profile);
+	 }
+/*
 	 if (param_number >= 2) {
 	 	tmp = g_strsplit (url_launch, "framerate=", 2);
 		if (width != NULL) {
@@ -484,12 +525,19 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
     	 factory->launch = g_strdup(tmp_launch);
  	 	 g_free (tmp_launch);
 	 }
+*/
 	 
 wrong_params:
  	 g_free (url_launch);
 	 g_hash_table_destroy (params);
   }	
-  
+
+  /**
+   * NOTE: we can easily set port using our pipeline profile
+   * gst_rtsp_pipeline_profile_set_var(profile, "port", factory->v4l2src_port);
+   * then use gst_rtsp_pipeline_profile_build_pipeline(profile) to get launch string.
+   * But temporary keep it here. May be I'll update after merge with server-development branch
+   */
   gchar *tmp, *tmp1=NULL, **tmp_0=NULL;
   factory->v4l2src_port += 1;
   tmp =  g_strdup (factory->launch);
@@ -690,4 +738,22 @@ default_configure (GstRTSPMediaFactory *factory, GstRTSPMedia *media)
   g_mutex_unlock (factory->lock);
 
   gst_rtsp_media_set_shared (media, shared);
+}
+
+void
+gst_rtsp_media_factory_set_server_configuration(GstRTSPMediaFactory* factory, GstRTSPServerConfiguration* server_config) {
+	/* if this's NULL then nothing to do */
+	g_return_if_fail(server_config != NULL);
+
+	if (factory->server_config != NULL) {
+		/* free the old one */
+		gst_rtsp_server_configuration_free(factory->server_config);
+	}
+
+	factory->server_config = server_config;
+}
+
+GstRTSPServerConfiguration *
+gst_rtsp_media_factory_get_server_configuration(GstRTSPMediaFactory* factory) {
+	return factory->server_config;
 }

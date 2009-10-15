@@ -20,8 +20,7 @@
 #include <gst/gst.h>
 #include <gst/rtsp-server/rtsp-server.h>
 
-#include "server-profile.h"
-#include "profile/pipeline-profile.h"
+#include "profile/pipeline-profile-ext.h"
 
 // default profile file for this server
 #define DEFAULT_PROFILE_FILE "onesrc-jpeg.ini"
@@ -74,8 +73,8 @@ main (int argc, char *argv[])
 	  /* we can set some common server parameter by using functions in server-profile.h
 	   * but default values will be used here
 	   */
-	  gst_rtsp_pipeline_profile_video_set_width(profile, 600);
-	  gst_rtsp_pipeline_profile_video_set_height(profile, 400);
+	  gst_rtsp_pipeline_profile_video_set_width_int(profile, 600);
+	  gst_rtsp_pipeline_profile_video_set_height_int(profile, 400);
 	  gst_rtsp_pipeline_profile_video_set_framerate(profile, "25/1");
 	  pipeline_str = gst_rtsp_pipeline_profile_build_pipeline(profile);
 	  g_warning("Our pipeline is '%s'", pipeline_str);

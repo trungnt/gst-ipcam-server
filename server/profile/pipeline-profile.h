@@ -97,6 +97,7 @@ extern "C" {
 		gchar * pipeline_desc; /// the string represent the pipeline
 		GList * vars_name; /// list of variables name
 		GHashTable * vars; /// table of variables and their values
+		GHashTable * default_vars; /// list of variables and their default values
 	} GstRTSPPipelineProfile;
 
 	/**

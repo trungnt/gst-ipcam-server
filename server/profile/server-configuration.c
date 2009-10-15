@@ -254,3 +254,4 @@ static void gst_rtsp_server_configuration_free_pipeline(gpointer pipeline) {
 	GstRTSPPipelineProfile * profile = (GstRTSPPipelineProfile *) pipeline;
 	gst_rtsp_pipeline_profile_free(profile);
 }
+
