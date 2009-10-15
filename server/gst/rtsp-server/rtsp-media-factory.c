@@ -94,7 +94,7 @@ gst_rtsp_media_factory_init (GstRTSPMediaFactory * factory)
   factory->medias_lock = g_mutex_new ();
   factory->medias = g_hash_table_new_full (g_str_hash, g_str_equal,
 		  g_free, g_object_unref);
-  factory->v4l2src_port = 2999;		  
+  factory->v4l2src_port = 0;		  
 }
 
 static void
@@ -107,6 +107,9 @@ gst_rtsp_media_factory_finalize (GObject * obj)
   g_free (factory->launch);
   g_mutex_free (factory->lock);
 
+  gst_element_set_state (factory->v4l2src_pipeline, GST_STATE_NULL);
+  g_object_unref (factory->v4l2src_pipeline);
+  g_object_unref (factory->multiudpsink);
   G_OBJECT_CLASS (gst_rtsp_media_factory_parent_class)->finalize (obj);
 }
 
@@ -490,8 +493,10 @@ wrong_params:
 	 g_hash_table_destroy (params);
   }	
   
-  gchar *tmp, *tmp1=NULL, **tmp_0=NULL;
+  gchar *tmp, *tmp1 = NULL, **tmp_0 = NULL;
   factory->v4l2src_port += 1;
+  /* we add new client here*/
+  g_signal_emit_by_name (factory->multiudpsink, "add", "127.0.0.1",factory->v4l2src_port, NULL);
   tmp =  g_strdup (factory->launch);
   if (strstr(tmp, "(")) {
     if (strstr(tmp, "udpsrc")) {
@@ -690,4 +695,58 @@ default_configure (GstRTSPMediaFactory *factory, GstRTSPMedia *media)
   g_mutex_unlock (factory->lock);
 
   gst_rtsp_media_set_shared (media, shared);
+}
+
+/**
+ * gst_rtsp_factory_set_device_source:
+ * @server: a #GstRTSPServer
+ * @v4l2src: v4l2src
+ *
+ * Configure @factory to use which v4l2 device.
+ * @v4l2dev v4l2src device=/dev/video0.
+ * @ prop device property, default is /dev/video0
+ * @port port to listen
+ *
+ * This function must be called when using 2 webcamera sources.
+ */
+void  
+gst_rtsp_factory_set_device_source (GstRTSPMediaFactory *factory, gchar *v4l2dev, gchar* prop, gint port)
+{
+  g_return_if_fail (GST_IS_RTSP_MEDIA_FACTORY (factory));
+  g_return_if_fail (v4l2dev);	
+ 
+  /* when do this I will create one server to v4l2src :P */
+  GstCaps *caps;
+  GstElement *pipeline,  *v4l2src, *ffmpegcolorspace, *jpegenc, *multiudpsink;
+  /* setup pipeline */
+  pipeline = gst_pipeline_new ("v4l2src-pipeline");
+  if (v4l2dev) {
+  	 v4l2src = gst_element_factory_make (g_strdup(v4l2dev), "v4l2src");
+  } else {
+	 v4l2src = gst_element_factory_make ("v4l2src", "v4l2src"); 
+  }   	 
+  if (prop)	  
+  	 g_object_set (G_OBJECT (v4l2src), "device", prop, NULL);
+  else 
+  	 g_object_set (G_OBJECT (v4l2src), "device", "/dev/video0", NULL); 	 
+  
+  ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
+  jpegenc = gst_element_factory_make ("jpegenc", "jpegenc");
+  multiudpsink = gst_element_factory_make ("multiudpsink", "multiudpsink");
+  g_object_set (G_OBJECT (multiudpsink), "closefd", FALSE, NULL);
+  g_object_set (G_OBJECT (multiudpsink), "sync", FALSE, NULL);
+  g_object_set (G_OBJECT (multiudpsink), "async", FALSE, NULL); 
+  gst_bin_add_many (GST_BIN(pipeline), v4l2src, ffmpegcolorspace, jpegenc, multiudpsink, NULL);
+  caps = gst_caps_new_simple ("video/x-raw-yuv",
+      "framerate", GST_TYPE_FRACTION, 20, 1,
+      "width", G_TYPE_INT, 640,
+      "height", G_TYPE_INT, 480,
+      NULL);
+  gst_element_link_filtered (v4l2src, ffmpegcolorspace, caps);  
+  /* link all */
+  gst_element_link_many (ffmpegcolorspace, jpegenc, multiudpsink, NULL);
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);	
+  factory->v4l2src_pipeline = pipeline ;  
+  factory->v4l2src_port = port ;
+  factory->multiudpsink = multiudpsink;
 }

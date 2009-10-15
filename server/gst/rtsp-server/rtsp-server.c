@@ -121,8 +121,6 @@ gst_rtsp_server_finalize (GObject *object)
 
   g_object_unref (server->session_pool);
   g_object_unref (server->media_mapping);
-  gst_element_set_state (server->v4l2src_pipeline, GST_STATE_NULL);
-  g_object_unref (server->v4l2src_pipeline);
 }
 
 /**
@@ -137,55 +135,6 @@ gst_rtsp_server_new (void)
   result = g_object_new (GST_TYPE_RTSP_SERVER, NULL);
 
   return result;
-}
-
-/**
- * gst_rtsp_server_set_device_source:
- * @server: a #GstRTSPServer
- * @v4l2src: v4l2src
- *
- * Configure @server to use which v4l2 device.
- * @v4l2dev v4l2src device=/dev/video0.
- * @port port to listen
- *
- * This function must be called when using 2 webcamera sources.
- */
-void
-gst_rtsp_server_set_device_source (GstRTSPServer *server, gchar *v4l2dev, gint port)
-{
-  g_return_if_fail (GST_IS_RTSP_SERVER (server));
-  g_return_if_fail (v4l2dev);	
-
-  /* when do this I will create one server to v4l2src :P */
-  GstCaps *caps;
-  GstElement *pipeline,  *v4l2src, *ffmpegcolorspace, *jpegenc,*multiudpsink;
-  gchar* tmp_port;
-  /* setup pipeline */
-  pipeline = gst_pipeline_new ("v4l2src-pipeline");
-  if (v4l2dev) {
-  	 v4l2src = gst_element_factory_make (g_strdup(v4l2dev), "v4l2src");
-  } else {
-	 v4l2src = gst_element_factory_make ("v4l2src", "v4l2src"); 
-  }   	 
-  ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
-  jpegenc = gst_element_factory_make ("jpegenc", "jpegenc");
-  multiudpsink = gst_element_factory_make ("multiudpsink", "multiudpsink");
-  tmp_port = "10.0.0.166:3000,10.0.0.166:3001,10.0.0.166:3002,10.0.0.166:3003,10.0.0.166:3004,10.0.0.166:3005,10.0.0.166:3006,10.0.0.166:3007,localhost:3008,localhost:3009, localhost:3010,localhost:3011,localhost:3012";
-  g_object_set (G_OBJECT (multiudpsink), "closefd", FALSE, NULL);
-  g_object_set (G_OBJECT (multiudpsink), "sync", FALSE, NULL);
-  g_object_set (G_OBJECT (multiudpsink), "async", FALSE, NULL); 
-  g_object_set (G_OBJECT (multiudpsink), "clients", tmp_port, NULL);
-  gst_bin_add_many (GST_BIN(pipeline), v4l2src, ffmpegcolorspace, jpegenc, multiudpsink, NULL);
-  caps = gst_caps_new_simple ("video/x-raw-yuv",
-      "framerate", GST_TYPE_FRACTION, 20, 1,
-      "width", G_TYPE_INT, 640,
-      "height", G_TYPE_INT, 480,
-      NULL);
-  gst_element_link_filtered (v4l2src, ffmpegcolorspace, caps);  
-  /* link all */
-  gst_element_link_many (ffmpegcolorspace, jpegenc, multiudpsink, NULL);
-  gst_element_set_state (pipeline, GST_STATE_PLAYING);	
-  server->v4l2src_pipeline = pipeline ;  
 }
 
 /**

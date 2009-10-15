@@ -57,8 +57,6 @@ main (int argc, char *argv[])
 
   /* create a server instance */
   server = gst_rtsp_server_new ();
-  /* set webcam source and port to listen for server */
-  gst_rtsp_server_set_device_source (server, "v4l2src", 3000);
   /* get the mapping for this server, every server has a default mapper object
    * that be used to map uri mount points to media factories */
 
@@ -69,6 +67,8 @@ main (int argc, char *argv[])
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
   factory = gst_rtsp_media_factory_new ();
+  /* set webcam source and port to listen for factory */
+  gst_rtsp_factory_set_device_source (factory, "v4l2src", "/dev/video0", 3000);
 
   /* start building the pipeline */
   profile_video = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_VIDEO);

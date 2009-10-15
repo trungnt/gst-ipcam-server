@@ -60,7 +60,12 @@ struct _GstRTSPMediaFactory {
 
   GMutex       *medias_lock;
   GHashTable   *medias;
-  guint  v4l2src_port ;
+  /* use for webcam */
+  GstElement   *v4l2src_pipeline;
+  GstElement   *multiudpsink;  
+
+  guint        v4l2src_port ;
+  
 };
 
 /**
@@ -115,7 +120,7 @@ GstRTSPMedia *        gst_rtsp_media_factory_construct    (GstRTSPMediaFactory *
 void                  gst_rtsp_media_factory_collect_streams (GstRTSPMediaFactory *factory,
                                                               const GstRTSPUrl *url,
                                                               GstRTSPMedia *media);
-
+void                  gst_rtsp_factory_set_device_source    (GstRTSPMediaFactory *factory, gchar *v4l2dev, gchar* prop, gint port);
 G_END_DECLS
 
 #endif /* __GST_RTSP_MEDIA_FACTORY_H__ */

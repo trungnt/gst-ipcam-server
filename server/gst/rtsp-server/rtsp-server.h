@@ -70,11 +70,7 @@ struct _GstRTSPServer {
   
   /* sessions on this server */
   GstRTSPSessionPool  *session_pool;
-  /* use for webcam */
-  GstElement *v4l2src_pipeline;
   
-  /* port assign to new pipeline start: 5000 */
-  guint v4l2src_port;
   /* media mapper for this server */
   GstRTSPMediaMapping *media_mapping;
 };
@@ -116,7 +112,6 @@ GIOChannel *          gst_rtsp_server_get_io_channel       (GstRTSPServer *serve
 GSource *             gst_rtsp_server_create_watch         (GstRTSPServer *server);
 guint                 gst_rtsp_server_attach               (GstRTSPServer *server, 
                                                             GMainContext *context);
-void                  gst_rtsp_server_set_device_source    (GstRTSPServer *server, gchar *v4l2dev, gint port);
 
 G_END_DECLS
 
