@@ -89,6 +89,7 @@ main (int argc, char *argv[])
          }
 	      if (profile_audio != NULL) {
 		   	 pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
+		   	 pipeline_audio_str = g_strdup_printf(pipeline_audio_str, 1);
              pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
              /* free pipeline audio video string */
              g_free(pipeline_video_str);

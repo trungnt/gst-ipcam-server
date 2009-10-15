@@ -24,10 +24,10 @@
 #include "profile/pipeline-profile.h"
 
 // default profile file for this server
-#define DEFAULT_PROFILE_FILE_VIDEO "onesrc-h264.ini"
-#define DEFAULT_PROFILE_FILE_AUDIO_AAC "audio-aac.ini"
-#define DEFAULT_PROFILE_FILE_AUDIO_G711 "audio-g711.ini"
-#define DEFAULT_PROFILE_FILE_AUDIO_G726 "audio-g726.ini"
+#define DEFAULT_PROFILE_FILE_VIDEO_JPEG_H264    "onesrc-jpeg-h264.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_AAC 	      "audio-aac.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_G711         "audio-g711.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_G726         "audio-g726.ini"
 
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)
@@ -36,6 +36,7 @@ timeout (GstRTSPServer *server, gboolean ignored)
 
   pool = gst_rtsp_server_get_session_pool (server);
   gst_rtsp_session_pool_cleanup (pool);
+  g_message ("Server timeout");
   g_object_unref (pool);
 
   return TRUE;
@@ -44,12 +45,12 @@ timeout (GstRTSPServer *server, gboolean ignored)
 int
 main (int argc, char *argv[])
 {
-  GMainLoop *loop;
-  GstRTSPServer *server;
-  GstRTSPMediaMapping *mapping;
-  GstRTSPMediaFactory *factory;
-  GstRTSPPipelineProfile *profile_video, *profile_audio = NULL;
-  gchar *pipeline_str = NULL, *pipeline_video_str = NULL, *pipeline_audio_str = NULL;
+  GMainLoop                 *loop;
+  GstRTSPServer             *server;
+  GstRTSPMediaMapping       *mapping;
+  GstRTSPMediaFactory       *factory;
+  GstRTSPPipelineProfile    *profile_video, *profile_audio = NULL;
+  gchar                     *pipeline_str = NULL, *pipeline_video_str = NULL, *pipeline_audio_str = NULL;
 
   gst_init (&argc, &argv);
 
@@ -57,52 +58,52 @@ main (int argc, char *argv[])
 
   /* create a server instance */
   server = gst_rtsp_server_new ();
+  /* set webcam source and port to listen for server */
+  gst_rtsp_server_set_device_source (server, "v4l2src", 3000);
   /* get the mapping for this server, every server has a default mapper object
    * that be used to map uri mount points to media factories */
 
   mapping = gst_rtsp_server_get_media_mapping (server);
 
-  /* make a media factory for a h264 video stream and audio (aac, g711 or g726) stream. The default media factory can use
+  /* make a media factory for two video(jpeg and h264) streams and audio(aac, g711 or g726) stream. The default media factory can use
    * gst-launch syntax to create pipelines. 
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
   factory = gst_rtsp_media_factory_new ();
-  /* set webcam source and port to listen for factory */
-  gst_rtsp_factory_set_device_source (factory, "v4l2src", "/dev/video0", 3000);
 
   /* start building the pipeline */
-  profile_video = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_VIDEO);
+  profile_video = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_VIDEO_JPEG_H264);
   if (profile_video == NULL) {
 	  pipeline_str = g_strdup("");
   } else {
-	  /* we can set some common server parameter by using functions in server-profile.h
-	   * but default values will be used here
-	   */
-	  pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
+    /* we can set some common server parameter by using functions in server-profile.h
+     * but default values will be used here
+     */
+     pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
      pipeline_str = pipeline_video_str;
 
      if (argc > 1) {
-       if (g_strrstr(argv[1], "aac")) {
+        if (g_strrstr(argv[1], "aac")) {
 		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_AAC);
   	    } else if (g_strrstr(argv[1], "g726")) {
 		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G726);
 	    } else if (g_strrstr(argv[1], "g711")) {
 		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G711);
-       }
-		 if (profile_audio != NULL) {
-		   pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
-		   pipeline_audio_str = g_strdup_printf(pipeline_audio_str, 1);
-         pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
-         /* free pipeline audio video string */
-         g_free(pipeline_video_str); 
-         g_free(pipeline_audio_str);
-         /* free profile audio string */
-         g_free(profile_audio);
-       }
-	  }
+        }
+        if (profile_audio != NULL) {
+	        pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
+           pipeline_audio_str = g_strdup_printf(pipeline_audio_str, 2);
+           pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
+           /* free pipeline audio video string */
+           g_free(pipeline_video_str); 
+           g_free(pipeline_audio_str);
+           /* free profile audio string */
+           g_free(profile_audio);
+        }
+     }
      /* free profile video string */
      g_free(profile_video);
-	  g_print("Our pipeline is '%s'\n", pipeline_str);
+     g_print("Our pipeline is '%s'\n", pipeline_str);
   }
 
   gst_rtsp_media_factory_set_launch (factory, pipeline_str);
@@ -113,8 +114,8 @@ main (int argc, char *argv[])
   /* share the pipeline with multiple clients */
   gst_rtsp_media_factory_set_shared(factory, TRUE);
 
-  /* attach the test factory to the /h264 url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/h264", factory);
+  /* attach the test factory to the /jpg-h264 url */
+  gst_rtsp_media_mapping_add_factory (mapping, "/jpg-h264", factory);
   
   /* don't need the ref to the mapper anymore */
   g_object_unref (mapping);
@@ -122,7 +123,7 @@ main (int argc, char *argv[])
   /* attach the server to the default maincontext */
   gst_rtsp_server_attach (server, NULL);
 
-  g_timeout_add_seconds (2, (GSourceFunc) timeout, server); 
+  g_timeout_add_seconds (15, (GSourceFunc) timeout, server); 
 
   /* start serving */
   g_main_loop_run (loop);
