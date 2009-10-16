@@ -89,7 +89,7 @@ static GstRTSPServerConfiguration * gst_rtsp_server_configuration_alloc() {
 	GstRTSPServerConfiguration * config = g_malloc(sizeof (GstRTSPServerConfiguration));
 	g_return_val_if_fail(config != NULL, NULL);
 
-	config->pipelines_name = NULL; //g_list_alloc();
+	config->pipelines_name = NULL;
 
 	config->pipelines = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, gst_rtsp_server_configuration_free_pipeline);
 
@@ -117,7 +117,7 @@ GstRTSPServerConfiguration * gst_rtsp_server_configuration_load(const gchar* con
 	g_return_val_if_fail(config_file != NULL, NULL);
 
 	{
-		// now read configuration file
+		/* now read configuration file */
 		gchar * contents = NULL;
 		GError * error = NULL;
 		gchar ** lines = NULL;
@@ -143,7 +143,7 @@ GstRTSPServerConfiguration * gst_rtsp_server_configuration_load(const gchar* con
 
 		while (current_line < no_lines) {
 			line = g_strstrip(lines[current_line]);
-			// skip them comments (line start with #) and empty line
+			/* skip them comments (line start with #) and empty line */
 			if (gst_rtsp_server_configuration_should_skip_line(line) == TRUE) {
 				current_line++;
 				continue;
@@ -151,16 +151,16 @@ GstRTSPServerConfiguration * gst_rtsp_server_configuration_load(const gchar* con
 
 			if (g_strcasecmp(line, "[pipeline]") == 0) {
 				current_line++;
-				// next section define a pipeline
+				/* next section define a pipeline */
 				tmp_profile = gst_rtsp_pipeline_profile_load_from_text(lines, &current_line);
 				if (tmp_profile != NULL) {
-					// add the pipeline profile to the configuration
+					/* add the pipeline profile to the configuration */
 					if (gst_rtsp_server_configuration_add_pipeline(config, tmp_profile) == FALSE) {
 						gst_rtsp_pipeline_profile_free(tmp_profile);
 					}
 				}
 			} else {
-				// now, anything else mean syntax error
+				/* now, anything else mean syntax error */
 				g_warning("Server configuration loader: invalid syntax at line %d in file '%s'", current_line, config_file);
 				current_line++;
 			}
@@ -223,7 +223,6 @@ static gboolean gst_rtsp_server_configuration_has_pipeline(const GstRTSPServerCo
 	g_return_val_if_fail(config != NULL, FALSE);
 
 	node = g_list_first(config->pipelines_name);
-	//	node = first;
 
 	while (node != NULL) {
 		name = (gchar*) node->data;
@@ -245,7 +244,7 @@ static gboolean gst_rtsp_server_configuration_add_pipeline(GstRTSPServerConfigur
 
 	g_return_val_if_fail(gst_rtsp_server_configuration_has_pipeline(config, profile->pipeline_name) != TRUE, FALSE);
 
-	// now adding hehe
+	/* now adding hehe */
 	index = g_malloc(sizeof (gint));
 	*index = gst_rtsp_server_configuration_get_number_of_pipelines(config);
 

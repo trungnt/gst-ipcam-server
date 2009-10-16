@@ -45,8 +45,7 @@ main (int argc, char *argv[])
   GstRTSPMediaMapping *mapping;
   GstRTSPMediaFactory *factory;
   gchar * profile_file_name = DEFAULT_PROFILE_FILE;
-  GstRTSPPipelineProfile * profile;
-  gchar * pipeline_str = NULL;
+  GstRTSPServerConfiguration * server_config;
 
   gst_init (&argc, &argv);
 
@@ -65,25 +64,13 @@ main (int argc, char *argv[])
    * element with pay%d names will be a stream */
   factory = gst_rtsp_media_factory_new ();
 
+  /* set webcam source and port to listen for factory */
+	gst_rtsp_factory_set_device_source(factory, "v4l2src", "/dev/video0", 3000);
+
   /* start building the pipeline */
-  profile = gst_rtsp_pipeline_profile_load(profile_file_name);
-  if (profile == NULL) {
-	  pipeline_str = g_strdup("");
-  } else {
-	  /* we can set some common server parameter by using functions in server-profile.h
-	   * but default values will be used here
-	   */
-	  gst_rtsp_pipeline_profile_video_set_width_int(profile, 600);
-	  gst_rtsp_pipeline_profile_video_set_height_int(profile, 400);
-	  gst_rtsp_pipeline_profile_video_set_framerate(profile, "25/1");
-	  pipeline_str = gst_rtsp_pipeline_profile_build_pipeline(profile);
-	  g_warning("Our pipeline is '%s'", pipeline_str);
-  }
+  server_config = gst_rtsp_server_configuration_load(profile_file_name);
 
-  gst_rtsp_media_factory_set_launch (factory, pipeline_str);
-
-  /* free pipeline string */
-  g_free(pipeline_str);
+  gst_rtsp_media_factory_set_server_configuration(factory, server_config);
 
   /* share the pipeline with multiple clients */
   gst_rtsp_media_factory_set_shared(factory, TRUE);
