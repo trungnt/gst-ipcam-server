@@ -491,9 +491,9 @@ wrong_params:
   }	
   
   gchar *tmp, *tmp1 = NULL, **tmp_0 = NULL;
-  /* we add new client here*/
+  /* we add new client here */
+  factory->v4l2src_port += 1;
   g_signal_emit_by_name (factory->multiudpsink, "add", "127.0.0.1",factory->v4l2src_port, NULL);
-  factory->v4l2src_port += 1;  
   tmp =  g_strdup (factory->launch);
   if (strstr(tmp, "(")) {
     if (strstr(tmp, "udpsrc")) {
@@ -720,7 +720,7 @@ gst_rtsp_factory_set_device_source (GstRTSPMediaFactory *factory, gchar *v4l2dev
   if (v4l2dev) {
   	 v4l2src = gst_element_factory_make (g_strdup(v4l2dev), "v4l2src");
   } else {
-	 v4l2src = gst_element_factory_make ("v4l2src", "v4l2src"); 
+	 v4l2src = gst_element_factory_make ("v4l2src", v4l2dev); 
   }   	 
   if (prop)	  
   	 g_object_set (G_OBJECT (v4l2src), "device", prop, NULL);
