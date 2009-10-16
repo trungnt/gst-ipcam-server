@@ -19,6 +19,7 @@
 
 #include "rtsp-media-factory.h"
 #include "string.h"
+#include "profile/pipeline-profile-ext.h"
 
 #define DEFAULT_LAUNCH         NULL
 #define DEFAULT_SHARED         FALSE
@@ -42,6 +43,15 @@ static GstElement * default_get_element (GstRTSPMediaFactory *factory, const Gst
 static GstRTSPMedia * default_construct (GstRTSPMediaFactory *factory, const GstRTSPUrl *url);
 static void default_configure (GstRTSPMediaFactory *factory, GstRTSPMedia *media);
 static GstElement* default_create_pipeline (GstRTSPMediaFactory *factory, GstRTSPMedia *media);
+
+/**
+ * parse url query to extract variables
+ *
+ * @param url_query gchar* query to extract
+ *
+ * @return GHashTable* table of variable and value
+ */
+static GHashTable * gst_rtsp_media_factory_query_parsing(const gchar * url_query);
 
 G_DEFINE_TYPE (GstRTSPMediaFactory, gst_rtsp_media_factory, G_TYPE_OBJECT);
 
@@ -88,6 +98,7 @@ static void
 gst_rtsp_media_factory_init (GstRTSPMediaFactory * factory)
 {
   factory->launch = g_strdup (DEFAULT_LAUNCH);
+  factory->server_config = NULL;
   factory->shared = DEFAULT_SHARED;
 
   factory->lock = g_mutex_new ();
@@ -105,6 +116,9 @@ gst_rtsp_media_factory_finalize (GObject * obj)
   g_hash_table_unref (factory->medias);
   g_mutex_free (factory->medias_lock);
   g_free (factory->launch);
+  if (factory->server_config != NULL) {
+    gst_rtsp_server_configuration_free(factory->server_config);
+  }
   g_mutex_free (factory->lock);
 
   gst_element_set_state (factory->v4l2src_pipeline, GST_STATE_NULL);
@@ -369,7 +383,8 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
   g_mutex_lock (factory->lock);
   /* we need a parse syntax */
-  if (factory->launch == NULL)
+  /*if (factory->launch == NULL)*/
+  if (factory->server_config == NULL)
     goto no_launch;
 
   /* we need to get framerate and bitrate here*/
@@ -384,49 +399,10 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
     gchar *height = NULL;    
     GHashTable *params = NULL;
 	 guint param_number = 0;
-  	 gchar ** tmp = NULL, **tmp_0 = NULL, ** tmp_1 = NULL;
-  	 gchar ** tmp_2 = NULL, ** tmp_3 = NULL;
-    gchar *tmp_launch = NULL;   	
-    params = g_hash_table_new (g_str_hash, g_str_equal);         
 
-	 if (strstr(url_launch, "&")) {
-  	 	tmp = g_strsplit (url_launch, "&", -1);
-		/* Check values before insert into hashtable */	 	
-		if (tmp[0] != NULL) {	 	
-	 		tmp_0 = g_strsplit (tmp[0], "=", 2);
-		 	if (tmp_0[1]) {
-				g_hash_table_insert (params, g_strdup(tmp_0[0]), g_strdup(tmp_0[1]));
-			}
-	 	}
-	 	if (tmp[1]) {
-	 		tmp_1 = g_strsplit (tmp[1], "=", 2);
-			if (tmp_1[1]) {		
-				g_hash_table_insert (params, g_strdup(tmp_1[0]), g_strdup(tmp_1[1]));
-			}
-	 	}
-	 	if (tmp[2]) {	 
-	 		tmp_2 = g_strsplit (tmp[2], "=", 2);
-	      g_message ("tmp 2 %s",tmp_2[1]);
-			if (tmp_2[1]) {		
-				g_hash_table_insert (params, g_strdup(tmp_2[0]), g_strdup(tmp_2[1]));
-			}
-	 	}
-	 	if (tmp[3]) {	
-	 		tmp_3 = g_strsplit (tmp[3], "=", 2);
-			if (tmp_3[1]) {		
-				g_hash_table_insert (params, g_strdup(tmp_3[0]), g_strdup(tmp_3[1]));
-			}
-	 	}	
-	   g_strfreev (tmp_0);
-	   g_strfreev (tmp_1);
-	   g_strfreev (tmp_2);
-	   g_strfreev (tmp_3);
-	 } else {
-		tmp = g_strsplit (url_launch, "=", 2);
-		g_hash_table_insert (params, g_strdup(tmp[0]), g_strdup(tmp[1]));
-	 } 
-    g_strfreev (tmp);
-	 url_launch = g_strdup (factory->launch);
+	/* now parse query */
+	params = gst_rtsp_media_factory_query_parsing(url_launch);
+	 /*url_launch = g_strdup (factory->launch);*/
 	 param_number = g_hash_table_size (params);
 	 if (param_number == 0) 
 	 	goto wrong_params; 
@@ -435,63 +411,48 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 	 width = g_hash_table_lookup (params, "width");
 	 height = g_hash_table_lookup (params, "height");
 	 g_message ("Parameters in url framerate=%s, bitrate=%s, width=%s, height=%s ", framerate, bitrate, width, height);
-	 
-	 if (param_number >= 2) {
-	 	tmp = g_strsplit (url_launch, "framerate=", 2);
-		if (width != NULL) {
-			if (height == NULL) {
-				height = "320";			
-			}
-			tmp_1 = g_strsplit (tmp[0], "width=", 2);		
-		} 	 	
-	 	tmp_0 = g_strsplit (tmp[1], "bitrate=", 2);
-	 	g_message ("Temp launch 1 %s: ", tmp_0[0]);
-	 	g_message ("Temp launch 2 %s: ", tmp_0[1]);
- 		gchar * tmp0 = strstr (tmp_0[0], "!") ;
- 		gchar * tmp1 = strstr (tmp_0[1], "!") ;  	 
-	 	if (tmp0 && tmp1) {
-	 		if (width != NULL) {
-				tmp_launch = g_strdup_printf("%swidth=%s,height=%s,framerate=%s %s bitrate=%s %s", tmp_1[0], width, height, framerate, tmp0, bitrate, tmp1);	 		
-	 		} else {
-		   	tmp_launch = g_strdup_printf("%sframerate=%s %s bitrate=%s %s", tmp[0], framerate, tmp0, bitrate, tmp1);
-	 		}
-   	  	g_message ("New launch string %s: ", tmp_launch);
-   	} else {
-			tmp_launch = g_strdup_printf("%swidth=%s,height=%s,framerate=%s %s", tmp_1[0], width, height, framerate, tmp[1]);	 		
-   	  	g_message ("New launch string %s: ", tmp_launch);
-   	} 
-   	g_strfreev (tmp_0);
-   	g_strfreev (tmp_1);
-    } else {
-		if (framerate != NULL) {
-			tmp = g_strsplit (url_launch, "framerate=", 2);
-			if (tmp[1]) {
-	      	gchar * tmp0 = strstr (tmp[1], "!") ;
-				tmp_launch = g_strdup_printf("%sframerate=%s %s", tmp[0], framerate, tmp0);
-			}		
-		} else {
-			tmp = g_strsplit (url_launch, "bitrate=", 2);		
-			if (tmp[1]) {
-	      	gchar * tmp0 = strstr (tmp[1], "!") ;
-				tmp_launch = g_strdup_printf("%sbitrate=%s %s", tmp[0], bitrate, tmp0);
-			}				
-		}	     
-   	g_strfreev (tmp);	
-		g_message ("New launch string %s: ", tmp_launch);
-	 }
-	 if (tmp_launch != NULL) {	 
-       g_free (factory->launch);
-    	 factory->launch = g_strdup(tmp_launch);
- 	 	 g_free (tmp_launch);
+
+	 /* now, we set variable to our pipeline */
+	 {
+		 /* get the first video pipeline => this tmp here*/
+		 GstRTSPPipelineProfile * profile = NULL;
+		 profile = gst_rtsp_server_configuration_get_default_video_pipeline(factory->server_config);
+
+		 if (profile == NULL)
+			 goto no_launch;
+
+		 if (framerate != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_framerate(profile, framerate);
+		 }
+
+		 if (width != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_width(profile, width);
+		 }
+
+		 if (height != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_height(profile, height);
+		 }
+
+		 if (bitrate != NULL) {
+			 gst_rtsp_pipeline_profile_video_set_bitrate(profile, bitrate);
+		 }
 	 }
 	 
 wrong_params:
  	 g_free (url_launch);
 	 g_hash_table_destroy (params);
   }	
-  
-  gchar *tmp, *tmp1 = NULL, **tmp_0 = NULL;
   /* we add new client here */
+
+  /**
+   * NOTE: we can easily set port using our pipeline profile
+   * gst_rtsp_pipeline_profile_set_var(profile, "port", factory->v4l2src_port);
+   * then use gst_rtsp_pipeline_profile_build_pipeline(profile) to get launch string.
+   * But temporary keep it here. May be I'll update after merge with server-development branch
+   */
+  factory->launch = gst_rtsp_server_configuration_build_pipeline(factory->server_config);
+  gchar *tmp, *tmp1=NULL, **tmp_0=NULL;
+
   factory->v4l2src_port += 1;
   g_signal_emit_by_name (factory->multiudpsink, "add", "127.0.0.1",factory->v4l2src_port, NULL);
   tmp =  g_strdup (factory->launch);
@@ -527,7 +488,7 @@ wrong_params:
 no_launch:
   {
     g_mutex_unlock (factory->lock);
-    g_critical ("no launch line specified");
+    g_critical ("no server configuration specified");
     return NULL;
   }
 parse_error:
@@ -746,4 +707,51 @@ gst_rtsp_factory_set_device_source (GstRTSPMediaFactory *factory, gchar *v4l2dev
   factory->v4l2src_pipeline = pipeline ;  
   factory->v4l2src_port = port ;
   factory->multiudpsink = multiudpsink;
+}
+
+void
+gst_rtsp_media_factory_set_server_configuration(GstRTSPMediaFactory* factory, GstRTSPServerConfiguration* server_config) {
+	/* if this's NULL then nothing to do */
+	g_return_if_fail(server_config != NULL);
+
+	if (factory->server_config != NULL) {
+		/* free the old one */
+		gst_rtsp_server_configuration_free(factory->server_config);
+	}
+
+	factory->server_config = server_config;
+}
+
+GstRTSPServerConfiguration *
+gst_rtsp_media_factory_get_server_configuration(GstRTSPMediaFactory* factory) {
+	return factory->server_config;
+}
+
+static
+GHashTable * gst_rtsp_media_factory_query_parsing(const gchar * url_query) {
+	gchar ** parts = g_strsplit(url_query, "&", -1);
+	gint no_parts = g_strv_length(parts);
+	gint i;
+	GHashTable * params;
+
+	if (no_parts == 0) {
+		return NULL;
+	}
+
+	params = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	g_return_val_if_fail(params != NULL, NULL);
+
+	/* now, check and insert variables to hash table */
+	for ( i=0 ; i<no_parts ; i++ ) {
+		gchar ** tmp = g_strsplit(parts[i], "=", -1);
+		if (g_strv_length(tmp) != 2) {
+			/* wrong param format */
+			g_strfreev(tmp);
+			continue;
+		}
+		g_hash_table_insert(params, tmp[0], tmp[1]);
+	}
+
+	g_strfreev(parts);
+	return params;
 }
