@@ -196,6 +196,13 @@ extern "C" {
 	 */
 	gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profile);
 
+	/**
+	 * check if given line should be skipped: empty line, comment line ...
+	 *
+	 * @param line gchar* line to check
+	 *
+	 * @return gboolean TRUE if the give line should be skipped, FALSE it not
+	 */
 	gboolean gst_rtsp_server_configuration_should_skip_line(const gchar * line);
 #ifdef	__cplusplus
 }

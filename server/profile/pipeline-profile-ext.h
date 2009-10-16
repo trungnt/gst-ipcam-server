@@ -71,8 +71,37 @@ extern "C" {
 	 */
 	gboolean gst_rtsp_pipeline_profile_video_set_bitrate_int(GstRTSPPipelineProfile * profile, gint bitrate);
 
+	/**
+	 * Set the width of video size. All servers have this variable.
+	 * If the pipeline is not a video pipeline, then return FALSE.
+	 *
+	 * @param profile GstRTSPPipelineProfile* profile to set
+	 * @param width gchar* value to set
+	 *
+	 * @return gboolean TRUE if everything is ok, FALSE otherwise
+	 */
 	gboolean gst_rtsp_pipeline_profile_video_set_width(GstRTSPPipelineProfile * profile, const gchar * width);
+
+	/**
+	 * Set the height of video size. All servers have this variable.
+	 * If the pipeline is not a video pipeline, then return FALSE.
+	 *
+	 * @param profile GstRTSPPipelineProfile* profile to set
+	 * @param height gchar* value to set
+	 *
+	 * @return gboolean TRUE if everything is ok, FALSE otherwise
+	 */
 	gboolean gst_rtsp_pipeline_profile_video_set_height(GstRTSPPipelineProfile * profile, const gchar * height);
+
+	/**
+	 * Set the bitrate to the video encoder. Not all pipeline has this variable.
+	 * If current pipeline is not a video pipeline and does not has "video-bitrate" variable: return FALSE
+	 *
+	 * @param profile GstRTSPPipelineProfile* profile to set
+	 * @param bitrate gchar* value to set
+	 *
+	 * @return gboolean TRUE if everything is ok, FALSE otherwise
+	 */
 	gboolean gst_rtsp_pipeline_profile_video_set_bitrate(GstRTSPPipelineProfile * profile, const gchar * bitrate);
 #ifdef	__cplusplus
 }
