@@ -387,36 +387,33 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   	 gchar ** tmp = NULL, **tmp_0 = NULL, ** tmp_1 = NULL;
   	 gchar ** tmp_2 = NULL, ** tmp_3 = NULL;
     gchar *tmp_launch = NULL;   	
-    guint array_size =0;
     params = g_hash_table_new (g_str_hash, g_str_equal);         
 
 	 if (strstr(url_launch, "&")) {
   	 	tmp = g_strsplit (url_launch, "&", -1);
-  	 	array_size = sizeof (tmp)/sizeof (tmp[0]); 
-
 		/* Check values before insert into hashtable */	 	
 		if (tmp[0] != NULL) {	 	
 	 		tmp_0 = g_strsplit (tmp[0], "=", 2);
-		 	if (tmp_0[1] != NULL) {
+		 	if (tmp_0[1]) {
 				g_hash_table_insert (params, g_strdup(tmp_0[0]), g_strdup(tmp_0[1]));
 			}
 	 	}
-	 	if (array_size > 1 && tmp[1] != NULL) {
+	 	if (tmp[1]) {
 	 		tmp_1 = g_strsplit (tmp[1], "=", 2);
-			if (tmp_1[1] != NULL) {		
+			if (tmp_1[1]) {		
 				g_hash_table_insert (params, g_strdup(tmp_1[0]), g_strdup(tmp_1[1]));
 			}
 	 	}
-	 	if (array_size > 2 && tmp[2] != NULL) {	 
+	 	if (tmp[2]) {	 
 	 		tmp_2 = g_strsplit (tmp[2], "=", 2);
 	      g_message ("tmp 2 %s",tmp_2[1]);
-			if (tmp_2[1] != NULL) {		
+			if (tmp_2[1]) {		
 				g_hash_table_insert (params, g_strdup(tmp_2[0]), g_strdup(tmp_2[1]));
 			}
 	 	}
-	 	if (array_size > 3 && tmp[3] != NULL) {	
+	 	if (tmp[3]) {	
 	 		tmp_3 = g_strsplit (tmp[3], "=", 2);
-			if (tmp_3[1] != NULL) {		
+			if (tmp_3[1]) {		
 				g_hash_table_insert (params, g_strdup(tmp_3[0]), g_strdup(tmp_3[1]));
 			}
 	 	}	
@@ -494,9 +491,9 @@ wrong_params:
   }	
   
   gchar *tmp, *tmp1 = NULL, **tmp_0 = NULL;
-  factory->v4l2src_port += 1;
   /* we add new client here*/
   g_signal_emit_by_name (factory->multiudpsink, "add", "127.0.0.1",factory->v4l2src_port, NULL);
+  factory->v4l2src_port += 1;  
   tmp =  g_strdup (factory->launch);
   if (strstr(tmp, "(")) {
     if (strstr(tmp, "udpsrc")) {
