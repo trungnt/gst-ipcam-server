@@ -197,7 +197,7 @@ send_generic_response (GstRTSPClient * client, GstRTSPStatusCode code,
 
   send_response (client, NULL, &response);
 }
-/*
+
 static gboolean
 compare_uri (const GstRTSPUrl * uri1, const GstRTSPUrl * uri2)
 {
@@ -209,7 +209,7 @@ compare_uri (const GstRTSPUrl * uri1, const GstRTSPUrl * uri2)
 
   return TRUE;
 }
-*/
+
 /* this function is called to initially find the media for the DESCRIBE request
  * but is cached for when the same client (without breaking the connection) is
  * doing a setup for the exact same url. */
@@ -219,7 +219,7 @@ find_media (GstRTSPClient * client, GstRTSPUrl * uri, GstRTSPMessage * request)
   GstRTSPMediaFactory *factory;
   GstRTSPMedia *media;
 
-//  if (!compare_uri (client->uri, uri)) {
+  if (!compare_uri (client->uri, uri)) {
     /* remove any previously cached values before we try to construct a new
      * media for uri */
     if (client->uri)
@@ -248,12 +248,10 @@ find_media (GstRTSPClient * client, GstRTSPUrl * uri, GstRTSPMessage * request)
     /* now keep track of the uri and the media */
     client->uri = gst_rtsp_url_copy (uri);
     client->media = media;
-/* do not cache this
   } else {
        media = client->media;
-    g_message ("reusing cached media %p", media);
+       g_message ("reusing cached media %p", media);
   }
- */
   if (media)
     g_object_ref (media);
   return media;
