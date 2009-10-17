@@ -99,7 +99,7 @@ gst_rtsp_sdp_from_media (GstRTSPMedia *media)
 
     if (caps_enc) {
       if (caps_params)
-        tmp = g_strdup_printf ("%d %s/%d/%s", caps_pt, caps_enc, caps_rate,
+        tmp = g_strdup_printf ("%d encoding-name=%s/%d/%s", caps_pt, caps_enc, caps_rate,
                       caps_params);
       else
         tmp = g_strdup_printf ("%d %s/%d", caps_pt, caps_enc, caps_rate);

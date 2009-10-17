@@ -18,6 +18,7 @@
  */
 
 #include "rtsp-media-factory.h"
+#include "string.h"
 
 #define DEFAULT_LAUNCH         NULL
 #define DEFAULT_SHARED         FALSE
@@ -360,14 +361,98 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 {
   GstElement *element;
   GError *error = NULL;
+  gchar *url_launch = g_strdup(url->query);
 
   g_mutex_lock (factory->lock);
   /* we need a parse syntax */
   if (factory->launch == NULL)
     goto no_launch;
 
+  /* we need to get framerate and bitrate here*/
+  /* url format sent from client like this rtsp://server:port/test?framerate=25/1&bitrate=2048 */
+  /*( v4l2src ! videoscale ! videorate ! video/x-raw-yuv,width=800,height=500,framerate=30/1 ! ffmpegcolorspace ! 
+  x264enc bitrate=2048 ! rtph264pay name=pay0 pt=96  alsasrc ! audio/x-raw-int ! faac bitrate=22000 ! 
+  rtpmp4apay name=pay1 pt=97 )  */
+  if (url_launch) {
+    gchar *framerate = NULL;
+    gchar *bitrate = NULL;
+    GHashTable *params = NULL;
+	 guint param_number = 0;
+  	 gchar ** tmp = NULL, **tmp_0 = NULL, ** tmp_1 = NULL;
+    gchar *tmp_launch = NULL;   	
+
+    params = g_hash_table_new (g_str_hash, g_str_equal);         
+
+	 if (strstr(url_launch, "&")) {
+  	 	tmp = g_strsplit (url_launch, "&", 2);
+	 	tmp_0 = g_strsplit (tmp[0], "=", 2);
+	 	tmp_1 = g_strsplit (tmp[1], "=", 2); 
+		/* Check values before insert into hashtable */	 	
+	 	if (tmp_0[1]) {
+			g_hash_table_insert (params, g_strdup(tmp_0[0]), g_strdup(tmp_0[1]));
+		}			
+		if (tmp_1[1]) {		
+			g_hash_table_insert (params, g_strdup(tmp_1[0]), g_strdup(tmp_1[1]));
+		}	
+	   g_strfreev (tmp_0);
+	   g_strfreev (tmp_1);
+	 } else {
+		tmp = g_strsplit (url_launch, "=", 2);
+		g_hash_table_insert (params, g_strdup(tmp[0]), g_strdup(tmp[1]));
+	 } 
+    g_strfreev (tmp);
+	 
+	 url_launch = g_strdup (factory->launch);
+	 param_number = g_hash_table_size (params);
+	 if (param_number == 0) 
+	 	goto wrong_params; 
+    framerate = g_hash_table_lookup (params, "framerate");
+	 bitrate = g_hash_table_lookup (params, "bitrate");
+	 g_message ("Parameters in url framerate=%s, bitrate=%s", framerate, bitrate);
+	 
+	 if (param_number == 2) {
+	 	tmp = g_strsplit (url_launch, "framerate=", 2);
+	 	tmp_0 = g_strsplit (tmp[1], "bitrate=", 2);
+	 	g_message ("Temp launch 1 %s: ", tmp_0[0]);
+	 	g_message ("Temp launch 2 %s: ", tmp_0[1]);
+ 		gchar * tmp0 = strstr (tmp_0[0], "!") ;
+ 		gchar * tmp1 = strstr (tmp_0[1], "!") ;  	 
+	 	if (tmp0 && tmp1) {
+		   tmp_launch = g_strdup_printf("%sframerate=%s %s bitrate=%s %s", tmp[0], framerate, tmp0, bitrate, tmp1);
+   	  	g_message ("Temp launch %s: ", tmp_launch);
+   	} 
+   	g_strfreev (tmp_0);
+    } else {
+		if (framerate != NULL) {
+			tmp = g_strsplit (url_launch, "framerate=", 2);
+			if (tmp[1]) {
+	      	gchar * tmp0 = strstr (tmp[1], "!") ;
+				tmp_launch = g_strdup_printf("%sframerate=%s %s", tmp[0], framerate, tmp0);
+			}		
+		} else {
+			tmp = g_strsplit (url_launch, "bitrate=", 2);		
+			if (tmp[1]) {
+	      	gchar * tmp0 = strstr (tmp[1], "!") ;
+				tmp_launch = g_strdup_printf("%sbitrate=%s %s", tmp[0], bitrate, tmp0);
+			}				
+		}	     
+   	g_strfreev (tmp);	
+		g_message ("Temp launch %s: ", tmp_launch);
+	 }
+	 if (tmp_launch != NULL) {	 
+       g_free (factory->launch);
+    	 factory->launch = g_strdup(tmp_launch);
+ 	 	 g_free (tmp_launch);
+	 }
+	 
+wrong_params:
+ 	 g_free (url_launch);
+	 g_hash_table_destroy (params);
+  }	
+ 
   /* parse the user provided launch line */
   element = gst_parse_launch (factory->launch, &error);
+
   if (element == NULL)
     goto parse_error;
 

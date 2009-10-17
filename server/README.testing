@@ -43,5 +43,10 @@ III. SOFTWARE DEPENDENCIES
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev 
 
 IV. RUN
-   We have only one server JPEG stream inside "servers" directory with name onesrc-jpeg.
-
+   We have 3 servers for H264, JPEG and MPEG4 inside "servers" directory with names: 
+    - onesrc-h264 (url: rtsp://ip:8554/h264)
+    - onesrc-jpeg (url: rtsp://ip:8554/jpg)
+    - onesrc-mpeg4 (url: rtsp://ip:8554/mpeg4)
+   For H264 and MPEG4 servers, we have 3 options for audio include: AAC, G726 and G711 format. Use them is easy, with the following usage:
+    $ server [None/aac/g726/g711]
+   With None for using server without audio.

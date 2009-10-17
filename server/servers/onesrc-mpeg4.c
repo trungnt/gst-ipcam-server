@@ -24,7 +24,10 @@
 #include "profile/pipeline-profile.h"
 
 // default profile file for this server
-#define DEFAULT_PROFILE_FILE "onesrc-jpeg.ini"
+#define DEFAULT_PROFILE_FILE_VIDEO "onesrc-mpeg4.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_AAC "audio-aac.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_G711 "audio-g711.ini"
+#define DEFAULT_PROFILE_FILE_AUDIO_G726 "audio-g726.ini"
 
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)
@@ -45,9 +48,8 @@ main (int argc, char *argv[])
   GstRTSPServer *server;
   GstRTSPMediaMapping *mapping;
   GstRTSPMediaFactory *factory;
-  gchar * profile_file_name = DEFAULT_PROFILE_FILE;
-  GstRTSPPipelineProfile * profile;
-  gchar * pipeline_str = NULL;
+  GstRTSPPipelineProfile *profile_video, *profile_audio = NULL;
+  gchar *pipeline_str = NULL, *pipeline_video_str = NULL, *pipeline_audio_str = NULL;
 
   gst_init (&argc, &argv);
 
@@ -60,38 +62,57 @@ main (int argc, char *argv[])
    * that be used to map uri mount points to media factories */
   mapping = gst_rtsp_server_get_media_mapping (server);
 
-  /* make a media factory for a jpeg stream. The default media factory can use
+  /* make a media factory for a mpeg 4 video stream and audio (aac, g711 or g726) stream. The default media factory can use
    * gst-launch syntax to create pipelines. 
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
   factory = gst_rtsp_media_factory_new ();
 
   /* start building the pipeline */
-  profile = gst_rtsp_pipeline_profile_load(profile_file_name);
-  if (profile == NULL) {
+  profile_video = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_VIDEO);
+  if (profile_video == NULL) {
 	  pipeline_str = g_strdup("");
   } else {
 	  /* we can set some common server parameter by using functions in server-profile.h
 	   * but default values will be used here
 	   */
-	  gst_rtsp_pipeline_profile_video_set_width(profile, 600);
-	  gst_rtsp_pipeline_profile_video_set_height(profile, 400);
-	  gst_rtsp_pipeline_profile_video_set_framerate(profile, "25/1");
-	  pipeline_str = gst_rtsp_pipeline_profile_build_pipeline(profile);
-	  g_warning("Our pipeline is '%s'", pipeline_str);
+	  pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
+         pipeline_str = pipeline_video_str;
+
+     if (argc > 1) {
+         if (g_strrstr(argv[1], "aac")) {
+			    profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_AAC);
+  	      } else if (g_strrstr(argv[1], "g726")) {
+		  		 profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G726);
+	      } else if (g_strrstr(argv[1], "g711")) {
+		   	 profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G711);
+         }
+	      if (profile_audio != NULL) {
+		   	 pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
+             pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
+             /* free pipeline audio video string */
+             g_free(pipeline_video_str);
+             g_free(pipeline_audio_str);
+             /* free profile audio string */
+             g_free(profile_audio);
+         }
+	  }
+     /* free profile string */
+     g_free(profile_video);
+	  g_print("Our pipeline is '%s'\n", pipeline_str);
   }
 
   gst_rtsp_media_factory_set_launch (factory, pipeline_str);
 
-  /* free pipeline string */
+  /* free unneeded string */
   g_free(pipeline_str);
 
   /* share the pipeline with multiple clients */
   gst_rtsp_media_factory_set_shared(factory, TRUE);
 
-  /* attach the test factory to the /jpg url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/jpg", factory);
-  
+  /* attach the test factory to the /mp4 url */
+  gst_rtsp_media_mapping_add_factory (mapping, "/mp4", factory);
+
   /* don't need the ref to the mapper anymore */
   g_object_unref (mapping);
 
