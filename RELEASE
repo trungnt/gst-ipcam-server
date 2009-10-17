@@ -1,3 +1,4 @@
+**************** 2 cho co release number **************
 
 Release notes for gst-ipcam-server 0.3.
 
@@ -9,13 +10,45 @@ Current stable version is 0.3 and includes 2 components:
 	* Server: based on gst-rtsp-server project.
 	* Client: a simple client used for demonstration.
 
+Changes from release 0.8:
+Server:
+	* Support for one server with 2 video streams using 2 camera. Support for H.264 and MPEG4.
+
+Changes from release 0.7:
+Server:
+	* Support for one server with 2 video streams using one camera. Support for H.264 and MPEG4.
+
+Changes from release 0.6:
+Server:
+	* Support for one server with 2 video streams using 2 cameras.
+	* Supported types are: JPEG with H.264 and JPEG with MPEG4.
+
+Changes from release 0.5:
+Server:
+	* Support for one server with 2 video streams using one camera.
+	* Supported types are: JPEG with H.264 and JPEG with MPEG4.
+	* Parameters can be adjusted for each stream independently.
+
+Changes from release 0.4:
+Server:
+	* Support for changing bitrate at run-time. Supported video formats are: H.264 and MPEG4.
+
+Changes from release 0.3:
+Server:
+	* Changed in server architecture: multi clients can request difference urls with difference parameters simultaneously.
+	* Support for changing framerate and framesize at run-time. Supported video formats are: JPEG, H.264 and MPEG4.
+Client:
+	* Support for requesting adjusting parameters from server.
+
 Changes from release 0.2:
 Server:
-	* Support 3 streams as independence servers: onesrc-h264, onesrc-mpeg4 and onesrc-jpeg.
-	* H264 and MPEG4 now support 3 audio formats (AAC, G711, G726) which can be choose when starting servers.
+	* Support 3 stream types and independence servers: onesrc-h264, onesrc-mpeg4 and onesrc-jpeg.
+	* Video servers have video stream synchronized with an audio stream.
+	* Supported video formats are: H.264 and MPEG4.
+	* Audio formats can be configured when starting the server. Supported formats are: AAC, G711, G726.
 Client:
-	* Support for both video and audio streams.
-	* Display basic streams information in the status bar.
+	* Added support for audio streams.
+	* Display basic stream information in the status bar.
 
 Changes from release 0.1:
 Server:
