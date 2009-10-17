@@ -22,7 +22,7 @@
 
 #include "profile/pipeline-profile-ext.h"
 
-// default profile file for this server
+/* default profile file for this server */
 #define DEFAULT_PROFILE_FILE "onesrc-jpeg.ini"
 
 static gboolean
