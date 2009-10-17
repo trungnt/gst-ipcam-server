@@ -103,8 +103,10 @@ main (int argc, char *argv[])
    * element with pay%d names will be a stream */
   factory_jpg = gst_rtsp_media_factory_new ();
   /* set webcam source and port to listen for server */
-  gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000);
-  
+  /* gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000); */
+  factory_jpg->v4l2src_pipeline = factory_h264->v4l2src_pipeline;  
+  factory_jpg->v4l2src_port = factory_h264->v4l2src_port;
+  factory_jpg->multiudpsink = factory_h264->multiudpsink;
   /* start building the pipeline */
   server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_JPEG);
   gst_rtsp_media_factory_set_server_configuration(factory_jpg, server_config);
