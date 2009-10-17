@@ -20,7 +20,6 @@
 #include <gst/gst.h>
 #include <gst/rtsp-server/rtsp-server.h>
 
-#include "server-profile.h"
 #include "profile/pipeline-profile.h"
 
 /* default profile file for this server */
