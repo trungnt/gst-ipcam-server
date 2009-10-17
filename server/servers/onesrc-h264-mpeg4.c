@@ -103,7 +103,7 @@ main(int argc, char *argv[]) {
 	/* set webcam source and port to listen for factory */
 	/* gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000); */
    factory_mpeg4->v4l2src_pipeline = factory_h264->v4l2src_pipeline;  
-   factory_mpeg4->v4l2src_port = factory_h264->v4l2src_port;
+   factory_mpeg4->v4l2src_port = factory_h264->v4l2src_port + 1;
    factory_mpeg4->multiudpsink = factory_h264->multiudpsink;
 
 	/* start building the pipeline */
