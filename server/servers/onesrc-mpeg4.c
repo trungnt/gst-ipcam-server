@@ -75,6 +75,9 @@ main(int argc, char *argv[]) {
 		} else if (g_strrstr(argv[1], "g711")) {
 			audio_stream_type = "audio G711";
 		}
+		if (audio_stream_type != NULL) {
+			gst_rtsp_server_configuration_set_default_audio_pipeline(server_config, audio_stream_type);
+		}
 	}
 
 	gst_rtsp_media_factory_set_server_configuration(factory, server_config);

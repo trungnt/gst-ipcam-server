@@ -23,11 +23,9 @@
 #include "server-profile.h"
 #include "profile/pipeline-profile.h"
 
-// default profile file for this server
-#define DEFAULT_PROFILE_FILE_VIDEO_JPEG_H264    "onesrc-jpeg-h264.ini"
-#define DEFAULT_PROFILE_FILE_AUDIO_AAC 	      "audio-aac.ini"
-#define DEFAULT_PROFILE_FILE_AUDIO_G711         "audio-g711.ini"
-#define DEFAULT_PROFILE_FILE_AUDIO_G726         "audio-g726.ini"
+/* default profile file for this server */
+#define DEFAULT_PROFILE_FILE_VIDEO_H264         "onesrc-h264.ini"
+#define DEFAULT_PROFILE_FILE_JPEG               "onesrc-jpeg.ini"
 
 static gboolean
 timeout (GstRTSPServer *server, gboolean ignored)
@@ -48,9 +46,8 @@ main (int argc, char *argv[])
   GMainLoop                 *loop;
   GstRTSPServer             *server;
   GstRTSPMediaMapping       *mapping;
-  GstRTSPMediaFactory       *factory;
-  GstRTSPPipelineProfile    *profile_video, *profile_audio = NULL;
-  gchar                     *pipeline_str = NULL, *pipeline_video_str = NULL, *pipeline_audio_str = NULL;
+  GstRTSPMediaFactory       *factory_h264, *factory_jpg;
+  GstRTSPServerConfiguration * server_config = NULL;
 
   gst_init (&argc, &argv);
 
@@ -58,64 +55,66 @@ main (int argc, char *argv[])
 
   /* create a server instance */
   server = gst_rtsp_server_new ();
-  /* set webcam source and port to listen for server */
-  gst_rtsp_server_set_device_source (server, "v4l2src", 3000);
+  
   /* get the mapping for this server, every server has a default mapper object
    * that be used to map uri mount points to media factories */
 
   mapping = gst_rtsp_server_get_media_mapping (server);
 
-  /* make a media factory for two video(jpeg and h264) streams and audio(aac, g711 or g726) stream. The default media factory can use
+  /* make a media factory for h264 video stream and audio(aac, g711 or g726) stream. The default media factory can use
    * gst-launch syntax to create pipelines. 
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
-  factory = gst_rtsp_media_factory_new ();
-
+  factory_h264 = gst_rtsp_media_factory_new ();
+  /* set webcam source and port to listen for server */
+  gst_rtsp_factory_set_device_source (factory_h264, "v4l2src", "/dev/video0", 3000);
+   
   /* start building the pipeline */
-  profile_video = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_VIDEO_JPEG_H264);
-  if (profile_video == NULL) {
-	  pipeline_str = g_strdup("");
-  } else {
-    /* we can set some common server parameter by using functions in server-profile.h
-     * but default values will be used here
-     */
-     pipeline_video_str = gst_rtsp_pipeline_profile_build_pipeline(profile_video);
-     pipeline_str = pipeline_video_str;
+  server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO_H264);
 
-     if (argc > 1) {
-        if (g_strrstr(argv[1], "aac")) {
-		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_AAC);
-  	    } else if (g_strrstr(argv[1], "g726")) {
-		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G726);
-	    } else if (g_strrstr(argv[1], "g711")) {
-		   profile_audio = gst_rtsp_pipeline_profile_load(DEFAULT_PROFILE_FILE_AUDIO_G711);
-        }
-        if (profile_audio != NULL) {
-	        pipeline_audio_str = gst_rtsp_pipeline_profile_build_pipeline(profile_audio);
-           pipeline_audio_str = g_strdup_printf(pipeline_audio_str, 2);
-           pipeline_str = g_strdup_printf("%s%s", g_strndup(pipeline_video_str, strlen(pipeline_video_str) -1), pipeline_audio_str);
-           /* free pipeline audio video string */
-           g_free(pipeline_video_str); 
-           g_free(pipeline_audio_str);
-           /* free profile audio string */
-           g_free(profile_audio);
-        }
-     }
-     /* free profile video string */
-     g_free(profile_video);
-     g_print("Our pipeline is '%s'\n", pipeline_str);
+  /* we can set some common server parameter by using functions in server-profile.h
+   * but default values will be used here
+  */
+	
+  if (argc > 1 && server_config != NULL) {
+    gchar * audio_profile_name = NULL;
+    if (g_strrstr(argv[1], "aac")) {
+      audio_profile_name = "audio AAC";
+    } else if (g_strrstr(argv[1], "g726")) {
+      audio_profile_name = "audio G726";
+    } else if (g_strrstr(argv[1], "g711")) {
+      audio_profile_name = "audio G711";
+    }
+    if (audio_profile_name != NULL) {
+      gst_rtsp_server_configuration_set_default_audio_pipeline(server_config, audio_profile_name);
+    }
   }
-
-  gst_rtsp_media_factory_set_launch (factory, pipeline_str);
   
-  /* free pipeline string */
-  g_free(pipeline_str);
+  gst_rtsp_media_factory_set_server_configuration(factory_h264, server_config);
 
   /* share the pipeline with multiple clients */
-  gst_rtsp_media_factory_set_shared(factory, TRUE);
+  gst_rtsp_media_factory_set_shared(factory_h264, TRUE);
 
-  /* attach the test factory to the /jpg-h264 url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/jpg-h264", factory);
+  /* attach the test factory to the /h264 url */
+  gst_rtsp_media_mapping_add_factory (mapping, "/h264", factory_h264);
+  
+  /* make a media factory for jpeg stream. The default media factory can use
+   * gst-launch syntax to create pipelines. 
+   * any launch line works as long as it contains elements named pay%d. Each
+   * element with pay%d names will be a stream */
+  factory_jpg = gst_rtsp_media_factory_new ();
+  /* set webcam source and port to listen for server */
+  gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000);
+  
+  /* start building the pipeline */
+  server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_JPEG);
+  gst_rtsp_media_factory_set_server_configuration(factory_jpg, server_config);
+
+  /* share the pipeline with multiple clients */
+  gst_rtsp_media_factory_set_shared(factory_jpg, TRUE);
+
+  /* attach the test factory to the /jpg url */
+  gst_rtsp_media_mapping_add_factory (mapping, "/jpg", factory_jpg);   
   
   /* don't need the ref to the mapper anymore */
   g_object_unref (mapping);
