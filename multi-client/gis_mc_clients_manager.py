@@ -186,4 +186,46 @@ class gisMcClientsMng:
 			return self.selected_store
 		return None
 
+	def change_fps(self, ids, fps):
+		if not isinstance(ids, list):
+			ids = [ids]
+		ok_ids = []
+		for id in ids:
+			ret = self.get_client(id).change_fps(fps)
+			if ret != "OK":
+				print ret
+			else:
+				ok_ids.append(id)
+		return ok_ids
+
+	def change_frame_size(self, ids, frame_size):
+		if not isinstance(ids, list):
+			ids = [ids]
+		ok_ids = []
+		for id in ids:
+			ret = self.get_client(id).change_frame_size(frame_size)
+			if ret != "OK":
+				print ret
+			else:
+				ok_ids.append(id)
+		return ok_ids
+
+	def change_bitrate(self, ids, bitrate):
+		if not isinstance(ids, list):
+			ids = [ids]
+		ok_ids = []
+		for id in ids:
+			ret = self.get_client(id).change_bitrate(bitrate)
+			if ret != "OK":
+				print ret
+			else:
+				ok_ids.append(id)
+		return ok_ids
+
+	def apply_change(self, ids):
+		if not isinstance(ids, list):
+			ids = [ids]
+		for id in ids:
+			self.get_client(id).apply_change()
+
 
