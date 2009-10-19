@@ -20,9 +20,12 @@
 static gpointer window;
 static gchar *video_type;
 static gchar *audio_type;
-static GstElement *pipeline, *rtspsrc, *videosink;
+static GstElement *pipeline, *rtspsrc, *videosink;;
 static GstElement *video_decoder = NULL;
 static GstElement *audio_decoder = NULL;
+static GstElement * video_tee, * audio_tee;
+static GstElement * audio_branch;
+static GstPad * audio_pad;
 static gint prewState;
 static gint curtState;
 
@@ -536,9 +539,6 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad) {
 	g_message("Pad name %s\n", media_type);
 
 	if (g_strrstr(media_type, "video") != NULL) {
-		/* got video stream */
-		GstPad * video_decoder_sink_pad;
-
 		g_warning("New video channel");
 
 		g_free(media_type);
@@ -549,23 +549,8 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad) {
 		video_type = g_strdup_printf("Video type: %s", stream_type);
 		g_free(stream_type);
 
-		video_decoder_sink_pad = gst_element_get_static_pad(video_decoder, "sink");
-		if (GST_PAD_IS_LINKED(video_decoder_sink_pad)) {
-			gst_object_unref(video_decoder_sink_pad);
-			return;
-		}
-
-		/* link rtspsrc to video decoder */
-		gst_pad_link(pad, video_decoder_sink_pad);
-		gst_object_unref(video_decoder_sink_pad);
-
-		if (GST_IS_X_OVERLAY(videosink)) {
-			gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
-		}
+                gst_element_link(rtspsrc, video_tee);
 	} else if (g_strrstr(media_type, "audio") != NULL) {
-		/* got audio stream */
-		GstPad * audio_decoder_sink_pad;
-
 		g_warning("New audio channel");
 		g_free(media_type);
 
@@ -575,21 +560,12 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad) {
 		audio_type = g_strdup_printf("/Audio type: %s", stream_type);
 		g_free(stream_type);
 
-		gst_ipcam_client_backend_create_audio_branch(pipeline);
-		audio_decoder_sink_pad = gst_element_get_static_pad(audio_decoder, "sink");
-		g_warning("Ok, got audio decoder sink pad");
-		if (GST_PAD_IS_LINKED(audio_decoder_sink_pad)) {
-			gst_object_unref(audio_decoder_sink_pad);
-			return;
-		}
-
-		g_message("and now, we link pad to audio decoder");
-		/* link rtspsrc to audio_decoder */
-		gst_pad_link(pad, audio_decoder_sink_pad);
-		gst_object_unref(audio_decoder_sink_pad);
+                gst_ipcam_client_backend_create_audio_branch(pipeline);
+                
+                gst_element_link(rtspsrc, audio_tee);
 
 		/* set state to play to make sure audio branch will run */
-		gst_element_set_state(pipeline, GST_STATE_PLAYING);
+		gst_element_set_state(audio_branch, GST_STATE_PLAYING);
 	}
 }
 
@@ -620,7 +596,6 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url) {
 	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, NULL);
 
 	gst_ipcam_client_backend_create_video_branch(pipeline);
-	/*gst_ipcam_client_backend_create_audio_branch(pipeline);*/
 }
 
 /**
@@ -671,26 +646,23 @@ gst_ipcam_client_read_video_props(GstElement *videosink) {
 }
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline) {
-	GstElement * video_queue;
-	GstElement * video_converter;
-	g_return_val_if_fail(pipeline != NULL, FALSE);
+	GstElement * video_branch = gst_parse_bin_from_description("tee name=video_tee ! queue name=video_queue "
+                                                      "! decodebin ! identity name = connector", FALSE, NULL);
+        video_tee = gst_bin_get_by_name(video_branch, "video_tee");
 
-	video_decoder = gst_element_factory_make("decodebin", "video_decoder");
-	g_assert(video_decoder);
+        GstElement * connector = gst_bin_get_by_name(GST_BIN(video_branch), "connector");
+        g_assert(connector);
 
-	video_queue = gst_element_factory_make("queue", "video_queue");
-	g_assert(video_queue);
+        videosink = gst_ipcam_client_backend_find_best_video_sink();
+        g_assert(videosink);
 
-	video_converter = gst_element_factory_make("ffmpegcolorspace", "video_converter");
-	g_assert(video_converter);
+        gst_bin_add_many(GST_BIN(pipeline), video_branch, videosink, NULL);
+        gst_element_link(connector, videosink);
 
-	videosink = gst_ipcam_client_backend_find_best_video_sink();
-	g_assert(videosink);
-	g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
-
-	gst_bin_add_many(GST_BIN(pipeline), video_decoder, video_queue, video_converter, videosink, NULL);
-	gst_element_link_many(video_queue, video_converter, videosink, NULL);
-	g_signal_connect(video_decoder, "new-decoded-pad", G_CALLBACK(gst_ipcam_client_backend_decoder_on_pad_add), video_queue);
+        g_object_set(G_OBJECT(videosink), "force-aspect-ratio", TRUE, NULL);
+        if (GST_IS_X_OVERLAY(videosink)) {
+            gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(videosink), GPOINTER_TO_INT(window));
+	}
 
 	return TRUE;
 }
@@ -712,28 +684,13 @@ static void gst_ipcam_client_backend_decoder_on_pad_add(GstElement* decoder, Gst
 }
 
 static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement* pipeline) {
-	GstElement * audio_queue;
-	GstElement * audio_converter;
-	GstElement * audio_sink;
+	audio_branch = gst_parse_bin_from_description("tee name=audio_tee ! queue name=audio_queue !"
+                                        " decodebin ! audio_convert ! autoaudiosink", FALSE, NULL);
+        audio_tee = gst_bin_get_by_name(audio_branch, "audio_tee");
+        gst_element_set_state(audio_branch, GST_STATE_PAUSED);
 
-	g_return_val_if_fail(pipeline != NULL, FALSE);
-
-	audio_decoder = gst_element_factory_make("decodebin", "audio_decoder");
-	g_assert(audio_decoder);
-
-	audio_queue = gst_element_factory_make("queue", "audio_queue");
-	g_assert(audio_queue);
-
-	audio_converter = gst_element_factory_make("audioconvert", "audio_converter");
-	g_assert(audio_converter);
-
-	audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");
-	g_assert(audio_sink);
-
-	gst_bin_add_many(GST_BIN(pipeline), audio_decoder, audio_queue, audio_converter, audio_sink, NULL);
-	gst_element_link_many(audio_queue, audio_converter, audio_sink, NULL);
-	g_signal_connect(audio_decoder, "new-decoded-pad", G_CALLBACK(gst_ipcam_client_backend_decoder_on_pad_add), audio_queue);
-
+        
+        gst_bin_add_many(GST_BIN(pipeline), audio_branch, NULL);
 	return TRUE;
 }
 
