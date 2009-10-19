@@ -286,6 +286,7 @@ gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
 {
     gchar *url_fps;
     gchar *url_fsize;
+    gchar * pipeline_description;
 
     gst_ipcam_client_backend_stop();
     if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fps), "") != 0)
@@ -301,14 +302,22 @@ gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
     {
         gchar *f_size = gtk_combo_box_get_active_text(cbx_entry_fsize);
         gchar **__f_size = g_strsplit(f_size, "x", 0);
-        url_fsize = g_strconcat("", "&width=", __f_size[0], "&height=", __f_size[1], NULL);
+        url_fsize = g_strconcat("", "width=", __f_size[0], "&height=", __f_size[1], NULL);
     }
     else
     {
         url_fsize = "";
     }
 
-    gst_ipcam_client_backend_create_pipeline(g_strconcat("", URL, url_fps, url_fsize, NULL));
+    if (g_strcmp0(url_fps, "") != 0)
+    {
+        pipeline_description = g_strconcat("", URL, url_fps, "&", url_fsize, NULL);
+    } else
+    {
+        pipeline_description = g_strconcat("", URL, "?", url_fsize, NULL);
+    }
+    
+    gst_ipcam_client_backend_create_pipeline(pipeline_description);
     gst_ipcam_client_backend_play();
 
     g_message("PLAY request sent.");
