@@ -64,18 +64,6 @@ void
 gst_ipcam_client_on_btn_Resume_clicked                  (GtkButton       *button,
                                         gpointer         user_data);
 
-/**
- * Handle the event when clicking on the Options button.
- * Show the options dialog
- *
- * @param button GtkButton *
- * @param user_data gpointer
- *
- * @return nothing
- */
-/*void
-gst_ipcam_client_on_btn_Options_clicked                 (GtkButton       *button,
-                                        gpointer         user_data);*/
 
 /**
  * Handle the event when clicking on the About button

@@ -590,7 +590,7 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url) {
 	rtspsrc = gst_element_factory_make("rtspsrc", "rtspsource");
 
 	g_object_set(G_OBJECT(rtspsrc), "location", url, NULL);
-	/*g_object_set(G_OBJECT(rtspsrc), "debug", TRUE, NULL);*/
+
 	g_signal_connect(rtspsrc, "pad-added", G_CALLBACK(gst_ipcam_client_on_pad_added), NULL);
 
 	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, NULL);

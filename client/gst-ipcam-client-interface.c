@@ -381,7 +381,6 @@ GtkWidget* gst_ipcam_client_init_status_bar()
         
         gtk_widget_set_size_request(statusBar_labelVideoType, 130, -1);
         gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
-        /*gtk_box_pack_start_defaults(GTK_BOX(statusBar_hBox), statusBar_labelVideoType);*/
         
         /* Audio type*/
         statusBar_labelAudioType = gtk_label_new("");
@@ -393,15 +392,12 @@ GtkWidget* gst_ipcam_client_init_status_bar()
 
     /* separator*/
     separator = gtk_vseparator_new();
-    /*gtk_widget_show(separator);*/
 
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
 
     /* Properties label*/
     statusBar_labelProperties = gtk_label_new("");
-    /*gtk_widget_show(statusBar_labelProperties);*/
     
-    /*gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);*/
     gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
 
     return statusBar_vBox;
