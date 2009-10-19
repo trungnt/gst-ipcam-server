@@ -286,6 +286,7 @@ gst_ipcam_client_on_btn_Change_clicked                 (GtkButton       *button,
 {
     gchar *url_fps;
     gchar *url_fsize;
+    gchar *bitrate;
     gchar * pipeline_description;
 
     gst_ipcam_client_backend_stop();
