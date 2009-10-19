@@ -7,7 +7,6 @@
 #include <gtk/gtk.h>
 
 
-//store the url in the current session
 static gchar *URL;
 /**
  * Handle the event when clicking on Connect button in the main window.

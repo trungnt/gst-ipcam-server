@@ -279,14 +279,6 @@ static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 				break;
 			}
 
-			/* collect all error messages */
-			/*
-						while ((message = gst_bus_pop_filtered(bus, GST_MESSAGE_ERROR))) {
-							g_warning("error message %" GST_PTR_FORMAT, message);
-							errors = g_slist_append(errors, message);
-						}
-			 */
-
 			gst_element_set_state(el, GST_STATE_NULL);
 			gst_object_unref(el);
 		}
@@ -302,7 +294,7 @@ static GstElement * gst_ipcam_client_backend_find_best_video_sink() {
 		} else {
 			/* send warning message to application and use a fakesink */
 			g_warning("Failed to find a usable video sink");
-			choice = sink; //gst_element_factory_make("fakesink", "fake-video-sink");
+			choice = sink;
 			if (g_object_class_find_property(G_OBJECT_GET_CLASS(choice), "sync"))
 				g_object_set(choice, "sync", TRUE, NULL);
 			gst_element_set_state(choice, GST_STATE_READY);

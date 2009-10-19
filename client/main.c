@@ -20,7 +20,7 @@ int
 main (int argc, char *argv[])
 {
   GtkWidget *mainWindow;
-  //GMainLoop *loop;
+  
 #ifdef ENABLE_NLS
   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -31,7 +31,6 @@ main (int argc, char *argv[])
   gtk_init (&argc, &argv);
   gst_ipcam_client_backend_init (&argc, &argv);
   gst_ipcam_client_process_options(argc, argv);
-  //add_pixmap_directory (PACKAGE_DATA_DIR "/" PACKAGE "/pixmaps");
 
   /*
    * The following code was added by Glade to create one of each component
@@ -40,8 +39,6 @@ main (int argc, char *argv[])
    */
   mainWindow = gst_ipcam_client_create_mainWindow ();
   gtk_widget_show (mainWindow);
-  //loop = g_main_loop_new(NULL, FALSE);
-  //g_main_loop_run(loop);
   
   gtk_main ();
   return 0;
