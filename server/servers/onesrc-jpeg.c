@@ -26,68 +26,67 @@
 #define DEFAULT_PROFILE_FILE "onesrc-jpeg.ini"
 
 static gboolean
-timeout (GstRTSPServer *server, gboolean ignored)
-{
-  GstRTSPSessionPool *pool;
+timeout(GstRTSPServer *server, gboolean ignored) {
+	GstRTSPSessionPool *pool;
 
-  pool = gst_rtsp_server_get_session_pool (server);
-  gst_rtsp_session_pool_cleanup (pool);
-  g_object_unref (pool);
+	pool = gst_rtsp_server_get_session_pool(server);
+	gst_rtsp_session_pool_cleanup(pool);
+	g_object_unref(pool);
 
-  return TRUE;
+	return TRUE;
 }
 
 int
-main (int argc, char *argv[])
-{
-  GMainLoop *loop;
-  GstRTSPServer *server;
-  GstRTSPMediaMapping *mapping;
-  GstRTSPMediaFactory *factory;
-  gchar * profile_file_name = DEFAULT_PROFILE_FILE;
-  GstRTSPServerConfiguration * server_config;
+main(int argc, char *argv[]) {
+	GMainLoop *loop;
+	GstRTSPServer *server;
+	GstRTSPMediaMapping *mapping;
+	GstRTSPMediaFactory *factory;
+	gchar * profile_file_name = DEFAULT_PROFILE_FILE;
+	GstRTSPServerConfiguration * server_config;
 
-  gst_init (&argc, &argv);
+	gst_init(&argc, &argv);
 
-  loop = g_main_loop_new (NULL, FALSE);
+	loop = g_main_loop_new(NULL, FALSE);
 
-  /* create a server instance */
-  server = gst_rtsp_server_new ();
+	/* create a server instance */
+	server = gst_rtsp_server_new();
 
-  /* get the mapping for this server, every server has a default mapper object
-   * that be used to map uri mount points to media factories */
-  mapping = gst_rtsp_server_get_media_mapping (server);
+	/* get the mapping for this server, every server has a default mapper object
+	 * that be used to map uri mount points to media factories */
+	mapping = gst_rtsp_server_get_media_mapping(server);
 
-  /* make a media factory for a jpeg stream. The default media factory can use
-   * gst-launch syntax to create pipelines. 
-   * any launch line works as long as it contains elements named pay%d. Each
-   * element with pay%d names will be a stream */
-  factory = gst_rtsp_media_factory_new ();
+	/* make a media factory for a jpeg stream. The default media factory can use
+	 * gst-launch syntax to create pipelines.
+	 * any launch line works as long as it contains elements named pay%d. Each
+	 * element with pay%d names will be a stream */
+	factory = gst_rtsp_media_factory_new();
 
-  /* set webcam source and port to listen for factory */
+	/* set webcam source and port to listen for factory */
 	gst_rtsp_factory_set_device_source(factory, "v4l2src", "/dev/video0", 3000);
 
-  /* start building the pipeline */
-  server_config = gst_rtsp_server_configuration_load(profile_file_name);
+	/* prepare server configuration for jpeg stream */
+	server_config = gst_rtsp_server_configuration_load(profile_file_name);
 
-  gst_rtsp_media_factory_set_server_configuration(factory, server_config);
+	/* map server configuration to media factory */
+	gst_rtsp_media_factory_set_server_configuration(factory, server_config);
 
-  /* share the pipeline with multiple clients */
-  gst_rtsp_media_factory_set_shared(factory, TRUE);
+	/* share the pipeline with multiple clients */
+	gst_rtsp_media_factory_set_shared(factory, TRUE);
 
-  /* attach the test factory to the /jpg url */
-  gst_rtsp_media_mapping_add_factory (mapping, "/jpg", factory);
-  
-  /* don't need the ref to the mapper anymore */
-  g_object_unref (mapping);
+	/* attach the test factory to the /jpg url */
+	gst_rtsp_media_mapping_add_factory(mapping, "/jpg", factory);
 
-  /* attach the server to the default maincontext */
-  gst_rtsp_server_attach (server, NULL);
+	/* don't need the ref to the mapper anymore */
+	g_object_unref(mapping);
 
-  g_timeout_add_seconds (2, (GSourceFunc) timeout, server); 
+	/* attach the server to the default maincontext */
+	gst_rtsp_server_attach(server, NULL);
 
-  /* start serving */
-  g_main_loop_run (loop);
+	g_timeout_add_seconds(2, (GSourceFunc) timeout, server);
 
-  return 0;
+	/* start serving */
+	g_main_loop_run(loop);
+
+	return 0;
 }

@@ -23,7 +23,7 @@
 #include "profile/pipeline-profile-ext.h"
 #include "profile/server-configuration.h"
 
-/* default profile file for this server */
+/* default profile files for this server */
 #define DEFAULT_PROFILE_FILE_VIDEO_H264 "onesrc-h264.ini"
 #define DEFAULT_PROFILE_FILE_VIDEO_MPEG4 "onesrc-mpeg4.ini"
 
@@ -67,13 +67,10 @@ main(int argc, char *argv[]) {
 	/* set webcam source and port to listen for factory */
 	gst_rtsp_factory_set_device_source(factory_h264, "v4l2src", "/dev/video0", 3000);
 
-	/* start building the pipeline */
+	/* Load server configuration for h264 stream */
 	server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO_H264);
 
-	/* we can set some common server parameter by using functions in server-profile.h
-	 * but default values will be used here
-	 */
-	
+	/* check to see if we need audio stream for our server */
 	if (argc > 1 && server_config != NULL) {
 		if (g_strrstr(argv[1], "aac")) {
 			audio_profile_name = "audio AAC";
@@ -82,11 +79,13 @@ main(int argc, char *argv[]) {
 		} else if (g_strrstr(argv[1], "g711")) {
 			audio_profile_name = "audio G711";
 		}
+		/* set default audio format for our configuration */
 		if (audio_profile_name != NULL) {
 			gst_rtsp_server_configuration_set_default_audio_pipeline(server_config, audio_profile_name);
 		}
 	}
 
+	/* apply server config to the factory */
 	gst_rtsp_media_factory_set_server_configuration(factory_h264, server_config);
 
 	/* share the pipeline with multiple clients */
@@ -94,26 +93,28 @@ main(int argc, char *argv[]) {
 
 	/* attach the test factory to the /h264 url */
 	gst_rtsp_media_mapping_add_factory(mapping, "/h264", factory_h264);
-	
+
 	/* make a media factory for a mpeg 4 video stream and audio (aac, g711 or g726) stream. The default media factory can use
 	 * gst-launch syntax to create pipelines.
 	 * any launch line works as long as it contains elements named pay%d. Each
 	 * element with pay%d names will be a stream */
 	factory_mpeg4 = gst_rtsp_media_factory_new();
-   factory_mpeg4->two_streams = TRUE;
+	factory_mpeg4->two_streams = TRUE;
 	/* set webcam source and port to listen for factory */
 	/* gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000); */
-   factory_mpeg4->v4l2src_pipeline = factory_h264->v4l2src_pipeline;  
-   factory_mpeg4->v4l2src_port = factory_h264->v4l2src_port + 1;
-   factory_mpeg4->multiudpsink = factory_h264->multiudpsink;
+	factory_mpeg4->v4l2src_pipeline = factory_h264->v4l2src_pipeline;
+	factory_mpeg4->v4l2src_port = factory_h264->v4l2src_port + 1;
+	factory_mpeg4->multiudpsink = factory_h264->multiudpsink;
 
-	/* start building the pipeline */
+	/* prepare server configuration for mpeg4 stream */
 	server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO_MPEG4);
-	
+
+	/* set default audio profile fo mpeg4 stream */
 	if (audio_profile_name != NULL) {
 		gst_rtsp_server_configuration_set_default_audio_pipeline(server_config, audio_profile_name);
 	}
 
+	/* now, map server configuration to the factory */
 	gst_rtsp_media_factory_set_server_configuration(factory_mpeg4, server_config);
 
 	/* share the pipeline with multiple clients */

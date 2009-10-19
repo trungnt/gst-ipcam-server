@@ -65,8 +65,9 @@ main(int argc, char *argv[]) {
 	/* set webcam source and port to listen for factory */
 	gst_rtsp_factory_set_device_source(factory, "v4l2src", "/dev/video0", 3000);
 
-	/* start building the pipeline */
+	/* prepare server configuration for mpeg4 stream */
 	server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO);
+	/* check and set audio profile for server configuration */
 	if (argc > 1) {
 		if (g_strrstr(argv[1], "aac")) {
 			audio_stream_type = "audio AAC";
@@ -80,6 +81,7 @@ main(int argc, char *argv[]) {
 		}
 	}
 
+	/* map server configuration to media factory */
 	gst_rtsp_media_factory_set_server_configuration(factory, server_config);
 
 	/* share the pipeline with multiple clients */

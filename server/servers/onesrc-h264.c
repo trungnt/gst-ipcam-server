@@ -64,13 +64,10 @@ main(int argc, char *argv[]) {
 	/* set webcam source and port to listen for factory */
 	gst_rtsp_factory_set_device_source(factory, "v4l2src", "/dev/video0", 3000);
 
-	/* start building the pipeline */
+	/* prepare server configuration for h264 stream */
 	server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO);
 
-	/* we can set some common server parameter by using functions in server-profile.h
-	 * but default values will be used here
-	 */
-	
+	/* check and set default audio profile in server configuration */
 	if (argc > 1 && server_config != NULL) {
 		gchar * audio_profile_name = NULL;
 		if (g_strrstr(argv[1], "aac")) {
@@ -85,6 +82,7 @@ main(int argc, char *argv[]) {
 		}
 	}
 
+	/* map server configuration to the media factory */
 	gst_rtsp_media_factory_set_server_configuration(factory, server_config);
 
 	/* share the pipeline with multiple clients */
