@@ -66,7 +66,7 @@ struct _GstRTSPMediaFactory {
   /* use for webcam */
   GstElement   *v4l2src_pipeline;
   GstElement   *multiudpsink;  
-
+  gboolean     two_streams;/** in case 2 streams: client ports will be odd and even */
   guint        v4l2src_port ;
   
 };

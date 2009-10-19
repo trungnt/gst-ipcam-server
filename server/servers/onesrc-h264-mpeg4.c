@@ -63,6 +63,7 @@ main(int argc, char *argv[]) {
 	 * any launch line works as long as it contains elements named pay%d. Each
 	 * element with pay%d names will be a stream */
 	factory_h264 = gst_rtsp_media_factory_new();
+	factory_h264->two_streams = TRUE;
 	/* set webcam source and port to listen for factory */
 	gst_rtsp_factory_set_device_source(factory_h264, "v4l2src", "/dev/video0", 3000);
 
@@ -99,7 +100,7 @@ main(int argc, char *argv[]) {
 	 * any launch line works as long as it contains elements named pay%d. Each
 	 * element with pay%d names will be a stream */
 	factory_mpeg4 = gst_rtsp_media_factory_new();
-
+   factory_mpeg4->two_streams = TRUE;
 	/* set webcam source and port to listen for factory */
 	/* gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000); */
    factory_mpeg4->v4l2src_pipeline = factory_h264->v4l2src_pipeline;  

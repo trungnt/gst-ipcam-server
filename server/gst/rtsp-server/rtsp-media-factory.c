@@ -106,6 +106,7 @@ gst_rtsp_media_factory_init (GstRTSPMediaFactory * factory)
   factory->medias = g_hash_table_new_full (g_str_hash, g_str_equal,
 		  g_free, g_object_unref);
   factory->v4l2src_port = 0;		  
+  factory->two_streams = FALSE;
 }
 
 static void
@@ -452,8 +453,12 @@ wrong_params:
    */
   factory->launch = gst_rtsp_server_configuration_build_pipeline(factory->server_config);
   gchar *tmp, *tmp1=NULL, **tmp_0=NULL;
-
-  factory->v4l2src_port += 1;
+  /* in case one source 2 streams */
+  if (factory->two_streams) {
+    factory->v4l2src_port += 2;
+  } else {   
+    factory->v4l2src_port += 1;
+  }  
   g_signal_emit_by_name (factory->multiudpsink, "add", "127.0.0.1",factory->v4l2src_port, NULL);
   tmp =  g_strdup (factory->launch);
   if (strstr(tmp, "(")) {

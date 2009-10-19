@@ -65,6 +65,7 @@ main (int argc, char *argv[])
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
   factory_h264 = gst_rtsp_media_factory_new ();
+  factory_h264->two_streams = TRUE;  
   /* set webcam source and port to listen for server */
   gst_rtsp_factory_set_device_source (factory_h264, "v4l2src", "/dev/video0", 3000);
    
@@ -90,7 +91,7 @@ main (int argc, char *argv[])
   }
   
   gst_rtsp_media_factory_set_server_configuration(factory_h264, server_config);
-
+  
   /* share the pipeline with multiple clients */
   gst_rtsp_media_factory_set_shared(factory_h264, TRUE);
 
@@ -104,6 +105,7 @@ main (int argc, char *argv[])
   factory_jpg = gst_rtsp_media_factory_new ();
   /* set webcam source and port to listen for server */
   /* gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000); */
+  factory_jpg->two_streams = TRUE; 
   factory_jpg->v4l2src_pipeline = factory_h264->v4l2src_pipeline;  
   factory_jpg->v4l2src_port = factory_h264->v4l2src_port + 1;
   factory_jpg->multiudpsink = factory_h264->multiudpsink;
