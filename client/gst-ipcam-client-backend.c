@@ -205,6 +205,7 @@ gst_ipcam_client_backend_stop() {
 	prewState = GST_PLAYING_STATE;
 	curtState = GST_STOP_STATE;
 
+        /*resize the main window*/
 	gtk_window_resize(GTK_WINDOW(mainWindow), 550, 50);
         gtk_widget_set_sensitive(vbox2, FALSE);
 	GstStateChangeReturn stateReturn;
@@ -212,8 +213,12 @@ gst_ipcam_client_backend_stop() {
 	stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
 	g_message("Setting to Stop.....Done");
 
+        /*Set video type and audio type to NULL after disconnect*/
 	video_type = NULL;
 	audio_type = NULL;
+
+        /*Set properties status to NULL after disconnect*/
+        gst_ipcam_client_set_status_properties("");
 	return stateReturn;
 }
 
