@@ -70,16 +70,16 @@ typedef struct _GstFpsBinClass GstFpsBinClass;
  * private structure storing information for our FpsBin
  */
 struct _GstFpsBin {
-    /// we are extending GstBin
+    /**< we are extending GstBin */
     GstBin bin;
 
-    /// source pad and sink pad. They are ghost pads
+    /**< source pad and sink pad. They are ghost pads */
     GstPad *sinkpad, *srcpad;
 
-    /// our bin'll pack videorate and capsfilter elements
+    /**< our bin'll pack videorate and capsfilter elements */
     GstElement *videorate, *capsfilter;
 
-    /// frame per seconds components. Gstreamer use fraction for represent fps value
+    /**< frame per seconds components. Gstreamer use fraction for represent fps value */
     guint numerator, denominator;
 };
 

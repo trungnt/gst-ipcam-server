@@ -154,7 +154,7 @@ static void gst_fps_bin_class_init(GstFpsBinClass * klass) {
 	gobject_class->set_property = gst_fps_bin_set_property;
 	gobject_class->get_property = gst_fps_bin_get_property;
 
-	// install framerate property
+	/* install framerate property */
 	g_object_class_install_property(gobject_class, PROP_FRAMERATE,
 			gst_param_spec_fraction("framerate", "Framerate", "frame rate value",
 			FPS_MIN_NUMERATOR, FPS_MIN_DENOMINATOR,
@@ -176,33 +176,33 @@ static void gst_fps_bin_class_init(GstFpsBinClass * klass) {
 static void gst_fps_bin_init(GstFpsBin * fps_bin, GstFpsBinClass * gclass) {
 	GstPad *pad;
 
-	// init child elements
+	/* init child elements */
 	fps_bin->videorate = gst_element_factory_make("videorate", "fps_bin_videorate");
 	g_return_if_fail(fps_bin->videorate != NULL);
 
 	fps_bin->capsfilter = gst_element_factory_make("capsfilter", "fps_bin_capsfilter");
 	g_return_if_fail(fps_bin->capsfilter != NULL);
 
-	// link them together
+	/* link them together */
 	gst_bin_add_many(GST_BIN(fps_bin), fps_bin->videorate, fps_bin->capsfilter, NULL);
 	gst_element_link(fps_bin->videorate, fps_bin->capsfilter);
 
-	// ghost the pads to our bin
-	// sink pad
+	/* ghost the pads to our bin */
+	/* sink pad */
 	pad = gst_element_get_static_pad(fps_bin->videorate, "sink");
 	fps_bin->sinkpad = gst_ghost_pad_new("sink", pad);
 	gst_object_unref(pad);
 	gst_pad_set_active(fps_bin->sinkpad, TRUE);
 	gst_element_add_pad(GST_ELEMENT(fps_bin), fps_bin->sinkpad);
 
-	// src pad
+	/* src pad */
 	pad = gst_element_get_static_pad(fps_bin->capsfilter, "src");
 	fps_bin->srcpad = gst_ghost_pad_new("src", pad);
 	gst_object_unref(pad);
 	gst_pad_set_active(fps_bin->srcpad, TRUE);
 	gst_element_add_pad(GST_ELEMENT(fps_bin), fps_bin->srcpad);
 
-	// default value for fps
+	/* default value for fps */
 	fps_bin->numerator = 30;
 	fps_bin->denominator = 1;
 }
