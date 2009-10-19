@@ -647,7 +647,7 @@ gst_ipcam_client_read_video_props(GstElement *videosink) {
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline) {
 	GstElement * video_branch = gst_parse_bin_from_description("tee name=video_tee ! queue name=video_queue "
-                                                      "! decodebin ! identity name = connector", FALSE, NULL);
+                                                      "! decodebin ! ffmpegcolorspace ! identity name = connector", FALSE, NULL);
         video_tee = gst_bin_get_by_name(video_branch, "video_tee");
 
         GstElement * connector = gst_bin_get_by_name(GST_BIN(video_branch), "connector");
@@ -685,7 +685,7 @@ static void gst_ipcam_client_backend_decoder_on_pad_add(GstElement* decoder, Gst
 
 static gboolean gst_ipcam_client_backend_create_audio_branch(GstElement* pipeline) {
 	audio_branch = gst_parse_bin_from_description("tee name=audio_tee ! queue name=audio_queue !"
-                                        " decodebin ! audio_convert ! autoaudiosink", FALSE, NULL);
+                                        " decodebin ! audioconvert ! autoaudiosink", FALSE, NULL);
         audio_tee = gst_bin_get_by_name(audio_branch, "audio_tee");
         gst_element_set_state(audio_branch, GST_STATE_PAUSED);
 
