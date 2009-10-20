@@ -173,6 +173,8 @@ def process_input(cmd):
 		
 def check_client_path(base_dir, client_name = 'gis-ipcam-client', cli_paths = [], checked_dirs = []):
 	''' check and list the client with given name in given basedir '''
+	if not os.path.isdir(base_dir):
+		checked_dirs.append(base_dir)
 	if base_dir in checked_dirs:
 		return
 	checked_dirs.append(base_dir)
