@@ -1,5 +1,5 @@
 /*
- * \file:   demo-client-callbacks.h
+ * \file:   gst-ipcam-client-callbacks.h
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
@@ -7,10 +7,8 @@
 #include <gtk/gtk.h>
 
 
-//store the url in the current session
+/*store the url in the current session*/
 static gchar *URL;
-//store the gstream type in the current session
-static gint TYPE = 4;
 /**
  * Handle the event when clicking on Connect button in the main window.
  * The button will change to Disconnect button and the connection dialog will appear
@@ -21,7 +19,7 @@ static gint TYPE = 4;
  * @return nothing
  */
 void
-demo_client_on_btn_Connect_clicked                 (GtkButton       *button,
+gst_ipcam_client_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -35,7 +33,7 @@ demo_client_on_btn_Connect_clicked                 (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Disconnect_clicked              (GtkButton       *button,
+gst_ipcam_client_on_btn_Disconnect_clicked              (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -49,7 +47,7 @@ demo_client_on_btn_Disconnect_clicked              (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Pause_clicked                   (GtkButton       *button,
+gst_ipcam_client_on_btn_Pause_clicked                   (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -63,21 +61,9 @@ demo_client_on_btn_Pause_clicked                   (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Resume_clicked                  (GtkButton       *button,
+gst_ipcam_client_on_btn_Resume_clicked                  (GtkButton       *button,
                                         gpointer         user_data);
 
-/**
- * Handle the event when clicking on the Options button.
- * Show the options dialog
- *
- * @param button GtkButton *
- * @param user_data gpointer
- *
- * @return nothing
- */
-/*void
-demo_client_on_btn_Options_clicked                 (GtkButton       *button,
-                                        gpointer         user_data);*/
 
 /**
  * Handle the event when clicking on the About button
@@ -89,7 +75,7 @@ demo_client_on_btn_Options_clicked                 (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_About_clicked                   (GtkButton       *button,
+gst_ipcam_client_on_btn_About_clicked                   (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -102,7 +88,7 @@ demo_client_on_btn_About_clicked                   (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_Quit_clicked                    (GtkButton       *button,
+gst_ipcam_client_on_btn_Quit_clicked                    (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -115,7 +101,7 @@ demo_client_on_btn_Quit_clicked                    (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
+gst_ipcam_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
                                         gpointer         user_data);
 
 /**
@@ -128,7 +114,7 @@ demo_client_on_btn_ConnectDialog_clicked           (GtkButton       *button,
  * @return nothing
  */
 void
-demo_client_on_connectionDialog_destroy                (GtkObject       *object,
+gst_ipcam_client_on_connectionDialog_destroy                (GtkObject       *object,
                                         gpointer         user_data);
 
 /**
@@ -140,7 +126,7 @@ demo_client_on_connectionDialog_destroy                (GtkObject       *object,
  *
  * @return nothing
  */
-void demo_client_on_mainWindow_destroy                (GtkObject       *object,
+void gst_ipcam_client_on_mainWindow_destroy                (GtkObject       *object,
                                         gpointer         user_data);
 
 /**
@@ -153,6 +139,19 @@ void demo_client_on_mainWindow_destroy                (GtkObject       *object,
  * @return nothing
  */
 gboolean
-demo_client_on_connectionDialog_key_press_event        (GtkWidget       *widget,
+gst_ipcam_client_on_connectionDialog_key_press_event        (GtkWidget       *widget,
                                         GdkEventKey     *event,
+                                        gpointer         user_data);
+
+/**
+ * Handle the event when clicking on the Change button in the main window.
+ * the video will change fps and bitrate followed the input from users
+ *
+ * @param button GtkButton *
+ * @param user_data gpointer
+ *
+ * @return nothing
+ */
+void
+gst_ipcam_client_on_btn_Connect_clicked                 (GtkButton       *button,
                                         gpointer         user_data);

@@ -1,5 +1,5 @@
 /**
- * \file:   demo-client-interface.c
+ * \file:   gst-ipcam-client-interface.c
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
@@ -18,9 +18,10 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 
-#include "demo-client-callbacks.h"
-#include "demo-client-interface.h"
-#include "demo-client-support.h"
+#include "gst-ipcam-client-callbacks.h"
+#include "gst-ipcam-client-interface.h"
+#include "gst-ipcam-client-support.h"
+#include "gst-ipcam-client-windowid.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -37,10 +38,12 @@
  * @return nothing
  */
 GtkWidget*
-demo_client_create_mainWindow (void)
+gst_ipcam_client_create_mainWindow (void)
 {
   mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (mainWindow), _("Demo Client"));
+  gchar * main_window_title = gst_ipcam_client_window_create_title(_("Gst Ipcam Client"));
+  gtk_window_set_title (GTK_WINDOW (mainWindow), main_window_title);
+  g_free(main_window_title);
   gtk_window_set_default_size (GTK_WINDOW (mainWindow), 420, 50);
 
   vbox = gtk_vbox_new (FALSE, 0);
@@ -62,9 +65,7 @@ demo_client_create_mainWindow (void)
   gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
 
   btn_Disconnect = gtk_button_new_from_stock ("gtk-disconnect");
-  //gtk_widget_show (btn_Disconnect);
   gtk_widget_set_sensitive(btn_Disconnect, FALSE);
-  //gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);
 
   toolitem_Pause = (GtkWidget*) gtk_tool_item_new ();
   gtk_widget_show (toolitem_Pause);
@@ -76,7 +77,6 @@ demo_client_create_mainWindow (void)
   gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
 
   btn_Resume = gtk_button_new ();
-  //gtk_widget_show (btn_Resume);
   gtk_widget_set_sensitive(btn_Resume, FALSE);
 
   algn_Resume = gtk_alignment_new (0.5, 0.5, 0, 0);
@@ -111,43 +111,126 @@ demo_client_create_mainWindow (void)
   gtk_widget_show (btn_Quit);
   gtk_container_add (GTK_CONTAINER (toolitem_Quit), btn_Quit);
 
+  hbox1 = gtk_hbox_new (FALSE, 0);
+  gtk_widget_show (hbox1);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox1, TRUE, TRUE, 0);
+
+  vbox2 = gtk_vbox_new (FALSE, 0);
+  gtk_widget_show (vbox2);
+  gtk_widget_set_sensitive(vbox2, FALSE);
+  gtk_box_pack_start (GTK_BOX (hbox1), vbox2, TRUE, TRUE, 0);
+
+  toolbar1 = gtk_toolbar_new ();
+  /*gtk_widget_show (toolbar1);*/
+  gtk_box_pack_start (GTK_BOX (vbox2), toolbar1, FALSE, FALSE, 0);
+  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar1), GTK_TOOLBAR_BOTH);
+  tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar1));
+
+  toolitem6 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem6);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem6);
+
+  lbl_fps = gtk_label_new (_("Frame rate:"));
+  gtk_widget_show (lbl_fps);
+  gtk_container_add (GTK_CONTAINER (toolitem6), lbl_fps);
+
+  toolitem8 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem8);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem8);
+
+  spinbtn_fps_n_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  spinbtn_fps_n = gtk_spin_button_new (GTK_ADJUSTMENT (spinbtn_fps_n_adj), 1, 0);
+  gtk_widget_show (spinbtn_fps_n);
+  gtk_container_add (GTK_CONTAINER (toolitem8), spinbtn_fps_n);
+
+  toolitem7 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem7);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem7);
+
+  lbl__ = gtk_label_new (_("/"));
+  gtk_widget_show (lbl__);
+  gtk_container_add (GTK_CONTAINER (toolitem7), lbl__);
+
+  toolitem9 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem9);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem9);
+
+  spinbtn_fps_d_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  spinbtn_fps_d = gtk_spin_button_new (GTK_ADJUSTMENT (spinbtn_fps_d_adj), 1, 0);
+  gtk_widget_show (spinbtn_fps_d);
+  gtk_container_add (GTK_CONTAINER (toolitem9), spinbtn_fps_d);
+
+  toolitem15 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem15);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem15);
+
+  alignment2 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment2);
+  gtk_container_add (GTK_CONTAINER (toolitem15), alignment2);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (alignment2), 0, 0, 41, 0);
+
+  toolitem12 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem12);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem12);
+
+  lbl_bitrate = gtk_label_new (_("Bit rate:"));
+  gtk_widget_show (lbl_bitrate);
+  gtk_container_add (GTK_CONTAINER (toolitem12), lbl_bitrate);
+
+  toolitem13 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem13);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem13);
+
+  spinbtn_bitrate_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+  spinbtn_bitrate = gtk_spin_button_new (GTK_ADJUSTMENT (spinbtn_bitrate_adj), 1, 0);
+  gtk_widget_show (spinbtn_bitrate);
+  gtk_container_add (GTK_CONTAINER (toolitem13), spinbtn_bitrate);
+
+  toolitem14 = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem14);
+  gtk_container_add (GTK_CONTAINER (toolbar1), toolitem14);
+
+  btn_change = gtk_button_new_with_mnemonic (_("Change"));
+  gtk_widget_show (btn_change);
+  gtk_container_add (GTK_CONTAINER (toolitem14), btn_change);
+
   hbox_VideoPrew = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox_VideoPrew);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox_VideoPrew, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox2), hbox_VideoPrew, TRUE, TRUE, 0);
 
-  prw_GuestVideo = gtk_drawing_area_new ();//gtk_preview_new (GTK_PREVIEW_COLOR);
+  prw_GuestVideo = gtk_drawing_area_new ();
   gtk_widget_show (prw_GuestVideo);
   gtk_box_pack_start (GTK_BOX (hbox_VideoPrew), prw_GuestVideo, TRUE, TRUE, 0);
 
-  statusBar = gtk_statusbar_new ();
+  statusBar = gst_ipcam_client_init_status_bar();
   gtk_widget_show (statusBar);
   gtk_box_pack_start (GTK_BOX (vbox), statusBar, FALSE, FALSE, 0);
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (statusBar), FALSE);
 
   g_signal_connect_swapped ((gpointer) btn_Connect, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Connect_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Connect_clicked),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_Disconnect, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Disconnect_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Disconnect_clicked),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_Pause, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Pause_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Pause_clicked),
                             GTK_OBJECT (NULL));
   
   g_signal_connect_swapped ((gpointer) btn_Resume, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Resume_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Resume_clicked),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_About, "clicked",
-                            G_CALLBACK (demo_client_on_btn_About_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_About_clicked),
                             GTK_OBJECT (NULL));
   g_signal_connect_swapped ((gpointer) btn_Quit, "clicked",
-                            G_CALLBACK (demo_client_on_btn_Quit_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_Quit_clicked),
                             GTK_OBJECT (NULL));
   g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
-                            G_CALLBACK (demo_client_on_mainWindow_destroy),
+                            G_CALLBACK (gst_ipcam_client_on_mainWindow_destroy),
                             GTK_OBJECT (NULL));
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
@@ -181,17 +264,19 @@ demo_client_create_mainWindow (void)
  * @return nothing
  */
 GtkWidget*
-demo_client_create_connectionDialog (void)
+gst_ipcam_client_create_connectionDialog (void)
 {
   connectionDialog = gtk_dialog_new ();
-  gtk_window_set_title (GTK_WINDOW (connectionDialog), _("Connection"));
+  gchar * connection_dialog_title = gst_ipcam_client_window_create_title(_("Connection"));
+  gtk_window_set_title (GTK_WINDOW (connectionDialog), connection_dialog_title);
+  g_free(connection_dialog_title);
   gtk_window_set_resizable (GTK_WINDOW (connectionDialog), FALSE);
   gtk_window_set_type_hint (GTK_WINDOW (connectionDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   dialog_vbox = GTK_DIALOG (connectionDialog)->vbox;
   gtk_widget_show (dialog_vbox);
 
-  tbl_ConInfo = gtk_table_new (2, 2, FALSE);
+  tbl_ConInfo = gtk_table_new (1, 2, FALSE);
   gtk_widget_show (tbl_ConInfo);
   gtk_box_pack_start (GTK_BOX (dialog_vbox), tbl_ConInfo, TRUE, TRUE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (tbl_ConInfo), 3);
@@ -212,22 +297,6 @@ demo_client_create_connectionDialog (void)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (entry_Url), 9679);
 
-  lbl_VideoStreamType = gtk_label_new (_("Video stream type"));
-  gtk_widget_show (lbl_VideoStreamType);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_VideoStreamType, 0, 1, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_VideoStreamType), 0, 0.5);
-
-  cbx_VideoStreamType = gtk_combo_box_entry_new_text ();
-  gtk_widget_show (cbx_VideoStreamType);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), cbx_VideoStreamType, 1, 2, 1, 2,
-                    (GtkAttachOptions) (GTK_FILL),
-                    (GtkAttachOptions) (GTK_FILL), 0, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Jpeg stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("Mpeg4 stream"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (cbx_VideoStreamType), _("H264 stream"));
-
   dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
   gtk_widget_show (dialog_action_area);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area), GTK_BUTTONBOX_END);
@@ -242,15 +311,15 @@ demo_client_create_connectionDialog (void)
   gtk_entry_set_activates_default (GTK_ENTRY(entry_Url), TRUE);
 
   g_signal_connect ((gpointer) connectionDialog, "key_press_event",
-                    G_CALLBACK (demo_client_on_connectionDialog_key_press_event),
+                    G_CALLBACK (gst_ipcam_client_on_connectionDialog_key_press_event),
                     NULL);
 
   g_signal_connect_swapped ((gpointer) connectionDialog, "destroy",
-                            G_CALLBACK (demo_client_on_connectionDialog_destroy),
+                            G_CALLBACK (gst_ipcam_client_on_connectionDialog_destroy),
                             GTK_OBJECT (NULL));
 
   g_signal_connect_swapped ((gpointer) btn_ConnectDialog, "clicked",
-                            G_CALLBACK (demo_client_on_btn_ConnectDialog_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_ConnectDialog_clicked),
                             GTK_OBJECT (NULL));
 
   /** Store pointers to all widgets, for use by lookup_widget(). */
@@ -259,10 +328,125 @@ demo_client_create_connectionDialog (void)
   GLADE_HOOKUP_OBJECT (connectionDialog, tbl_ConInfo, "tbl_ConInfo");
   GLADE_HOOKUP_OBJECT (connectionDialog, lbl_Url, "lbl_Url");
   GLADE_HOOKUP_OBJECT (connectionDialog, entry_Url, "entry_Url");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_VideoStreamType, "lbl_VideoStreamType");
-  GLADE_HOOKUP_OBJECT (connectionDialog, cbx_VideoStreamType, "cbx_VideoStreamType");
   GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_action_area, "dialog_action_area");
   GLADE_HOOKUP_OBJECT (connectionDialog, btn_ConnectDialog, "btn_ConnectDialog");
 
   return connectionDialog;
+}
+
+/**
+ * init the statusbar widget
+ * 
+ * @param void
+ *
+ * @return the statusbar widget
+ */
+GtkWidget* gst_ipcam_client_init_status_bar()
+{
+    GtkWidget * separator;
+
+    /* init the outside containter*/
+    statusBar_vBox = gtk_vbox_new(FALSE, 0);
+    gtk_widget_show(statusBar_vBox);
+
+    separator = gtk_hseparator_new();
+
+    gtk_widget_show(separator);
+    gtk_box_pack_start(GTK_BOX(statusBar_vBox), separator, FALSE, FALSE, 0);
+
+    /* init the inside containter*/
+    statusBar_hBox = gtk_hbox_new(FALSE, 0);
+    gtk_widget_show(statusBar_hBox);
+
+    gtk_widget_set_size_request(statusBar_hBox, 500, 25);
+    gtk_box_pack_start(GTK_BOX(statusBar_vBox), statusBar_hBox, FALSE, FALSE, 0);
+
+    /* init the status label*/
+    statusBar_labelStatus = gtk_label_new("");
+    gtk_widget_show(statusBar_labelStatus);
+
+    gtk_widget_set_size_request(statusBar_labelStatus, 60, -1);
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelStatus, FALSE, TRUE, 5);
+
+    /* separator*/
+    separator = gtk_vseparator_new();
+    gtk_widget_show(separator);
+    
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
+
+    {
+        /* Video type*/
+        statusBar_labelVideoType = gtk_label_new("");
+        gtk_widget_show(statusBar_labelVideoType);
+        
+        gtk_widget_set_size_request(statusBar_labelVideoType, 130, -1);
+        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
+        
+        /* Audio type*/
+        statusBar_labelAudioType = gtk_label_new("");
+        gtk_widget_show(statusBar_labelAudioType);
+        
+        gtk_widget_set_size_request(statusBar_labelAudioType, 120, -1);
+        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelAudioType, FALSE, FALSE, 0);
+    }
+
+    /* separator*/
+    separator = gtk_vseparator_new();
+
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
+
+    /* Properties label*/
+    statusBar_labelProperties = gtk_label_new("");
+    
+    gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
+
+    return statusBar_vBox;
+}
+
+/**
+ *  set the status text on the status bar
+ * 
+ * @param void
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_text(const gchar* text)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelStatus), text);
+}
+
+/**
+ * show the properties
+ * 
+ * @param name const gchar* the status name
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_properties(const gchar* name)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelProperties), name);
+}
+
+/**
+ * show the video type
+ * 
+ * @param type_name const gchar* the video type
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_Video_Type(const gchar* type_name)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelVideoType), type_name);
+}
+
+/**
+ * show the audio type
+ *
+ * @param type_name const gchar* the audio type
+ *
+ * @return nothing
+ */
+void gst_ipcam_client_set_status_Audio_Type(const gchar* type_name)
+{
+    gtk_label_set_text(GTK_LABEL(statusBar_labelAudioType), type_name);
 }

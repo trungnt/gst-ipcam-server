@@ -1,17 +1,21 @@
 /*
- * \file:   demo-client-backend.h
+ * \file:   gst-ipcam-client-backend.h
  * \author: Dam Quang Tuan <damquang.tuan@nomovok.com>
  *
  * \date 8-26-2009
  */
 
-#ifndef _DEMO_CLIENT_BACKEND_H
-#define	_DEMO_CLIENT_BACKEND_H
+#ifndef _gst_ipcam_client_BACKEND_H
+#define	_gst_ipcam_client_BACKEND_H
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
+#define GST_PLAYING_STATE 0
+#define GST_PAUSE_STATE 1
+#define GST_STOP_STATE 2
+#define GST_RESUME_STATE 3
 /**
  * init for using gstreamer
  * This function is used whenever the main function is created
@@ -22,7 +26,7 @@ extern "C" {
  * @return nothing
  */
 void
-demo_client_backend_init (int *argc,
+gst_ipcam_client_backend_init (int *argc,
               char **argv[]);
 
 /**
@@ -33,7 +37,7 @@ demo_client_backend_init (int *argc,
  * @return nothing
  */
 void
-demo_client_backend_create_pipeline(const gchar *pipeline_description);
+gst_ipcam_client_backend_create_pipeline(const gchar *pipeline_description);
 
 /**
  * Set the pointer window
@@ -43,7 +47,7 @@ demo_client_backend_create_pipeline(const gchar *pipeline_description);
  * @return nothing
  */
 void
-demo_client_backend_set_window (gpointer window_);
+gst_ipcam_client_backend_set_window (gpointer window_);
 
 /**
  * set the pipeline from the state GST_STATE_NULL to the state GST_STATE_PLAYING
@@ -53,7 +57,7 @@ demo_client_backend_set_window (gpointer window_);
  * @return Result of the state change
  */
 gint
-demo_client_backend_play();
+gst_ipcam_client_backend_play();
 
 /**
  * set the pipeline from the state GST_STATE_PLAYING to the state GST_STATE_PAUSED
@@ -63,7 +67,7 @@ demo_client_backend_play();
  * @return Result of the state change
  */
 gint
-demo_client_backend_pause();
+gst_ipcam_client_backend_pause();
 
 /**
  * set the pipeline from the state GST_STATE_PLAYING to the state GST_STATE_NULL
@@ -73,7 +77,7 @@ demo_client_backend_pause();
  * @return Result of the state change
  */
 gint
-demo_client_backend_stop();
+gst_ipcam_client_backend_stop();
 
 /**
  * set the pipeline from the state GST_STATE_PAUSED to the state GST_STATE_PLAYING
@@ -83,7 +87,7 @@ demo_client_backend_stop();
  * @return Result of the state change
  */
 gint
-demo_client_backend_resume();
+gst_ipcam_client_backend_resume();
 /**
  * free memories for pipeline and videosink pointer before exit the application
  *
@@ -92,11 +96,10 @@ demo_client_backend_resume();
  * @return nothing
  */
 void
-demo_client_backend_deinit();
+gst_ipcam_client_backend_deinit();
 
 #ifdef	__cplusplus
 }
 #endif
 
-#endif	/* _DEMO_CLIENT_BACKEND_H */
-
+#endif	/* _gst_ipcam_client_BACKEND_H */
