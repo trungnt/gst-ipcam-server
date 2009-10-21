@@ -41,7 +41,7 @@ gst_ipcam_client_on_btn_connect_clicked                 (GtkButton       *button
 
     if (URL != NULL)
     {
-	gtk_entry_set_text(GTK_ENTRY(entry_Url), URL);
+	gtk_entry_set_text(GTK_ENTRY(entry_url), URL);
     }
 
     gtk_widget_show(connection_dialog);
@@ -179,7 +179,7 @@ gst_ipcam_client_on_btn_connect_dialog_clicked           (GtkButton       *butto
 {
     /* static gint counter = 0;*/
     is_connect_button_clicked = TRUE;
-    gchar *url = gtk_entry_get_text(entry_Url);
+    gchar *url = gtk_entry_get_text(entry_url);
     URL = g_strconcat("", url, NULL);
     gst_ipcam_client_backend_set_window (GINT_TO_POINTER (GDK_WINDOW_XWINDOW (prw_video->window)));
 

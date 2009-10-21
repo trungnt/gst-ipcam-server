@@ -47,8 +47,6 @@ GtkWidget *alignment2;
 GtkWidget *alignment3;
 GtkWidget *alignment4;
 GtkWidget *toolitem10;
-GtkWidget *btn_change_fps;
-GtkWidget *vseparator1;
 GtkWidget *lbl_bitrate;
 GtkWidget *btn_change;
 GtkWidget *prw_video;

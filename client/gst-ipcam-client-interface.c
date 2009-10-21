@@ -286,10 +286,17 @@ gst_ipcam_client_create_main_window (void)
   GLADE_HOOKUP_OBJECT (main_window, toolitem6, "toolitem6");
   GLADE_HOOKUP_OBJECT (main_window, toolitem7, "toolitem7");
   GLADE_HOOKUP_OBJECT (main_window, toolitem10, "toolitem10");
+  GLADE_HOOKUP_OBJECT (main_window, alignment1, "alignment1");
+  GLADE_HOOKUP_OBJECT (main_window, alignment2, "alignment2");
+  GLADE_HOOKUP_OBJECT (main_window, alignment3, "alignment3");
+  GLADE_HOOKUP_OBJECT (main_window, alignment4, "alignment4");
+  GLADE_HOOKUP_OBJECT (main_window, lbl_bitrate, "lbl_bitrate");
+  GLADE_HOOKUP_OBJECT (main_window, btn_change, "btn_change");
   GLADE_HOOKUP_OBJECT (main_window, lbl_fps, "lbl_fps");
   GLADE_HOOKUP_OBJECT (main_window, lbl_fsize, "lbl_fsize");
   GLADE_HOOKUP_OBJECT (main_window, prw_video, "prw_video");
   GLADE_HOOKUP_OBJECT (main_window, status_bar, "status_bar");
+  GLADE_HOOKUP_OBJECT (main_window, entry_bitrate, "entry_bitrate");
 
   return main_window;
 }
