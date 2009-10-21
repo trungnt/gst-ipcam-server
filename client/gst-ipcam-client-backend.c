@@ -165,12 +165,12 @@ gint
 gst_ipcam_client_backend_play() {
     prew_state = GST_STOP_STATE;
     curt_state = GST_PLAYING_STATE;
-    GstStateChangeReturn stateReturn;
+    GstStateChangeReturn state_return;
 
-    stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    state_return = gst_element_set_state(pipeline, GST_STATE_PLAYING);
     g_message("Setting to Play.....Done");
 
-    return stateReturn;
+    return state_return;
 }
 
 /**
@@ -185,12 +185,12 @@ gst_ipcam_client_backend_pause() {
     prew_state = GST_PLAYING_STATE;
     curt_state = GST_PAUSE_STATE;
 
-    GstStateChangeReturn stateReturn;
+    GstStateChangeReturn state_return;
 
-    stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
+    state_return = gst_element_set_state(pipeline, GST_STATE_PAUSED);
     g_message("Setting to Pause.....Done");
 
-    return stateReturn;
+    return state_return;
 }
 
 /**
@@ -208,9 +208,9 @@ gst_ipcam_client_backend_stop() {
     /*resize the main window*/
     gtk_window_resize(GTK_WINDOW(main_window), 550, 50);
     gtk_widget_set_sensitive(vbox2, FALSE);
-    GstStateChangeReturn stateReturn;
+    GstStateChangeReturn state_return;
 
-    stateReturn = gst_element_set_state(pipeline, GST_STATE_NULL);
+    state_return = gst_element_set_state(pipeline, GST_STATE_NULL);
     g_message("Setting to Stop.....Done");
 
     /*Set video type and audio type to NULL after disconnect*/
@@ -219,7 +219,7 @@ gst_ipcam_client_backend_stop() {
 
     /*Set properties status to NULL after disconnect*/
     gst_ipcam_client_set_status_properties("");
-    return stateReturn;
+    return state_return;
 }
 
 /**
@@ -234,12 +234,12 @@ gst_ipcam_client_backend_resume() {
     prew_state = GST_PAUSE_STATE;
     curt_state = GST_PLAYING_STATE;
 
-    GstStateChangeReturn stateReturn;
+    GstStateChangeReturn state_return;
 
-    stateReturn = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    state_return = gst_element_set_state(pipeline, GST_STATE_PLAYING);
     g_message("Setting to Resume.....Done");
 
-    return stateReturn;
+    return state_return;
 }
 
 /**
@@ -613,7 +613,7 @@ gst_ipcam_client_read_video_props(GstElement *video_sink) {
     gint fps_n, fps_d;
     gint width, height;
     gint datarate;
-    gchar *capsInfor;
+    gchar *caps_infor;
     gchar *status_props;
     GstStructure *str = NULL;
     GstPad *video_pad;
@@ -634,8 +634,8 @@ gst_ipcam_client_read_video_props(GstElement *video_sink) {
         return;
     }
 
-    capsInfor = gst_caps_to_string(video_caps);
-    g_message("caps Infor: %s", capsInfor);
+    caps_infor = gst_caps_to_string(video_caps);
+    g_message("caps Infor: %s", caps_infor);
 
     gst_structure_get_fraction(str, "framerate", &fps_n, &fps_d);
     gst_structure_get_int(str, "width", &width);
