@@ -28,6 +28,41 @@ static GstElement * video_tee, * audio_tee;
 static GstElement * audio_branch;
 static gint prew_state;
 static gint curt_state;
+static GstClockTime min_video_latency, max_video_latency, min_audio_latency, max_audio_latency;
+
+/**
+ * Set the latency for synchronize
+ * @param data gpointer
+ *
+ * @return TRUE
+ */
+
+static gboolean gst_ipcam_client_backend_set_latency(gpointer data)
+{
+   if (audio_sink != NULL && video_sink != NULL)
+   {
+      max_video_latency = 0;
+      min_video_latency = 0;
+      max_audio_latency = 0;
+      min_audio_latency = 0;
+      gst_ipcam_client_backend_read_latency_props(video_sink, audio_sink);
+      GstClockTime max_min_latency, min_max_latency, latency;
+      GstEvent *event;
+      max_min_latency = min_video_latency > min_audio_latency ? min_video_latency : min_audio_latency;
+      min_max_latency = max_video_latency < max_audio_latency ? max_video_latency : max_audio_latency;
+      if (min_max_latency >= max_min_latency) {
+         latency = max_min_latency;
+         event = gst_event_new_latency (latency);
+         if (event != NULL) {
+            if (latency > min_audio_latency)
+               gst_element_send_event (audio_sink, event);
+            if (latency > min_video_latency) 
+               gst_element_send_event (video_sink, event);
+         } 
+      }
+   }
+   return TRUE;
+}
 
 /**
  * Get the string representation for GstStreamStatusType
@@ -171,6 +206,7 @@ gst_ipcam_client_backend_play()
 
 	state_return = gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	g_message("Setting to Play.....Done");
+        g_timeout_add_seconds(3, gst_ipcam_client_backend_set_latency, NULL);
 
 	return state_return;
 }
@@ -429,12 +465,6 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 		switch (newState)
 		{
 		case GST_STATE_PLAYING:
-			if (video_sink != NULL)
-			{
-				gst_ipcam_client_read_video_props(video_sink);
-			}
-			if (audio_sink != NULL)
-				gst_ipcam_client_read_audio_props(audio_sink);
 			gst_ipcam_client_set_status_text("Playing");
 			gst_ipcam_client_set_status_video_type(video_type);
 			gst_ipcam_client_set_status_audio_type(audio_type);
@@ -794,27 +824,29 @@ static const gchar * gst_ipcam_client_backend_stream_status_get_name(GstStreamSt
 /**
  * Read the audio properties
  *
- * @param audio_sink GstElement *
+ * @param videosink GstElement *
+ * @param audiosink GstElement *
  *
  * @return nothing
  */
 void
-gst_ipcam_client_read_audio_props(GstElement *audio_sink)
-{
-	gboolean live;
-	GstClockTime min_latency;
-	GstClockTime max_latency;
-	GstQuery * latency_query = gst_query_new_latency();
-	if (gst_element_query(audio_sink, latency_query))
-	{
-		gst_query_parse_latency(latency_query, &live, &min_latency, &max_latency);
-		if (live == TRUE)
-			g_print("Is live\n");
-		else
-			g_print("Is not live\n");
-		g_print("min latency: %" GST_TIME_FORMAT "\n", GST_TIME_ARGS(min_latency));
-		g_print("max latency: %" GST_TIME_FORMAT "\n", GST_TIME_ARGS(max_latency));
-	}
-	gst_query_unref(latency_query);
-	return TRUE;
+gst_ipcam_client_backend_read_latency_props(GstElement *videosink, GstElement *audiosink) {
+    gboolean live;
+    GstClockTime minLatency;
+    GstClockTime maxLatency;
+    GstQuery * latencyQuery = gst_query_new_latency();
+    /*For videosink*/
+    if (gst_element_query(videosink, latencyQuery)) {
+        gst_query_parse_latency(latencyQuery, &live, &minLatency, &maxLatency);
+	min_video_latency = minLatency;
+        max_video_latency = maxLatency; 
+    }
+    /*For audiosink*/
+    if (gst_element_query(audiosink, latencyQuery)) {
+        gst_query_parse_latency(latencyQuery, &live, &minLatency, &maxLatency);
+	min_audio_latency = minLatency;
+        max_audio_latency = maxLatency;
+    }
+    gst_query_unref(latencyQuery);
 }
+
