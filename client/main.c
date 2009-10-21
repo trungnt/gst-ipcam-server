@@ -19,7 +19,7 @@
 int
 main (int argc, char *argv[])
 {
-  GtkWidget *mainWindow;
+  GtkWidget *main_window;
   
 #ifdef ENABLE_NLS
   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -37,8 +37,8 @@ main (int argc, char *argv[])
    * (except popup menus), just so that you see something after building
    * the project. Delete any components that you don't want shown initially.
    */
-  mainWindow = gst_ipcam_client_create_mainWindow ();
-  gtk_widget_show (mainWindow);
+  main_window = gst_ipcam_client_create_main_window ();
+  gtk_widget_show (main_window);
   
   gtk_main ();
   return 0;

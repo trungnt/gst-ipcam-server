@@ -38,17 +38,17 @@
  * @return nothing
  */
 GtkWidget*
-gst_ipcam_client_create_mainWindow (void)
+gst_ipcam_client_create_main_window (void)
 {
-  mainWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gchar * main_window_title = gst_ipcam_client_window_create_title(_("Gst Ipcam Client"));
-  gtk_window_set_title (GTK_WINDOW (mainWindow), main_window_title);
+  gtk_window_set_title (GTK_WINDOW (main_window), main_window_title);
   g_free(main_window_title);
-  gtk_window_set_default_size (GTK_WINDOW (mainWindow), 550, 50);
+  gtk_window_set_default_size (GTK_WINDOW (main_window), 550, 50);
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox);
-  gtk_container_add (GTK_CONTAINER (mainWindow), vbox);
+  gtk_container_add (GTK_CONTAINER (main_window), vbox);
 
   toolbar = gtk_toolbar_new ();
   gtk_widget_show (toolbar);
@@ -56,63 +56,60 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH);
   tmp_toolbar_icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar));
 
-  toolitem_Connect = (GtkWidget*) gtk_tool_item_new ();
-  gtk_widget_show (toolitem_Connect);
-  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_Connect);
+  toolitem_connect = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem_connect);
+  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_connect);
 
-  btn_Connect = gtk_button_new_from_stock ("gtk-connect");
-  gtk_widget_show (btn_Connect);
-  gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Connect);
+  btn_connect = gtk_button_new_from_stock ("gtk-connect");
+  gtk_widget_show (btn_connect);
+  gtk_container_add (GTK_CONTAINER (toolitem_connect), btn_connect);
 
-  btn_Disconnect = gtk_button_new_from_stock ("gtk-disconnect");
-  /*gtk_widget_show (btn_Disconnect);*/
-  gtk_widget_set_sensitive(btn_Disconnect, FALSE);
-  /*gtk_container_add (GTK_CONTAINER (toolitem_Connect), btn_Disconnect);*/
+  btn_disconnect = gtk_button_new_from_stock ("gtk-disconnect");
+  gtk_widget_set_sensitive(btn_disconnect, FALSE);
 
-  toolitem_Pause = (GtkWidget*) gtk_tool_item_new ();
-  gtk_widget_show (toolitem_Pause);
-  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_Pause);
+  toolitem_pause = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem_pause);
+  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_pause);
 
-  btn_Pause = gtk_button_new_from_stock ("gtk-media-pause");
-  gtk_widget_show (btn_Pause);
-  gtk_widget_set_sensitive(btn_Pause, FALSE);
-  gtk_container_add (GTK_CONTAINER (toolitem_Pause), btn_Pause);
+  btn_pause = gtk_button_new_from_stock ("gtk-media-pause");
+  gtk_widget_show (btn_pause);
+  gtk_widget_set_sensitive(btn_pause, FALSE);
+  gtk_container_add (GTK_CONTAINER (toolitem_pause), btn_pause);
 
-  btn_Resume = gtk_button_new ();
-  /*gtk_widget_show (btn_Resume);*/
-  gtk_widget_set_sensitive(btn_Resume, FALSE);
+  btn_resume = gtk_button_new ();
+  gtk_widget_set_sensitive(btn_resume, FALSE);
 
-  algn_Resume = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (algn_Resume);
-  gtk_container_add (GTK_CONTAINER (btn_Resume), algn_Resume);
+  algn_resume = gtk_alignment_new (0.5, 0.5, 0, 0);
+  gtk_widget_show (algn_resume);
+  gtk_container_add (GTK_CONTAINER (btn_resume), algn_resume);
 
-  hbox_ResumeButton = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox_ResumeButton);
-  gtk_container_add (GTK_CONTAINER (algn_Resume), hbox_ResumeButton);
+  hbox_resume_button = gtk_hbox_new (FALSE, 2);
+  gtk_widget_show (hbox_resume_button);
+  gtk_container_add (GTK_CONTAINER (algn_resume), hbox_resume_button);
 
-  img_Resume = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (img_Resume);
-  gtk_box_pack_start (GTK_BOX (hbox_ResumeButton), img_Resume, FALSE, FALSE, 0);
+  img_resume = gtk_image_new_from_stock ("gtk-media-play", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_show (img_resume);
+  gtk_box_pack_start (GTK_BOX (hbox_resume_button), img_resume, FALSE, FALSE, 0);
 
-  lbl_ResumeButton = gtk_label_new_with_mnemonic ("_Resume");
-  gtk_widget_show (lbl_ResumeButton);
-  gtk_box_pack_start (GTK_BOX (hbox_ResumeButton), lbl_ResumeButton, FALSE, FALSE, 0);
+  lbl_resume_button = gtk_label_new_with_mnemonic ("_Resume");
+  gtk_widget_show (lbl_resume_button);
+  gtk_box_pack_start (GTK_BOX (hbox_resume_button), lbl_resume_button, FALSE, FALSE, 0);
 
-  toolitem_About = (GtkWidget*) gtk_tool_item_new ();
-  gtk_widget_show (toolitem_About);
-  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_About);
+  toolitem_about = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem_about);
+  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_about);
 
-  btn_About = gtk_button_new_from_stock ("gtk-about");
-  gtk_widget_show (btn_About);
-  gtk_container_add (GTK_CONTAINER (toolitem_About), btn_About);
+  btn_about = gtk_button_new_from_stock ("gtk-about");
+  gtk_widget_show (btn_about);
+  gtk_container_add (GTK_CONTAINER (toolitem_about), btn_about);
 
-  toolitem_Quit = (GtkWidget*) gtk_tool_item_new ();
-  gtk_widget_show (toolitem_Quit);
-  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_Quit);
+  toolitem_quit = (GtkWidget*) gtk_tool_item_new ();
+  gtk_widget_show (toolitem_quit);
+  gtk_container_add (GTK_CONTAINER (toolbar), toolitem_quit);
 
-  btn_Quit = gtk_button_new_from_stock ("gtk-quit");
-  gtk_widget_show (btn_Quit);
-  gtk_container_add (GTK_CONTAINER (toolitem_Quit), btn_Quit);
+  btn_quit = gtk_button_new_from_stock ("gtk-quit");
+  gtk_widget_show (btn_quit);
+  gtk_container_add (GTK_CONTAINER (toolitem_quit), btn_quit);
 
   hbox1 = gtk_hbox_new (FALSE, 0);
   gtk_widget_show (hbox1);
@@ -226,65 +223,75 @@ gst_ipcam_client_create_mainWindow (void)
   gtk_widget_show (alignment4);
   gtk_box_pack_start (GTK_BOX (vbox2), alignment4, TRUE, TRUE, 0);
 
-  prw_GuestVideo = gtk_drawing_area_new ();
-  gtk_widget_show (prw_GuestVideo);
-  gtk_container_add (GTK_CONTAINER (alignment4), prw_GuestVideo);
+  prw_video = gtk_drawing_area_new ();
+  gtk_widget_show (prw_video);
+  gtk_container_add (GTK_CONTAINER (alignment4), prw_video);
 
-  statusBar = gst_ipcam_client_init_status_bar();
-  gtk_widget_show (statusBar);
-  gtk_box_pack_start (GTK_BOX (vbox), statusBar, FALSE, FALSE, 0);
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (statusBar), FALSE);
+  status_bar = gst_ipcam_client_init_status_bar();
+  gtk_widget_show (status_bar);
+  gtk_box_pack_start (GTK_BOX (vbox), status_bar, FALSE, FALSE, 0);
+  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (status_bar), FALSE);
 
-  g_signal_connect_swapped ((gpointer) btn_Connect, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Connect_clicked),
+  g_signal_connect_swapped ((gpointer) btn_connect, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_connect_clicked),
                             GTK_OBJECT (NULL));
 
-  g_signal_connect_swapped ((gpointer) btn_Disconnect, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Disconnect_clicked),
+  g_signal_connect_swapped ((gpointer) btn_disconnect, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_disconnect_clicked),
                             GTK_OBJECT (NULL));
 
-  g_signal_connect_swapped ((gpointer) btn_Pause, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Pause_clicked),
+  g_signal_connect_swapped ((gpointer) btn_pause, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_pause_clicked),
                             GTK_OBJECT (NULL));
   
-  g_signal_connect_swapped ((gpointer) btn_Resume, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Resume_clicked),
+  g_signal_connect_swapped ((gpointer) btn_resume, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_resume_clicked),
                             GTK_OBJECT (NULL));
 
-  g_signal_connect_swapped ((gpointer) btn_About, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_About_clicked),
+  g_signal_connect_swapped ((gpointer) btn_about, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_about_clicked),
                             GTK_OBJECT (NULL));
-  g_signal_connect_swapped ((gpointer) btn_Quit, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Quit_clicked),
+  g_signal_connect_swapped ((gpointer) btn_quit, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_quit_clicked),
                             GTK_OBJECT (NULL));
-  g_signal_connect_swapped ((gpointer) mainWindow, "destroy",
-                            G_CALLBACK (gst_ipcam_client_on_mainWindow_destroy),
+  g_signal_connect_swapped ((gpointer) main_window, "destroy",
+                            G_CALLBACK (gst_ipcam_client_on_main_window_destroy),
                             GTK_OBJECT (NULL));
   g_signal_connect_swapped ((gpointer) btn_change, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_Change_clicked),
+                            G_CALLBACK (gst_ipcam_client_on_btn_change_clicked),
                             GTK_OBJECT (NULL));
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (mainWindow, mainWindow, "mainWindow");
-  GLADE_HOOKUP_OBJECT (mainWindow, vbox, "vbox");
-  GLADE_HOOKUP_OBJECT (mainWindow, toolbar, "toolbar");
-  GLADE_HOOKUP_OBJECT (mainWindow, toolitem_Connect, "toolitem_Connect");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_Connect, "btn_Connect");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_Disconnect, "btn_disconnect");
-  GLADE_HOOKUP_OBJECT (mainWindow, toolitem_Pause, "toolitem_Pause");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_Pause, "btn_Pause");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_Resume, "btn_Resume");
-  GLADE_HOOKUP_OBJECT (mainWindow, toolitem_Options, "toolitem_Options");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_Options, "btn_Preferences");
-  GLADE_HOOKUP_OBJECT (mainWindow, toolitem_About, "toolitem_About");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_About, "btn_About");
-  GLADE_HOOKUP_OBJECT (mainWindow, toolitem_Quit, "toolitem_Quit");
-  GLADE_HOOKUP_OBJECT (mainWindow, btn_Quit, "btn_Quit");
-  GLADE_HOOKUP_OBJECT (mainWindow, hbox_VideoPrew, "hbox_VideoPrew");
-  GLADE_HOOKUP_OBJECT (mainWindow, prw_GuestVideo, "prw_GuestVideo");
-  GLADE_HOOKUP_OBJECT (mainWindow, statusBar, "statusBar");
+  GLADE_HOOKUP_OBJECT_NO_REF (main_window, main_window, "main_window");
+  GLADE_HOOKUP_OBJECT (main_window, vbox, "vbox");
+  GLADE_HOOKUP_OBJECT (main_window, toolbar, "toolbar");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem_connect, "toolitem_connect");
+  GLADE_HOOKUP_OBJECT (main_window, btn_connect, "btn_connect");
+  GLADE_HOOKUP_OBJECT (main_window, btn_disconnect, "btn_disconnect");
+  GLADE_HOOKUP_OBJECT (main_window, hbox_resume_button, "hbox_resume_button");
+  GLADE_HOOKUP_OBJECT (main_window, lbl_resume_button, "lbl_resume_button");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem_pause, "toolitem_pause");
+  GLADE_HOOKUP_OBJECT (main_window, btn_pause, "btn_pause");
+  GLADE_HOOKUP_OBJECT (main_window, btn_resume, "btn_resume");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem_about, "toolitem_about");
+  GLADE_HOOKUP_OBJECT (main_window, btn_about, "btn_about");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem_quit, "toolitem_quit");
+  GLADE_HOOKUP_OBJECT (main_window, btn_quit, "btn_quit");
+  GLADE_HOOKUP_OBJECT (main_window, hbox1, "hbox1");
+  GLADE_HOOKUP_OBJECT (main_window, hbox2, "hbox2");
+  GLADE_HOOKUP_OBJECT (main_window, hbox3, "hbox3");
+  GLADE_HOOKUP_OBJECT (main_window, hbox4, "hbox4");
+  GLADE_HOOKUP_OBJECT (main_window, vbox2, "vbox2");
+  GLADE_HOOKUP_OBJECT (main_window, toolbar1, "toolbar1");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem6, "toolitem6");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem7, "toolitem7");
+  GLADE_HOOKUP_OBJECT (main_window, toolitem10, "toolitem10");
+  GLADE_HOOKUP_OBJECT (main_window, lbl_fps, "lbl_fps");
+  GLADE_HOOKUP_OBJECT (main_window, lbl_fsize, "lbl_fsize");
+  GLADE_HOOKUP_OBJECT (main_window, prw_video, "prw_video");
+  GLADE_HOOKUP_OBJECT (main_window, status_bar, "status_bar");
 
-  return mainWindow;
+  return main_window;
 }
 
 /**
@@ -295,74 +302,74 @@ gst_ipcam_client_create_mainWindow (void)
  * @return nothing
  */
 GtkWidget*
-gst_ipcam_client_create_connectionDialog (void)
+gst_ipcam_client_create_connection_dialog (void)
 {
-  connectionDialog = gtk_dialog_new ();
+  connection_dialog = gtk_dialog_new ();
   gchar * connection_dialog_title = gst_ipcam_client_window_create_title(_("Connection"));
-  gtk_window_set_title (GTK_WINDOW (connectionDialog), connection_dialog_title);
+  gtk_window_set_title (GTK_WINDOW (connection_dialog), connection_dialog_title);
   g_free(connection_dialog_title);
-  gtk_window_set_resizable (GTK_WINDOW (connectionDialog), FALSE);
-  gtk_window_set_type_hint (GTK_WINDOW (connectionDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_window_set_resizable (GTK_WINDOW (connection_dialog), FALSE);
+  gtk_window_set_type_hint (GTK_WINDOW (connection_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox = GTK_DIALOG (connectionDialog)->vbox;
+  dialog_vbox = GTK_DIALOG (connection_dialog)->vbox;
   gtk_widget_show (dialog_vbox);
 
-  tbl_ConInfo = gtk_table_new (1, 2, FALSE);
-  gtk_widget_show (tbl_ConInfo);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox), tbl_ConInfo, TRUE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (tbl_ConInfo), 3);
-  gtk_table_set_row_spacings (GTK_TABLE (tbl_ConInfo), 4);
-  gtk_table_set_col_spacings (GTK_TABLE (tbl_ConInfo), 11);
+  tbl_con_info = gtk_table_new (1, 2, FALSE);
+  gtk_widget_show (tbl_con_info);
+  gtk_box_pack_start (GTK_BOX (dialog_vbox), tbl_con_info, TRUE, TRUE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (tbl_con_info), 3);
+  gtk_table_set_row_spacings (GTK_TABLE (tbl_con_info), 4);
+  gtk_table_set_col_spacings (GTK_TABLE (tbl_con_info), 11);
 
-  lbl_Url = gtk_label_new (_("Url"));
-  gtk_widget_show (lbl_Url);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), lbl_Url, 0, 1, 0, 1,
+  lbl_url = gtk_label_new (_("Url"));
+  gtk_widget_show (lbl_url);
+  gtk_table_attach (GTK_TABLE (tbl_con_info), lbl_url, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_misc_set_alignment (GTK_MISC (lbl_Url), 0, 0.5);
+  gtk_misc_set_alignment (GTK_MISC (lbl_url), 0, 0.5);
 
-  entry_Url = gtk_entry_new ();
-  gtk_widget_show (entry_Url);
-  gtk_table_attach (GTK_TABLE (tbl_ConInfo), entry_Url, 1, 2, 0, 1,
+  entry_url = gtk_entry_new ();
+  gtk_widget_show (entry_url);
+  gtk_table_attach (GTK_TABLE (tbl_con_info), entry_url, 1, 2, 0, 1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (entry_Url), 9679);
+  gtk_entry_set_invisible_char (GTK_ENTRY (entry_url), 9679);
 
-  dialog_action_area = GTK_DIALOG (connectionDialog)->action_area;
+  dialog_action_area = GTK_DIALOG (connection_dialog)->action_area;
   gtk_widget_show (dialog_action_area);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area), GTK_BUTTONBOX_END);
 
-  btn_ConnectDialog = gtk_button_new_from_stock ("gtk-connect");
-  gtk_widget_show (btn_ConnectDialog);
-  gtk_dialog_add_action_widget (GTK_DIALOG (connectionDialog), btn_ConnectDialog, 0);
-  GTK_WIDGET_SET_FLAGS (btn_ConnectDialog, GTK_CAN_DEFAULT);
+  btn_connect_dialog = gtk_button_new_from_stock ("gtk-connect");
+  gtk_widget_show (btn_connect_dialog);
+  gtk_dialog_add_action_widget (GTK_DIALOG (connection_dialog), btn_connect_dialog, 0);
+  GTK_WIDGET_SET_FLAGS (btn_connect_dialog, GTK_CAN_DEFAULT);
 
-  gint id_response = gtk_dialog_get_response_for_widget(GTK_DIALOG(connectionDialog), GTK_WIDGET(btn_ConnectDialog));
-  gtk_dialog_set_default_response(GTK_DIALOG(connectionDialog), id_response);
-  gtk_entry_set_activates_default (GTK_ENTRY(entry_Url), TRUE);
+  gint id_response = gtk_dialog_get_response_for_widget(GTK_DIALOG(connection_dialog), GTK_WIDGET(btn_connect_dialog));
+  gtk_dialog_set_default_response(GTK_DIALOG(connection_dialog), id_response);
+  gtk_entry_set_activates_default (GTK_ENTRY(entry_url), TRUE);
 
-  g_signal_connect ((gpointer) connectionDialog, "key_press_event",
-                    G_CALLBACK (gst_ipcam_client_on_connectionDialog_key_press_event),
+  g_signal_connect ((gpointer) connection_dialog, "key_press_event",
+                    G_CALLBACK (gst_ipcam_client_on_connection_dialog_key_press_event),
                     NULL);
 
-  g_signal_connect_swapped ((gpointer) connectionDialog, "destroy",
-                            G_CALLBACK (gst_ipcam_client_on_connectionDialog_destroy),
+  g_signal_connect_swapped ((gpointer) connection_dialog, "destroy",
+                            G_CALLBACK (gst_ipcam_client_on_connection_dialog_destroy),
                             GTK_OBJECT (NULL));
 
-  g_signal_connect_swapped ((gpointer) btn_ConnectDialog, "clicked",
-                            G_CALLBACK (gst_ipcam_client_on_btn_ConnectDialog_clicked),
+  g_signal_connect_swapped ((gpointer) btn_connect_dialog, "clicked",
+                            G_CALLBACK (gst_ipcam_client_on_btn_connect_dialog_clicked),
                             GTK_OBJECT (NULL));
 
   /** Store pointers to all widgets, for use by lookup_widget(). */
-  GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, connectionDialog, "connectionDialog");
-  GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_vbox, "dialog_vbox");
-  GLADE_HOOKUP_OBJECT (connectionDialog, tbl_ConInfo, "tbl_ConInfo");
-  GLADE_HOOKUP_OBJECT (connectionDialog, lbl_Url, "lbl_Url");
-  GLADE_HOOKUP_OBJECT (connectionDialog, entry_Url, "entry_Url");
-  GLADE_HOOKUP_OBJECT_NO_REF (connectionDialog, dialog_action_area, "dialog_action_area");
-  GLADE_HOOKUP_OBJECT (connectionDialog, btn_ConnectDialog, "btn_ConnectDialog");
+  GLADE_HOOKUP_OBJECT_NO_REF (connection_dialog, connection_dialog, "connection_dialog");
+  GLADE_HOOKUP_OBJECT_NO_REF (connection_dialog, dialog_vbox, "dialog_vbox");
+  GLADE_HOOKUP_OBJECT (connection_dialog, tbl_con_info, "tbl_con_info");
+  GLADE_HOOKUP_OBJECT (connection_dialog, lbl_url, "lbl_url");
+  GLADE_HOOKUP_OBJECT (connection_dialog, entry_url, "entry_url");
+  GLADE_HOOKUP_OBJECT_NO_REF (connection_dialog, dialog_action_area, "dialog_action_area");
+  GLADE_HOOKUP_OBJECT (connection_dialog, btn_connect_dialog, "btn_connect_dialog");
 
-  return connectionDialog;
+  return connection_dialog;
 }
 
 /**
@@ -377,65 +384,65 @@ GtkWidget* gst_ipcam_client_init_status_bar()
     GtkWidget * separator;
 
     /* init the outside containter*/
-    statusBar_vBox = gtk_vbox_new(FALSE, 0);
-    gtk_widget_show(statusBar_vBox);
+    status_bar_vbox = gtk_vbox_new(FALSE, 0);
+    gtk_widget_show(status_bar_vbox);
 
     separator = gtk_hseparator_new();
 
     gtk_widget_show(separator);
-    gtk_box_pack_start(GTK_BOX(statusBar_vBox), separator, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(status_bar_vbox), separator, FALSE, FALSE, 0);
 
     /* init the inside containter*/
-    statusBar_hBox = gtk_hbox_new(FALSE, 0);
-    gtk_widget_show(statusBar_hBox);
+    status_bar_hbox = gtk_hbox_new(FALSE, 0);
+    gtk_widget_show(status_bar_hbox);
 
-    gtk_widget_set_size_request(statusBar_hBox, 500, 25);
-    gtk_box_pack_start(GTK_BOX(statusBar_vBox), statusBar_hBox, FALSE, FALSE, 0);
+    gtk_widget_set_size_request(status_bar_hbox, 500, 25);
+    gtk_box_pack_start(GTK_BOX(status_bar_vbox), status_bar_hbox, FALSE, FALSE, 0);
 
     /* init the status label*/
-    statusBar_labelStatus = gtk_label_new("");
-    gtk_widget_show(statusBar_labelStatus);
+    statusbar_label_status = gtk_label_new("");
+    gtk_widget_show(statusbar_label_status);
 
-    gtk_widget_set_size_request(statusBar_labelStatus, 60, -1);
-    gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelStatus, FALSE, TRUE, 5);
+    gtk_widget_set_size_request(statusbar_label_status, 60, -1);
+    gtk_box_pack_start(GTK_BOX(status_bar_hbox), statusbar_label_status, FALSE, TRUE, 5);
 
     /* separator*/
     separator = gtk_vseparator_new();
     gtk_widget_show(separator);
     
-    gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(status_bar_hbox), separator, FALSE, FALSE, 0);
 
     {
         /* Video type*/
-        statusBar_labelVideoType = gtk_label_new("");
-        gtk_widget_show(statusBar_labelVideoType);
+        statusbar_label_video_type = gtk_label_new("");
+        gtk_widget_show(statusbar_label_video_type);
         
-        gtk_widget_set_size_request(statusBar_labelVideoType, 130, -1);
-        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelVideoType, FALSE, FALSE, 0);
-        /*gtk_box_pack_start_defaults(GTK_BOX(statusBar_hBox), statusBar_labelVideoType);*/
+        gtk_widget_set_size_request(statusbar_label_video_type, 130, -1);
+        gtk_box_pack_start(GTK_BOX(status_bar_hbox), statusbar_label_video_type, FALSE, FALSE, 0);
+        /*gtk_box_pack_start_defaults(GTK_BOX(status_bar_hbox), statusbar_label_video_type);*/
         
         /* Audio type*/
-        statusBar_labelAudioType = gtk_label_new("");
-        gtk_widget_show(statusBar_labelAudioType);
+        statusbar_label_audio_type = gtk_label_new("");
+        gtk_widget_show(statusbar_label_audio_type);
         
-        gtk_widget_set_size_request(statusBar_labelAudioType, 120, -1);
-        gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelAudioType, FALSE, FALSE, 0);
+        gtk_widget_set_size_request(statusbar_label_audio_type, 120, -1);
+        gtk_box_pack_start(GTK_BOX(status_bar_hbox), statusbar_label_audio_type, FALSE, FALSE, 0);
     }
 
     /* separator*/
     separator = gtk_vseparator_new();
     gtk_widget_show(separator);
 
-    gtk_box_pack_start(GTK_BOX(statusBar_hBox), separator, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(status_bar_hbox), separator, FALSE, FALSE, 0);
 
     /* Properties label*/
-    statusBar_labelProperties = gtk_label_new("");
-    gtk_widget_show(statusBar_labelProperties);
+    statusbar_label_properties = gtk_label_new("");
+    gtk_widget_show(statusbar_label_properties);
     
     /*gtk_widget_set_size_request(__statusBar_labelSong, 500, -1);*/
-    gtk_box_pack_start(GTK_BOX(statusBar_hBox), statusBar_labelProperties, FALSE, TRUE, 5);
+    gtk_box_pack_start(GTK_BOX(status_bar_hbox), statusbar_label_properties, FALSE, TRUE, 5);
 
-    return statusBar_vBox;
+    return status_bar_vbox;
 }
 
 /**
@@ -447,7 +454,7 @@ GtkWidget* gst_ipcam_client_init_status_bar()
  */
 void gst_ipcam_client_set_status_text(const gchar* text)
 {
-    gtk_label_set_text(GTK_LABEL(statusBar_labelStatus), text);
+    gtk_label_set_text(GTK_LABEL(statusbar_label_status), text);
 }
 
 /**
@@ -459,7 +466,7 @@ void gst_ipcam_client_set_status_text(const gchar* text)
  */
 void gst_ipcam_client_set_status_properties(const gchar* name)
 {
-    gtk_label_set_text(GTK_LABEL(statusBar_labelProperties), name);
+    gtk_label_set_text(GTK_LABEL(statusbar_label_properties), name);
 }
 
 /**
@@ -469,9 +476,9 @@ void gst_ipcam_client_set_status_properties(const gchar* name)
  *
  * @return nothing
  */
-void gst_ipcam_client_set_status_Video_Type(const gchar* type_name)
+void gst_ipcam_client_set_status_video_type(const gchar* type_name)
 {
-    gtk_label_set_text(GTK_LABEL(statusBar_labelVideoType), type_name);
+    gtk_label_set_text(GTK_LABEL(statusbar_label_video_type), type_name);
 }
 
 /**
@@ -481,7 +488,7 @@ void gst_ipcam_client_set_status_Video_Type(const gchar* type_name)
  *
  * @return nothing
  */
-void gst_ipcam_client_set_status_Audio_Type(const gchar* type_name)
+void gst_ipcam_client_set_status_audio_type(const gchar* type_name)
 {
-    gtk_label_set_text(GTK_LABEL(statusBar_labelAudioType), type_name);
+    gtk_label_set_text(GTK_LABEL(statusbar_label_audio_type), type_name);
 }

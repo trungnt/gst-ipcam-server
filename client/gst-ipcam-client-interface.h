@@ -8,31 +8,25 @@
 #include <gtk/gtk.h>
 
 /*For main Dialog*/
-GtkWidget *mainWindow;
+GtkWidget *main_window;
 GtkWidget *vbox;
 GtkWidget *toolbar;
 GtkIconSize tmp_toolbar_icon_size;
-GtkWidget *toolitem_Connect;
-GtkWidget *btn_Connect;
-GtkWidget *btn_Disconnect;
+GtkWidget *toolitem_connect;
+GtkWidget *btn_connect;
+GtkWidget *btn_disconnect;
 
-GtkWidget *toolitem_Pause;
-GtkWidget *btn_Pause;
-GtkWidget *btn_Resume;
-GtkWidget *img_Resume;
-GtkWidget *algn_Resume;
-GtkWidget *hbox_ResumeButton;
-GtkWidget *lbl_ResumeButton;
-GtkWidget *toolitem_Options;
-GtkWidget *btn_Options;
-GtkWidget *img_Options;
-GtkWidget *algn_Options;
-GtkWidget *hbox_OptionsButton;
-GtkWidget *lbl_OptionsButton;
-GtkWidget *toolitem_About;
-GtkWidget *btn_About;
-GtkWidget *toolitem_Quit;
-GtkWidget *btn_Quit;
+GtkWidget *toolitem_pause;
+GtkWidget *btn_pause;
+GtkWidget *btn_resume;
+GtkWidget *img_resume;
+GtkWidget *algn_resume;
+GtkWidget *hbox_resume_button;
+GtkWidget *lbl_resume_button;
+GtkWidget *toolitem_about;
+GtkWidget *btn_about;
+GtkWidget *toolitem_quit;
+GtkWidget *btn_quit;
 GtkWidget *hbox1;
 GtkWidget *hbox2;
 GtkWidget *hbox3;
@@ -57,30 +51,29 @@ GtkWidget *btn_change_fps;
 GtkWidget *vseparator1;
 GtkWidget *lbl_bitrate;
 GtkWidget *btn_change;
-GtkWidget *hbox_VideoPrew;
-GtkWidget *prw_GuestVideo;
-GtkWidget *statusBar;
+GtkWidget *prw_video;
+GtkWidget *status_bar;
 GtkWidget *entry_bitrate;
-/* The vbox used in the statusbar. This widget will be return in the Init function.
+/* The vbox used in the status_bar. This widget will be return in the Init function.
    Infact, it contains a hseparator and a hbox.*/
-GtkWidget * statusBar_vBox;
+GtkWidget * status_bar_vbox;
 /* This hbox will contains all of the labels;*/
-GtkWidget * statusBar_hBox;
+GtkWidget * status_bar_hbox;
 /* The label for the status text*/
-GtkWidget * statusBar_labelStatus;
-GtkWidget * statusBar_labelVideoType;
-GtkWidget * statusBar_labelAudioType;
+GtkWidget * statusbar_label_status;
+GtkWidget * statusbar_label_video_type;
+GtkWidget * statusbar_label_audio_type;
 /* The label for Properties displaying*/
-GtkWidget * statusBar_labelProperties;
+GtkWidget * statusbar_label_properties;
 
 /*For Connection Dialog*/
-GtkWidget *connectionDialog;
+GtkWidget *connection_dialog;
 GtkWidget *dialog_vbox;
-GtkWidget *tbl_ConInfo;
-GtkWidget *lbl_Url;
-GtkWidget *entry_Url;
+GtkWidget *tbl_con_info;
+GtkWidget *lbl_url;
+GtkWidget *entry_url;
 GtkWidget *dialog_action_area;
-GtkWidget *btn_ConnectDialog;
+GtkWidget *btn_connect_dialog;
 
 static gboolean is_connect_button_clicked = FALSE;
 /**
@@ -90,7 +83,7 @@ static gboolean is_connect_button_clicked = FALSE;
  *
  * @return nothing
  */
-GtkWidget* gst_ipcam_client_create_mainWindow (void);
+GtkWidget* gst_ipcam_client_create_main_window (void);
 
 /**
  * create the connection dialog
@@ -99,7 +92,7 @@ GtkWidget* gst_ipcam_client_create_mainWindow (void);
  *
  * @return nothing
  */
-GtkWidget* gst_ipcam_client_create_connectionDialog (void);
+GtkWidget* gst_ipcam_client_create_connection_dialog (void);
 
 /**
  * init the statusbar widget
@@ -131,7 +124,7 @@ void gst_ipcam_client_set_status_properties(const gchar* name);
  *
  * @return nothing
  */
-void gst_ipcam_client_set_status_Video_Type(const gchar* type_name);
+void gst_ipcam_client_set_status_video_type(const gchar* type_name);
 
 /**
  * show the audio type
@@ -140,4 +133,4 @@ void gst_ipcam_client_set_status_Video_Type(const gchar* type_name);
  *
  * @return nothing
  */
-void gst_ipcam_client_set_status_Audio_Type(const gchar* type_name);
+void gst_ipcam_client_set_status_audio_type(const gchar* type_name);
