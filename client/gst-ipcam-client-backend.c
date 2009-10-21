@@ -136,10 +136,9 @@ static void gst_ipcam_client_backend_print_gst_message(GstMessage * message);
  * @return nothing
  */
 void
-gst_ipcam_client_backend_init(int *argc,
-		char **argv[]) {
-	gst_init(argc, argv);
-	pipeline = NULL;
+gst_ipcam_client_backend_init(int *argc, char **argv[]) {
+    gst_init(argc, argv);
+    pipeline = NULL;
 }
 
 /**
@@ -151,7 +150,7 @@ gst_ipcam_client_backend_init(int *argc,
  */
 void
 gst_ipcam_client_backend_set_window(gpointer window_) {
-	window = window_;
+    window = window_;
 }
 
 /**
