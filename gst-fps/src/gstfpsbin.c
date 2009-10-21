@@ -75,11 +75,11 @@ enum {
 };
 
 /** values for fps property */
-#define FPS_MAX_NUMERATOR		G_MAXINT
-#define FPS_MAX_DENOMINATOR		1
-#define FPS_MIN_NUMERATOR		0
-#define FPS_MIN_DENOMINATOR		1
-#define FPS_DEFAULT_NUMERATOR	30
+#define FPS_MAX_NUMERATOR				G_MAXINT
+#define FPS_MAX_DENOMINATOR			1
+#define FPS_MIN_NUMERATOR				0
+#define FPS_MIN_DENOMINATOR			1
+#define FPS_DEFAULT_NUMERATOR		30
 #define FPS_DEFAULT_DENOMINATOR	1
 
 /**
@@ -113,7 +113,11 @@ static void gst_fps_bin_set_property(GObject * object, guint prop_id,
 static void gst_fps_bin_get_property(GObject * object, guint prop_id,
 		GValue * value, GParamSpec * pspec);
 
-static void gst_fps_bin_set_framerate(GstFpsBin * fps_bin, guint numerator, guint demonirator);
+/** set new framerate value */
+static void gst_fps_bin_set_framerate(GstFpsBin * fps_bin, gint numerator, gint demonirator);
+
+/** get current framerate */
+static void gst_fps_bin_get_framerate(GstFpsBin * fps_bin, gint * numerator, gint * demonirator);
 
 /** support for set_fps functions */
 static void gst_fps_bin_stop_pipeline(GstFpsBin * fps_bin);
@@ -202,9 +206,7 @@ static void gst_fps_bin_init(GstFpsBin * fps_bin, GstFpsBinClass * gclass) {
 	gst_pad_set_active(fps_bin->srcpad, TRUE);
 	gst_element_add_pad(GST_ELEMENT(fps_bin), fps_bin->srcpad);
 
-	/* default value for fps */
-	fps_bin->numerator = 30;
-	fps_bin->denominator = 1;
+	gst_fps_bin_set_framerate(fps_bin, FPS_DEFAULT_NUMERATOR, FPS_DEFAULT_DENOMINATOR);
 }
 
 /**
@@ -248,7 +250,11 @@ static void gst_fps_bin_get_property(GObject * object, guint prop_id, GValue * v
 
 	switch (prop_id) {
 		case PROP_FRAMERATE:
-			gst_value_set_fraction(value, filter->numerator, filter->denominator);
+		{
+			gint numerator, denominator;
+			gst_fps_bin_get_framerate(filter, &numerator, &denominator);
+			gst_value_set_fraction(value, numerator, denominator);
+		}
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -265,16 +271,57 @@ static void gst_fps_bin_get_property(GObject * object, guint prop_id, GValue * v
  * @param numerator guint numerator value of framerate
  * @param denominator guint denominator value of framerate
  */
-static void gst_fps_bin_set_framerate(GstFpsBin* fps_bin, guint numerator, guint denominator) {
-	GstCaps * caps = gst_caps_new_simple("video/x-raw-yuv",
+static void gst_fps_bin_set_framerate(GstFpsBin* fps_bin, gint numerator, gint denominator) {
+	gint num, den;
+	
+	gst_fps_bin_get_framerate(fps_bin, &num, &den);
+	if ( num != numerator || den != denominator ) {
+		GstCaps * caps = gst_caps_new_simple("video/x-raw-yuv",
 			"framerate", GST_TYPE_FRACTION, numerator, denominator,
 			NULL);
-	gst_fps_bin_stop_pipeline(fps_bin);
-	g_object_set(fps_bin->capsfilter, "caps", caps, NULL);
-	gst_fps_bin_start_pipeline(fps_bin);
-	fps_bin->numerator = numerator;
-	fps_bin->denominator = denominator;
+		gst_fps_bin_stop_pipeline(fps_bin);
+		g_object_set(fps_bin->capsfilter, "caps", caps, NULL);
+		gst_fps_bin_start_pipeline(fps_bin);
+		gst_caps_unref(caps);
+	}
+	gst_fps_bin_get_framerate(fps_bin, &num, &den);
+}
+
+/**
+ * Get current frame rate value
+ *
+ * @param fps_bin GstFpsBin* current fps_bin element to get framerate
+ * @param numerator gint* numerator value of framerate
+ * @param denomirator gint* framerate's denomirator value
+ *
+ * @return None
+ */
+static void gst_fps_bin_get_framerate(GstFpsBin* fps_bin, gint * numerator, gint * denomirator) {
+	GstPad * src_pad;
+	GstCaps * caps = NULL;
+	GstStructure * str;
+
+	src_pad = gst_element_get_static_pad(fps_bin->capsfilter, "src");
+	g_assert(src_pad);
+
+	caps = gst_pad_get_caps(src_pad);
+	g_assert(caps);
+
+	/* if the caps is not fixed -> the pipeline is at init state, no frame rate was set before */
+	if (!gst_caps_is_fixed(caps)) {
+		*numerator = 0;
+		*denomirator = 1;
+		gst_caps_unref(caps);
+		gst_object_unref(src_pad);
+		return;
+	}
+
+	str = gst_caps_get_structure(caps, 0);
+	gst_structure_get_fraction(str, "framerate", numerator, denomirator);
 	gst_caps_unref(caps);
+	gst_object_unref(src_pad);
+	
+	return;
 }
 
 /**
@@ -284,10 +331,11 @@ static void gst_fps_bin_set_framerate(GstFpsBin* fps_bin, guint numerator, guint
  * @param fps_bin GstFpsBin* our bin to get the pipeline
  */
 static void gst_fps_bin_stop_pipeline(GstFpsBin* fps_bin) {
-	GstElement * pipeline = GST_ELEMENT(gst_element_get_parent(fps_bin));
-	if (pipeline != NULL) {
-		gst_element_set_state(pipeline, GST_STATE_READY);
+	GstPad * sink_pad = gst_element_get_static_pad(fps_bin->videorate, "src");
+	if (GST_STATE(fps_bin) == GST_STATE_PLAYING && !GST_PAD_IS_BLOCKING(sink_pad)) {
+		gst_pad_set_blocked(sink_pad, TRUE);
 	}
+	gst_object_unref(sink_pad);
 }
 
 /**
@@ -296,10 +344,11 @@ static void gst_fps_bin_stop_pipeline(GstFpsBin* fps_bin) {
  * @param fps_bin GstFpsBin* our bin to get the pipeline
  */
 static void gst_fps_bin_start_pipeline(GstFpsBin* fps_bin) {
-	GstElement * pipeline = GST_ELEMENT(gst_element_get_parent(fps_bin));
-	if (pipeline != NULL) {
-		gst_element_set_state(pipeline, GST_STATE_PLAYING);
+	GstPad * sink_pad = gst_element_get_static_pad(fps_bin->videorate, "src");
+	if (GST_STATE(fps_bin) == GST_STATE_PLAYING && GST_PAD_IS_BLOCKING(sink_pad)) {
+		gst_pad_set_blocked(sink_pad, FALSE);
 	}
+	gst_object_unref(sink_pad);
 }
 
 /**

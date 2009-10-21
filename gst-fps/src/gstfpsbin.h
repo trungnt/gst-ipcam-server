@@ -78,9 +78,6 @@ struct _GstFpsBin {
 
     /**< our bin'll pack videorate and capsfilter elements */
     GstElement *videorate, *capsfilter;
-
-    /**< frame per seconds components. Gstreamer use fraction for represent fps value */
-    guint numerator, denominator;
 };
 
 /**
