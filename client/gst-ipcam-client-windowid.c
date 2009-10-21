@@ -22,57 +22,49 @@ static struct option my_client_long_options[] = {
 };
 
 gchar*
-gst_ipcam_client_window_create_title(const gchar* window_name)
-{
+gst_ipcam_client_window_create_title(const gchar* window_name) {
 	gchar * title = g_strdup_printf("%s - %d", window_name, my_client_id);
 	g_assert(title);
 	return title;
 }
 
 void
-gst_ipcam_client_set_id(gint id)
-{
+gst_ipcam_client_set_id(gint id) {
 	my_client_id = id;
 }
 
 void
-gst_ipcam_client_process_options(gint argc, char** argv)
-{
+gst_ipcam_client_process_options(gint argc, char** argv) {
 	gint c = -1;
 	gint option_index;
 	gboolean is_id_set = FALSE;
 
-	while (1)
-	{
+	while (1) {
 		c = getopt_long(argc, argv, "", my_client_long_options, &option_index);
 
-		// if the process is end
-		if (c == -1)
-		{
+		/* if the process is end */
+		if (c == -1) {
 			break;
 		}
 
-		switch (c)
-		{
-		case 'i': // got id option
-		{
-			gint id;
-			id = g_ascii_strtod(optarg, NULL);
-			if (id > 0)
+		switch (c) {
+			case 'i': /* got id option */
 			{
-				gst_ipcam_client_set_id(id);
-				is_id_set = TRUE;
+				gint id;
+				id = g_ascii_strtod(optarg, NULL);
+				if (id > 0) {
+					gst_ipcam_client_set_id(id);
+					is_id_set = TRUE;
+				}
 			}
-		}
-			break;
-		default:
-			break;
+				break;
+			default:
+				break;
 		}
 	}
 
-	// so no id was requested by the user, we'll use process id
-	if (is_id_set == FALSE)
-	{
+	/* so no id was requested by the user, we'll use process id */
+	if (is_id_set == FALSE) {
 		pid_t my_pid = getpid();
 		gst_ipcam_client_set_id(my_pid);
 	}
