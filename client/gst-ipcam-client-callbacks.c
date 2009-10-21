@@ -7,7 +7,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include <gtk/gtk.h>
@@ -22,7 +22,6 @@
 #include "gst-ipcam-client-backend.h"
 #include "gst-ipcam-client-windowid.h"
 
-
 /**
  * Handle the event when clicking on Connect button in the main window.
  * The button will change to Disconnect button and the connection dialog will appear
@@ -33,16 +32,18 @@
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_connect_clicked                 (GtkButton       *button,
-                                        gpointer         user_data) {
-    gtk_widget_set_sensitive(btn_connect, FALSE);
-    connection_dialog = gst_ipcam_client_create_connection_dialog();
+gst_ipcam_client_on_btn_connect_clicked(GtkButton *button,
+																				gpointer user_data)
+{
+	gtk_widget_set_sensitive(btn_connect, FALSE);
+	connection_dialog = gst_ipcam_client_create_connection_dialog();
 
-    if (URL != NULL) {
-        gtk_entry_set_text(GTK_ENTRY(entry_url), URL);
-    }
+	if (URL != NULL)
+	{
+		gtk_entry_set_text(GTK_ENTRY(entry_url), URL);
+	}
 
-    gtk_widget_show(connection_dialog);
+	gtk_widget_show(connection_dialog);
 }
 
 /**
@@ -56,28 +57,29 @@ gst_ipcam_client_on_btn_connect_clicked                 (GtkButton       *button
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_disconnect_clicked              (GtkButton       *button,
-                                           gpointer         user_data) {
-    /*remove btn_Disconnect button from toolitem_Connect*/
-    gtk_container_remove(GTK_CONTAINER(toolitem_connect), btn_disconnect);
+gst_ipcam_client_on_btn_disconnect_clicked(GtkButton *button,
+																					 gpointer user_data)
+{
+	/*remove btn_Disconnect button from toolitem_Connect*/
+	gtk_container_remove(GTK_CONTAINER(toolitem_connect), btn_disconnect);
 
-    gtk_container_remove(GTK_CONTAINER(toolitem_pause), btn_resume);
+	gtk_container_remove(GTK_CONTAINER(toolitem_pause), btn_resume);
 
-    gtk_container_add(GTK_CONTAINER(toolitem_pause), btn_pause);
-    gtk_widget_show(btn_pause);
+	gtk_container_add(GTK_CONTAINER(toolitem_pause), btn_pause);
+	gtk_widget_show(btn_pause);
 
 
-    /*add btn_Connect to toolitem_Connect and stop the pipeline*/
-    gtk_container_add(GTK_CONTAINER(toolitem_connect), btn_connect);
-    gtk_widget_set_sensitive(btn_connect, TRUE);
-    gtk_widget_show(btn_connect);
+	/*add btn_Connect to toolitem_Connect and stop the pipeline*/
+	gtk_container_add(GTK_CONTAINER(toolitem_connect), btn_connect);
+	gtk_widget_set_sensitive(btn_connect, TRUE);
+	gtk_widget_show(btn_connect);
 
-    gtk_widget_set_sensitive(btn_pause, FALSE);
-    gst_ipcam_client_backend_stop();
+	gtk_widget_set_sensitive(btn_pause, FALSE);
+	gst_ipcam_client_backend_stop();
 
-    gst_ipcam_client_set_status_text("");
-    gst_ipcam_client_set_status_video_type("");
-    gst_ipcam_client_set_status_audio_type("");
+	gst_ipcam_client_set_status_text("");
+	gst_ipcam_client_set_status_video_type("");
+	gst_ipcam_client_set_status_audio_type("");
 }
 
 /**
@@ -91,16 +93,17 @@ gst_ipcam_client_on_btn_disconnect_clicked              (GtkButton       *button
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_pause_clicked                   (GtkButton       *button,
-                                            gpointer         user_data) {
-    /*remove btn_Pause from toolitem_Pause*/
-    gtk_container_remove(GTK_CONTAINER(toolitem_pause), btn_pause);
+gst_ipcam_client_on_btn_pause_clicked(GtkButton *button,
+																			gpointer user_data)
+{
+	/*remove btn_Pause from toolitem_Pause*/
+	gtk_container_remove(GTK_CONTAINER(toolitem_pause), btn_pause);
 
-    /*add btn_Resume to toolitem_Pause and pause the pipeline*/
-    gtk_container_add(GTK_CONTAINER(toolitem_pause), btn_resume);
-    gtk_widget_show(btn_resume);
-    gtk_widget_set_sensitive(btn_resume, TRUE);
-    gst_ipcam_client_backend_pause();
+	/*add btn_Resume to toolitem_Pause and pause the pipeline*/
+	gtk_container_add(GTK_CONTAINER(toolitem_pause), btn_resume);
+	gtk_widget_show(btn_resume);
+	gtk_widget_set_sensitive(btn_resume, TRUE);
+	gst_ipcam_client_backend_pause();
 }
 
 /**
@@ -114,15 +117,16 @@ gst_ipcam_client_on_btn_pause_clicked                   (GtkButton       *button
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_resume_clicked                  (GtkButton       *button,
-                                            gpointer         user_data) {
-    /*remove btn_Resume from toolitem_pause*/
-    gtk_container_remove(GTK_CONTAINER(toolitem_pause), btn_resume);
+gst_ipcam_client_on_btn_resume_clicked(GtkButton *button,
+																			 gpointer user_data)
+{
+	/*remove btn_Resume from toolitem_pause*/
+	gtk_container_remove(GTK_CONTAINER(toolitem_pause), btn_resume);
 
-    /*add btn_Pause to toolitem_pause and resume playing video*/
-    gtk_container_add(GTK_CONTAINER(toolitem_pause), btn_pause);
-    gtk_widget_show(btn_pause);
-    gst_ipcam_client_backend_resume();
+	/*add btn_Pause to toolitem_pause and resume playing video*/
+	gtk_container_add(GTK_CONTAINER(toolitem_pause), btn_pause);
+	gtk_widget_show(btn_pause);
+	gst_ipcam_client_backend_resume();
 }
 
 /**
@@ -135,8 +139,8 @@ gst_ipcam_client_on_btn_resume_clicked                  (GtkButton       *button
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_about_clicked                   (GtkButton       *button,
-                                        gpointer         user_data)
+gst_ipcam_client_on_btn_about_clicked(GtkButton *button,
+																			gpointer user_data)
 {
 
 }
@@ -151,11 +155,12 @@ gst_ipcam_client_on_btn_about_clicked                   (GtkButton       *button
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_quit_clicked                    (GtkButton       *button,
-                                        gpointer         user_data) {
-    gst_ipcam_client_backend_stop();
-    gtk_main_quit();
-    gst_ipcam_client_backend_deinit();
+gst_ipcam_client_on_btn_quit_clicked(GtkButton *button,
+																		 gpointer user_data)
+{
+	gst_ipcam_client_backend_stop();
+	gtk_main_quit();
+	gst_ipcam_client_backend_deinit();
 }
 
 /**
@@ -168,40 +173,41 @@ gst_ipcam_client_on_btn_quit_clicked                    (GtkButton       *button
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_connect_dialog_clicked           (GtkButton       *button,
-                                        gpointer         user_data) {
-    /* static gint counter = 0;*/
-    is_connect_button_clicked = TRUE;
-    gchar *url = gtk_entry_get_text(entry_url);
-    URL = g_strconcat("", url, NULL);
-    gst_ipcam_client_backend_set_window(GINT_TO_POINTER(GDK_WINDOW_XWINDOW(prw_video->window)));
+gst_ipcam_client_on_btn_connect_dialog_clicked(GtkButton *button,
+																							 gpointer user_data)
+{
+	/* static gint counter = 0;*/
+	is_connect_button_clicked = TRUE;
+	gchar *url = gtk_entry_get_text(entry_url);
+	URL = g_strconcat("", url, NULL);
+	gst_ipcam_client_backend_set_window(GINT_TO_POINTER(GDK_WINDOW_XWINDOW(prw_video->window)));
 
-    gst_ipcam_client_backend_create_pipeline(URL);
+	gst_ipcam_client_backend_create_pipeline(URL);
 
-    g_message("PLAY request is sending...");
-    /*set pipeline to playing status*/
-    gst_ipcam_client_backend_play();
+	g_message("PLAY request is sending...");
+	/*set pipeline to playing status*/
+	gst_ipcam_client_backend_play();
 
-    g_message("PLAY request sent.");
+	g_message("PLAY request sent.");
 
-    /*Resize the mainwindow to show Video got from server*/
-    gtk_window_resize(GTK_WINDOW(main_window), 550, 500);
-    gtk_widget_set_sensitive(vbox2, TRUE);
+	/*Resize the mainwindow to show Video got from server*/
+	gtk_window_resize(GTK_WINDOW(main_window), 550, 500);
+	gtk_widget_set_sensitive(vbox2, TRUE);
 
-    /*remove btn_Connect button from toolitem_Connect*/
-    gtk_container_remove(GTK_CONTAINER(toolitem_connect), btn_connect);
+	/*remove btn_Connect button from toolitem_Connect*/
+	gtk_container_remove(GTK_CONTAINER(toolitem_connect), btn_connect);
 
-    /*add btn_Disconnect to toolitem_Connect*/
-    gtk_container_add(GTK_CONTAINER(toolitem_connect), btn_disconnect);
-    gtk_widget_show(btn_disconnect);
+	/*add btn_Disconnect to toolitem_Connect*/
+	gtk_container_add(GTK_CONTAINER(toolitem_connect), btn_disconnect);
+	gtk_widget_show(btn_disconnect);
 
-    /*Get the Pause button and Disconnect button to be sensitive;*/
-    gtk_widget_set_sensitive(btn_pause, TRUE);
-    gtk_widget_set_sensitive(btn_disconnect, TRUE);
+	/*Get the Pause button and Disconnect button to be sensitive;*/
+	gtk_widget_set_sensitive(btn_pause, TRUE);
+	gtk_widget_set_sensitive(btn_disconnect, TRUE);
 
-    /*destroy the connection dialog*/
-    gtk_widget_destroy(connection_dialog);
-    is_connect_button_clicked = FALSE;
+	/*destroy the connection dialog*/
+	gtk_widget_destroy(connection_dialog);
+	is_connect_button_clicked = FALSE;
 }
 
 /**
@@ -214,13 +220,15 @@ gst_ipcam_client_on_btn_connect_dialog_clicked           (GtkButton       *butto
  * @return nothing
  */
 void
-gst_ipcam_client_on_connection_dialog_destroy                (GtkObject       *object,
-                                        gpointer         user_data) {
-    if (!is_connect_button_clicked) {
-        /*Active the Connect button and Inactive the Pause button*/
-        gtk_widget_set_sensitive(btn_pause, FALSE);
-        gtk_widget_set_sensitive(btn_connect, TRUE);
-    }
+gst_ipcam_client_on_connection_dialog_destroy(GtkObject *object,
+																							gpointer user_data)
+{
+	if (!is_connect_button_clicked)
+	{
+		/*Active the Connect button and Inactive the Pause button*/
+		gtk_widget_set_sensitive(btn_pause, FALSE);
+		gtk_widget_set_sensitive(btn_connect, TRUE);
+	}
 }
 
 /**
@@ -232,11 +240,12 @@ gst_ipcam_client_on_connection_dialog_destroy                (GtkObject       *o
  *
  * @return nothing
  */
-void gst_ipcam_client_on_main_window_destroy                (GtkObject       *object,
-                                        gpointer         user_data) {
-    gst_ipcam_client_backend_stop();
-    gtk_main_quit();
-    gst_ipcam_client_backend_deinit();
+void gst_ipcam_client_on_main_window_destroy(GtkObject *object,
+																						 gpointer user_data)
+{
+	gst_ipcam_client_backend_stop();
+	gtk_main_quit();
+	gst_ipcam_client_backend_deinit();
 }
 
 /**
@@ -249,14 +258,16 @@ void gst_ipcam_client_on_main_window_destroy                (GtkObject       *ob
  * @return nothing
  */
 gboolean
-gst_ipcam_client_on_connection_dialog_key_press_event        (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data) {
-    if (event->keyval == GDK_Return) {
-        gst_ipcam_client_on_btn_connect_dialog_clicked(NULL, NULL);
-    }
+gst_ipcam_client_on_connection_dialog_key_press_event(GtkWidget *widget,
+																											GdkEventKey *event,
+																											gpointer user_data)
+{
+	if (event->keyval == GDK_Return)
+	{
+		gst_ipcam_client_on_btn_connect_dialog_clicked(NULL, NULL);
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 /**
@@ -269,38 +280,48 @@ gst_ipcam_client_on_connection_dialog_key_press_event        (GtkWidget       *w
  * @return nothing
  */
 void
-gst_ipcam_client_on_btn_change_clicked                 (GtkButton       *button,
-                                        gpointer         user_data) {
-    gchar *url_fps;
-    gchar *url_fsize;
-    gchar * pipeline_description;
+gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
+																			 gpointer user_data)
+{
+	gchar *url_fps;
+	gchar *url_fsize;
+	gchar * pipeline_description;
 
-    gst_ipcam_client_backend_stop();
-    if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fps), "") != 0) {
-        url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
-    } else {
-        url_fps = "";
-    }
+	gst_ipcam_client_backend_stop();
+	if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fps), "") != 0)
+	{
+		url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
+	}
+	else
+	{
+		url_fps = "";
+	}
 
-    if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fsize), "") != 0) {
-        gchar *f_size = gtk_combo_box_get_active_text(cbx_entry_fsize);
-        gchar **__f_size = g_strsplit(f_size, "x", 0);
-        url_fsize = g_strconcat("", "width=", __f_size[0], "&height=", __f_size[1], NULL);
-    } else {
-        url_fsize = "";
-    }
+	if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fsize), "") != 0)
+	{
+		gchar *f_size = gtk_combo_box_get_active_text(cbx_entry_fsize);
+		gchar **__f_size = g_strsplit(f_size, "x", 0);
+		url_fsize = g_strconcat("", "width=", __f_size[0], "&height=", __f_size[1], NULL);
+	}
+	else
+	{
+		url_fsize = "";
+	}
 
-    if (g_strcmp0(url_fps, "") != 0) {
-        pipeline_description = g_strconcat("", URL, url_fps, "&", url_fsize, NULL);
-    } else {
-        pipeline_description = g_strconcat("", URL, "?", url_fsize, NULL);
-    }
+	if (g_strcmp0(url_fps, "") != 0)
+	{
+		pipeline_description = g_strconcat("", URL, url_fps, "&", url_fsize, NULL);
+	}
+	else
+	{
+		pipeline_description = g_strconcat("", URL, "?", url_fsize, NULL);
+	}
 
-    gst_ipcam_client_backend_create_pipeline(pipeline_description);
-    gst_ipcam_client_backend_play();
+	gst_ipcam_client_backend_create_pipeline(pipeline_description);
+	gst_ipcam_client_backend_play();
 
-    g_message("PLAY request sent.");
-    /*Resize the mainwindow to show the video got from server*/
-    gtk_window_resize(GTK_WINDOW(main_window), 550, 500);
-    gtk_widget_set_sensitive(vbox2, TRUE);
+	g_message("PLAY request sent.");
+	/*Resize the mainwindow to show the video got from server*/
+	gtk_window_resize(GTK_WINDOW(main_window), 550, 500);
+	gtk_widget_set_sensitive(vbox2, TRUE);
 }
