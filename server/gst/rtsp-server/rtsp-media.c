@@ -25,7 +25,7 @@
 #include "rtsp-media.h"
 
 #define DEFAULT_SHARED         FALSE
-#define DEFAULT_REUSABLE       FALSE
+#define DEFAULT_REUSABLE       TRUE
 
 /* define to dump received RTCP packets */
 #undef DUMP_STATS
@@ -98,6 +98,7 @@ gst_rtsp_media_class_init (GstRTSPMediaClass * klass)
   klass->unprepare = default_unprepare;
 
   ssrc_stream_map_key = g_quark_from_static_string ("GstRTSPServer.stream");
+  g_message ("DB: Media class init");
 }
 
 static void
@@ -106,6 +107,8 @@ gst_rtsp_media_init (GstRTSPMedia * media)
   media->streams = g_array_new (FALSE, TRUE, sizeof (GstRTSPMediaStream *));
   media->is_live = FALSE;
   media->buffering = FALSE;
+  g_message ("DB: Media init");
+
 }
 
 static void
@@ -508,6 +511,8 @@ gst_rtsp_media_stream_rtp (GstRTSPMediaStream *stream, GstBuffer *buffer)
   GstFlowReturn ret;
 
   ret = gst_app_src_push_buffer (GST_APP_SRC_CAST (stream->appsrc[0]), buffer);
+  g_message ("DB: Stream RTP");
+
 
   return ret;
 }
@@ -530,6 +535,7 @@ gst_rtsp_media_stream_rtcp (GstRTSPMediaStream *stream, GstBuffer *buffer)
   GstFlowReturn ret;
 
   ret = gst_app_src_push_buffer (GST_APP_SRC_CAST (stream->appsrc[1]), buffer);
+  g_message ("DB: Stream RTCP");
 
   return ret;
 }
@@ -652,7 +658,7 @@ again:
   stream->udpsink[1] = udpsink1;
   stream->server_port.min = rtpport;
   stream->server_port.max = rtcpport;
-
+  g_message ("DB: ALLOCATE UDP port");
   return TRUE;
 
   /* ERRORS */
@@ -758,7 +764,7 @@ find_transport (GstRTSPMediaStream *stream, const gchar *rtcp_from)
     }
   }
   g_free (dest);
-
+  g_message ("DB: Find transport");
   return result;
 }
 
@@ -928,6 +934,7 @@ setup_stream (GstRTSPMediaStream *stream, guint idx, GstRTSPMedia *media)
   }
 
   /* hook up the stream to the RTP session elements. */
+
   name = g_strdup_printf ("send_rtp_sink_%d", idx);
   stream->send_rtp_sink = gst_element_get_request_pad (media->rtpbin, name);
   g_free (name);
@@ -943,7 +950,6 @@ setup_stream (GstRTSPMediaStream *stream, guint idx, GstRTSPMedia *media)
   name = g_strdup_printf ("recv_rtp_sink_%d", idx);
   stream->recv_rtp_sink = gst_element_get_request_pad (media->rtpbin, name);
   g_free (name);
-
   /* get the session */
   g_signal_emit_by_name (media->rtpbin, "get-internal-session", idx,
 		  &stream->session);
@@ -1056,13 +1062,12 @@ setup_stream (GstRTSPMediaStream *stream, guint idx, GstRTSPMedia *media)
   gst_element_set_state (stream->udpsrc[1], GST_STATE_PLAYING);
   gst_element_set_locked_state (stream->udpsrc[0], TRUE);
   gst_element_set_locked_state (stream->udpsrc[1], TRUE);
- 
   /* be notified of caps changes */
   stream->caps_sig = g_signal_connect (stream->send_rtp_sink, "notify::caps",
-                  (GCallback) caps_notify, stream);
+                  (GCallback) caps_notify, stream);                  
 
   stream->prepared = TRUE;
-
+  g_message ("DB: Setup stream");
   return TRUE;
 
   /* ERRORS */
@@ -1088,6 +1093,7 @@ unlock_streams (GstRTSPMedia *media)
     gst_element_set_locked_state (stream->udpsrc[0], FALSE);
     gst_element_set_locked_state (stream->udpsrc[1], FALSE);
   }
+  g_message ("DB: Unlock stream");
 }
 
 static gboolean
@@ -1546,7 +1552,7 @@ gst_rtsp_media_set_state (GstRTSPMedia *media, GstState state, GArray *transport
   /* remember where we are */
   if (state == GST_STATE_PAUSED)
     collect_media_stats (media);
-
+  g_message ("DB: Set state");
   return TRUE;
 }
 
@@ -1591,5 +1597,6 @@ gst_rtsp_media_remove_elements (GstRTSPMedia *media)
 
   gst_object_unref (media->pipeline);
   media->pipeline = NULL;
+  g_message ("DB: Remove all elements");
 }
 

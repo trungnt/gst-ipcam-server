@@ -67,10 +67,10 @@ struct _GstRTSPServer {
   GstPollFD    server_sock;
   GIOChannel  *io_channel;
   GSource     *io_watch;
-
+  
   /* sessions on this server */
   GstRTSPSessionPool  *session_pool;
-
+  
   /* media mapper for this server */
   GstRTSPMediaMapping *media_mapping;
 };

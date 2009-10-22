@@ -131,6 +131,27 @@ static gboolean gst_rtsp_pipeline_profile_load_basic_info(GstRTSPPipelineProfile
  */
 static gboolean gst_rtsp_pipeline_profile_load_vars(GstRTSPPipelineProfile * profile, gchar ** lines, gint * start_line);
 
+/**
+ * Reset pipeline to use default variable values
+ *
+ * @param profile GstRTSPPipelineProfile* profile to reset
+ *
+ * @return None
+ */
+static void gst_rtsp_pipeline_profile_var_reset_vars(GstRTSPPipelineProfile * profile);
+
+/**
+ * callback function to reset variable values
+ * This function will be call on profile->default_vars hash table
+ *
+ * @param key gpointer variable name.
+ * @param value gpointer value of the variable
+ * @param user_data pointer to a string storing pipeline description.
+ *
+ * @return None
+ */
+static void gst_rtsp_pipeline_profile_reset_var_func(gpointer key, gpointer value, gpointer user_data);
+
 static GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_alloc() {
 	GstRTSPPipelineProfile * profile = g_malloc(sizeof (GstRTSPPipelineProfile));
 	g_return_val_if_fail(profile != NULL, NULL);
@@ -138,7 +159,13 @@ static GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_alloc() {
 	profile->pipeline_name = NULL;
 	profile->pipeline_desc = NULL;
 	profile->pipeline_codec = NULL;
-	profile->vars = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	profile->default_vars = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	if (profile->default_vars == NULL) {
+		gst_rtsp_pipeline_profile_free(profile);
+	}
+
+	profile->vars = g_hash_table_new(g_str_hash, g_str_equal);
 	if (profile->vars == NULL) {
 		gst_rtsp_pipeline_profile_free(profile);
 	}
@@ -159,16 +186,16 @@ static gboolean gst_rtsp_pipeline_profile_load_basic_info(GstRTSPPipelineProfile
 		return FALSE;
 	}
 
-	// a pipeline need to has name, type, codec and desc
+	/* a pipeline need to has name, type, codec and desc */
 	has_name = has_type = has_codec = has_desc = FALSE;
 
 	while (*start_line < no_lines) {
-		if (has_desc == TRUE) { // read all information
+		if (has_desc == TRUE) { /* read all information */
 			return TRUE;
 		}
 		gchar * line = g_strstrip(lines[*start_line]);
 		if (gst_rtsp_server_configuration_should_skip_line(line) == TRUE) {
-			// skip empty line or comments
+			/* skip empty line or comments */
 			(*start_line)++;
 			continue;
 		}
@@ -180,7 +207,7 @@ static gboolean gst_rtsp_pipeline_profile_load_basic_info(GstRTSPPipelineProfile
 			return FALSE;
 		}
 
-		// remove spaces
+		/* remove spaces */
 		g_strstrip(vars[0]);
 		g_strstrip(vars[1]);
 
@@ -203,104 +230,22 @@ static gboolean gst_rtsp_pipeline_profile_load_basic_info(GstRTSPPipelineProfile
 	} \
 }
 
-		// check for pipeline name
+		/* check for pipeline name */
 		GST_RTSP_PIPELINE_PROFILE_GET_INFO(vars, "pipeline-name", has_name, *start_line, gst_rtsp_pipeline_profile_set_name(profile, vars[1]));
-		// check for pipeline type
+		/* check for pipeline type */
 		GST_RTSP_PIPELINE_PROFILE_GET_INFO(vars, "pipeline-type", has_type, *start_line,
-				// set the type of pipeline
-				if (gst_rtsp_pipeline_profile_set_type(profile, vars[1], *start_line) == FALSE) {
-					g_strfreev(vars);
-					return FALSE;
-				});
+		/* set the type of pipeline */
+		if (gst_rtsp_pipeline_profile_set_type(profile, vars[1], *start_line) == FALSE) {
+			g_strfreev(vars);
+			return FALSE;
+		});
 
-		// check for pipeline codec
+		/* check for pipeline codec */
 		GST_RTSP_PIPELINE_PROFILE_GET_INFO(vars, "pipeline-codec", has_codec, *start_line, profile->pipeline_codec = g_strdup(vars[1]));
-		// check for pipeline description
+		/* check for pipeline description */
 		GST_RTSP_PIPELINE_PROFILE_GET_INFO(vars, "pipeline-desc", has_desc, *start_line, profile->pipeline_desc = g_strdup(vars[1]));
 
 #undef GST_RTSP_PIPELINE_PROFILE_GET_INFO
-
-		/* old checking code */
-		// check for pipeline name
-/*
-		if (!has_name) {
-			if (g_strcasecmp("pipeline-name", g_strstrip(vars[0])) != 0) {
-				// we need to has the name first
-				g_warning("Pipeline profile loader: invalid pipeline syntax at line %d (need pipeline-name but found '%s')", *start_line, vars[0]);
-				(*start_line)++;
-				g_strfreev(vars);
-				return FALSE;
-			} else {
-				g_message("set pipeline name");
-				has_name = TRUE;
-				gst_rtsp_pipeline_profile_set_name(profile, vars[1]);
-				g_message("Done with settings");
-				g_strfreev(vars);
-				(*start_line)++;
-				continue;
-			}
-		}
-*/
-
-/*
-		g_message("Checking pipeline type");
-*/
-		// check for pipeline type
-/*
-		if (!has_type) {
-			if (g_strcasecmp("pipeline-type", g_strstrip(vars[0])) != 0) {
-				g_warning("Pipeline profile loader: invalid pipeline syntax at line %d (need pipeline-type but found '%s')", *start_line, vars[0]);
-				(*start_line)++;
-				g_strfreev(vars);
-				return FALSE;
-			} else {
-				has_type = TRUE;
-				(*start_line)++;
-				if (gst_rtsp_pipeline_profile_set_type(profile, vars[1]) == FALSE) {
-					g_strfreev(vars);
-					return FALSE;
-				}
-				g_strfreev(vars);
-				continue;
-			}
-		}
-*/
-
-		// check for codec
-/*
-		if (!has_codec) {
-			if (g_strcasecmp("pipeline-codec", g_strstrip(vars[0])) != 0) {
-				g_warning("Pipeline profile loader: invalid pipeline syntax at line %d (need pipeline-codec but found '%s')", *start_line, vars[0]);
-				(*start_line)++;
-				g_strfreev(vars);
-				return FALSE;
-			} else {
-				has_codec = TRUE;
-				(*start_line)++;
-				profile->pipeline_codec = g_strdup(vars[1]);
-				g_strfreev(vars);
-				continue;
-			}
-		}
-*/
-
-		// check for pipeline desc
-/*
-		if (!has_desc) {
-			if (g_strcasecmp("pipeline-desc", g_strstrip(vars[0])) != 0) {
-				g_warning("Pipeline profile loader: invalid pipeline syntax at line %d (need pipeline-desc but found '%s')", *start_line, vars[0]);
-				(*start_line)++;
-				g_strfreev(vars);
-				return FALSE;
-			} else {
-				has_desc = TRUE;
-				(*start_line)++;
-				profile->pipeline_desc = g_strdup(vars[1]);
-				g_strfreev(vars);
-				return TRUE; // everything is passed at this step
-			}
-		}
-*/
 	}
 	return TRUE;
 }
@@ -322,18 +267,18 @@ static gboolean gst_rtsp_pipeline_profile_load_vars(GstRTSPPipelineProfile* prof
 
 	while (*start_line < no_lines) {
 		line = g_strstrip(lines[*start_line]);
-		// skip empty line or comments
+		/* skip empty line or comments */
 		if (gst_rtsp_server_configuration_should_skip_line(line) == TRUE) {
 			(*start_line)++;
 			continue;
 		}
 
-		// check for new pipeline
+		/* check for new pipeline */
 		if (g_strcasecmp("[pipeline]", line) == 0) {
 			return TRUE;
 		}
 
-		// check for the section name
+		/* check for the section name */
 		if (!can_read_vars) {
 			if (g_strcasecmp(pipeline_vars_section_name, line) == 0) {
 				can_read_vars = TRUE;
@@ -345,7 +290,7 @@ static gboolean gst_rtsp_pipeline_profile_load_vars(GstRTSPPipelineProfile* prof
 			continue;
 		}
 
-		// now we should read variables
+		/* now we should read variables */
 		{
 			gchar ** vars = g_strsplit(line, "=", -1);
 			if (g_strv_length(vars) != 2) {
@@ -354,7 +299,7 @@ static gboolean gst_rtsp_pipeline_profile_load_vars(GstRTSPPipelineProfile* prof
 				g_strfreev(vars);
 				continue;
 			}
-			// remove space
+			/* remove space */
 			g_strstrip(vars[0]);
 			g_strstrip(vars[1]);
 			if (gst_rtsp_pipeline_profile_add_var(profile, vars[0], vars[1]) == FALSE) {
@@ -377,10 +322,10 @@ GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar* name) {
 	gint no_lines;
 	GstRTSPPipelineProfile * profile = NULL;
 
-	// we can load if the given name is NULL
+	/* we can load if the given name is NULL */
 	g_return_val_if_fail(name != NULL, NULL);
 
-	// get the contents
+	/* get the contents */
 	if (g_file_get_contents(name, &contents, NULL, &error) == FALSE) {
 		g_warning("Pipeline profile loader error: %s", error->message);
 		g_error_free(error);
@@ -388,13 +333,13 @@ GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load(const gchar* name) {
 	}
 
 	g_return_val_if_fail(contents != NULL, NULL);
-	// parse the contents
+	/* parse the contents */
 	lines = g_strsplit(contents, "\n", -1);
 	g_free(contents);
 
-	// searching for the first [pipeline] section
+	/* searching for the first [pipeline] section */
 	no_lines = g_strv_length(lines);
-	while (start_line < no_lines) { 
+	while (start_line < no_lines) {
 		current_line = g_strstrip(lines[start_line]);
 		start_line++;
 		if (g_strcasecmp("[pipeline]", current_line) == 0) {
@@ -412,7 +357,6 @@ GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load_from_text(gchar ** lines
 	GstRTSPPipelineProfile * profile = gst_rtsp_pipeline_profile_alloc();
 	g_return_val_if_fail(profile != NULL, NULL);
 
-
 	{
 		gint no_lines = g_strv_length(lines);
 		if (no_lines <= 0 || (*start_line) >= no_lines) {
@@ -420,12 +364,12 @@ GstRTSPPipelineProfile * gst_rtsp_pipeline_profile_load_from_text(gchar ** lines
 			return NULL;
 		}
 
-		// load pipeline basic info
+		/* load pipeline basic info */
 		if (gst_rtsp_pipeline_profile_load_basic_info(profile, lines, start_line) == FALSE) {
 			gst_rtsp_pipeline_profile_free(profile);
 			return NULL;
 		}
-		// next will be vars with the format var_name=default_value
+		/* next will be vars with the format var_name=default_value */
 
 		gst_rtsp_pipeline_profile_load_vars(profile, lines, start_line);
 	}
@@ -448,15 +392,17 @@ void gst_rtsp_pipeline_profile_free(GstRTSPPipelineProfile* profile) {
 		if (profile->pipeline_codec != NULL) {
 			g_free(profile->pipeline_codec);
 		}
-		
+
 		if (profile->vars != NULL) {
 			g_hash_table_destroy(profile->vars);
-			//g_free(profile->vars);
+		}
+
+		if (profile->default_vars != NULL) {
+			g_hash_table_destroy(profile->default_vars);
 		}
 
 		if (profile->vars_name != NULL) {
 			g_list_free(profile->vars_name);
-			//g_free(profile->vars_name);
 		}
 
 		g_free(profile);
@@ -488,15 +434,16 @@ GstRTSPPipelineType gst_rtsp_pipeline_profile_get_type(const GstRTSPPipelineProf
 gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar* value) {
 	g_return_val_if_fail(profile != NULL, FALSE);
 	g_return_val_if_fail(var_name != NULL, FALSE);
-	// what if in the case that we want to unset value for a var ??
+	/* what if in the case that we want to unset value for a var ?? */
 	g_return_val_if_fail(value != NULL, FALSE);
 
-	// do not allow to set an unexisted variable
+	/* do not allow to set an unexisted variable */
 	if (!gst_rtsp_pipeline_profile_has_var(profile, var_name)) {
 		g_warning("gis_profile_set_var(): No variable name '%s'", var_name);
 		return FALSE;
 	}
 
+	/* begin set var */
 	gchar * var = g_strdup(var_name);
 	g_hash_table_replace(profile->vars, var, g_strdup(value));
 	return TRUE;
@@ -519,7 +466,7 @@ static gboolean gst_rtsp_pipeline_profile_has_var(GstRTSPPipelineProfile * profi
 }
 
 static gboolean gst_rtsp_pipeline_profile_add_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar* init_value) {
-	gchar * name;
+	gchar * name, *value;
 	g_return_val_if_fail(profile != NULL, FALSE);
 	g_return_val_if_fail(var_name != NULL, FALSE);
 	g_return_val_if_fail(init_value != NULL, FALSE);
@@ -527,8 +474,10 @@ static gboolean gst_rtsp_pipeline_profile_add_var(GstRTSPPipelineProfile * profi
 	g_return_val_if_fail(gst_rtsp_pipeline_profile_has_var(profile, var_name) == FALSE, FALSE);
 
 	name = g_strdup(var_name);
+	value = g_strdup(init_value);
 	profile->vars_name = g_list_append(profile->vars_name, name);
-	g_hash_table_insert(profile->vars, name, g_strdup(init_value));
+	g_hash_table_insert(profile->default_vars, name, value);
+	g_hash_table_insert(profile->vars, name, value);
 
 	return TRUE;
 }
@@ -537,7 +486,11 @@ gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profil
 	g_return_val_if_fail(profile != NULL, NULL);
 
 	gchar * pipeline_desc = g_strdup(profile->pipeline_desc);
+
 	g_hash_table_foreach(profile->vars, gst_rtsp_pipeline_profile_var_replacing_func, &pipeline_desc);
+
+	/* reset all variables */
+	gst_rtsp_pipeline_profile_var_reset_vars(profile);
 
 	return pipeline_desc;
 }
@@ -545,7 +498,7 @@ gchar * gst_rtsp_pipeline_profile_build_pipeline(GstRTSPPipelineProfile * profil
 static void gst_rtsp_pipeline_profile_var_replacing_func(gpointer key, gpointer value, gpointer user_data) {
 	gchar ** pipeline_desc_ptr = (gchar**) user_data;
 	gchar * pipeline_desc = *pipeline_desc_ptr;
-	// var name is 'name', but in the pipeline description, it's represented as '${name}'
+	/* var name is 'name', but in the pipeline description, it's represented as '${name}' */
 	gchar * var = g_strconcat("${", (gchar*) key, "}", NULL);
 	gchar * var_value = (gchar*) value;
 	gchar * temp_pipeline = NULL;
@@ -588,4 +541,19 @@ gboolean gst_rtsp_server_configuration_should_skip_line(const gchar* line) {
 	}
 
 	return FALSE;
+}
+
+static void gst_rtsp_pipeline_profile_var_reset_vars(GstRTSPPipelineProfile* profile) {
+	g_return_if_fail(profile != NULL);
+
+	g_hash_table_foreach(profile->default_vars, gst_rtsp_pipeline_profile_reset_var_func, profile);
+}
+
+static void gst_rtsp_pipeline_profile_reset_var_func(gpointer key, gpointer value, gpointer user_data) {
+	/* this function is called for profile->default_vars */
+	GstRTSPPipelineProfile * profile = (GstRTSPPipelineProfile*) user_data;
+	g_assert(profile);
+
+	/* replace vars by their default values */
+	g_hash_table_replace(profile->vars, key, value);
 }

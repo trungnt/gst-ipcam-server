@@ -44,6 +44,7 @@
  * Created on September 18, 2009, 5:30 PM
  */
 #include "server-configuration.h"
+#include "string.h"
 
 /**
  * Allocation memory for a server configuration structure.
@@ -88,7 +89,7 @@ static GstRTSPServerConfiguration * gst_rtsp_server_configuration_alloc() {
 	GstRTSPServerConfiguration * config = g_malloc(sizeof (GstRTSPServerConfiguration));
 	g_return_val_if_fail(config != NULL, NULL);
 
-	config->pipelines_name = NULL; //g_list_alloc();
+	config->pipelines_name = NULL;
 
 	config->pipelines = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, gst_rtsp_server_configuration_free_pipeline);
 
@@ -103,6 +104,9 @@ static GstRTSPServerConfiguration * gst_rtsp_server_configuration_alloc() {
 		return NULL;
 	}
 
+	config->default_audio_pipeline = NULL;
+	config->default_video_pipeline = NULL;
+
 	return config;
 }
 
@@ -113,7 +117,7 @@ GstRTSPServerConfiguration * gst_rtsp_server_configuration_load(const gchar* con
 	g_return_val_if_fail(config_file != NULL, NULL);
 
 	{
-		// now read configuration file
+		/* now read configuration file */
 		gchar * contents = NULL;
 		GError * error = NULL;
 		gchar ** lines = NULL;
@@ -139,7 +143,7 @@ GstRTSPServerConfiguration * gst_rtsp_server_configuration_load(const gchar* con
 
 		while (current_line < no_lines) {
 			line = g_strstrip(lines[current_line]);
-			// skip them comments (line start with #) and empty line
+			/* skip them comments (line start with #) and empty line */
 			if (gst_rtsp_server_configuration_should_skip_line(line) == TRUE) {
 				current_line++;
 				continue;
@@ -147,16 +151,16 @@ GstRTSPServerConfiguration * gst_rtsp_server_configuration_load(const gchar* con
 
 			if (g_strcasecmp(line, "[pipeline]") == 0) {
 				current_line++;
-				// next section define a pipeline
+				/* next section define a pipeline */
 				tmp_profile = gst_rtsp_pipeline_profile_load_from_text(lines, &current_line);
 				if (tmp_profile != NULL) {
-					// add the pipeline profile to the configuration
+					/* add the pipeline profile to the configuration */
 					if (gst_rtsp_server_configuration_add_pipeline(config, tmp_profile) == FALSE) {
 						gst_rtsp_pipeline_profile_free(tmp_profile);
 					}
 				}
 			} else {
-				// now, anything else mean syntax error
+				/* now, anything else mean syntax error */
 				g_warning("Server configuration loader: invalid syntax at line %d in file '%s'", current_line, config_file);
 				current_line++;
 			}
@@ -181,6 +185,14 @@ void gst_rtsp_server_configuration_free(GstRTSPServerConfiguration* config) {
 			g_hash_table_destroy(config->pipelines_by_index);
 		}
 
+		if (config->default_video_pipeline != NULL) {
+			g_free(config->default_video_pipeline);
+		}
+
+		if (config->default_audio_pipeline != NULL) {
+			g_free(config->default_audio_pipeline);
+		}
+		
 		g_free(config);
 	}
 }
@@ -211,7 +223,6 @@ static gboolean gst_rtsp_server_configuration_has_pipeline(const GstRTSPServerCo
 	g_return_val_if_fail(config != NULL, FALSE);
 
 	node = g_list_first(config->pipelines_name);
-	//	node = first;
 
 	while (node != NULL) {
 		name = (gchar*) node->data;
@@ -233,13 +244,18 @@ static gboolean gst_rtsp_server_configuration_add_pipeline(GstRTSPServerConfigur
 
 	g_return_val_if_fail(gst_rtsp_server_configuration_has_pipeline(config, profile->pipeline_name) != TRUE, FALSE);
 
-	// now adding hehe
+	/* now adding hehe */
 	index = g_malloc(sizeof (gint));
 	*index = gst_rtsp_server_configuration_get_number_of_pipelines(config);
 
 	config->pipelines_name = g_list_append(config->pipelines_name, profile->pipeline_name);
 	g_hash_table_insert(config->pipelines, profile->pipeline_name, profile);
 	g_hash_table_insert(config->pipelines_by_index, index, profile);
+
+	/* we will automatic set default video pipeline */
+	if (config->default_video_pipeline == NULL && gst_rtsp_pipeline_profile_is_video(profile)) {
+		gst_rtsp_server_configuration_set_default_video_pipeline(config, gst_rtsp_pipeline_profile_get_name(profile));
+	}
 
 	return TRUE;
 }
@@ -253,4 +269,78 @@ gint gst_rtsp_server_configuration_get_number_of_pipelines(const GstRTSPServerCo
 static void gst_rtsp_server_configuration_free_pipeline(gpointer pipeline) {
 	GstRTSPPipelineProfile * profile = (GstRTSPPipelineProfile *) pipeline;
 	gst_rtsp_pipeline_profile_free(profile);
+}
+
+gboolean gst_rtsp_server_configuration_set_default_video_pipeline(GstRTSPServerConfiguration* config, const gchar* pipeline_name) {
+	GstRTSPPipelineProfile * profile = gst_rtsp_server_configuration_get_pipeline(config, pipeline_name);
+
+	g_return_val_if_fail(profile != NULL, FALSE);
+
+	if (config->default_video_pipeline != NULL) {
+		g_free(config->default_video_pipeline);
+	}
+
+	config->default_video_pipeline = g_strdup(pipeline_name);
+
+	return TRUE;
+}
+
+const gchar * gst_rtsp_server_configuration_get_default_video_pipeline_name(const GstRTSPServerConfiguration* config) {
+	g_return_val_if_fail(config != NULL, NULL);
+
+	return config->default_video_pipeline;
+}
+
+GstRTSPPipelineProfile * gst_rtsp_server_configuration_get_default_video_pipeline(const GstRTSPServerConfiguration* config) {
+	const gchar * profile_name = gst_rtsp_server_configuration_get_default_video_pipeline_name(config);
+	return gst_rtsp_server_configuration_get_pipeline(config, profile_name);
+}
+
+gboolean gst_rtsp_server_configuration_set_default_audio_pipeline(GstRTSPServerConfiguration* config, const gchar* pipeline_name) {
+	GstRTSPPipelineProfile * profile = gst_rtsp_server_configuration_get_pipeline(config, pipeline_name);
+
+	g_return_val_if_fail(profile != NULL, FALSE);
+
+	if (config->default_audio_pipeline != NULL) {
+		g_free(config->default_audio_pipeline);
+	}
+
+	config->default_audio_pipeline = g_strdup(pipeline_name);
+
+	return TRUE;
+}
+
+const gchar * gst_rtsp_server_configuration_get_default_audio_pipeline_name(const GstRTSPServerConfiguration* config) {
+	g_return_val_if_fail(config != NULL, NULL);
+
+	return config->default_audio_pipeline;
+}
+
+GstRTSPPipelineProfile * gst_rtsp_server_configuration_get_default_audio_pipeline(const GstRTSPServerConfiguration* config) {
+	const gchar * profile_name = gst_rtsp_server_configuration_get_default_audio_pipeline_name(config);
+	if (profile_name != NULL) {
+		return gst_rtsp_server_configuration_get_pipeline(config, profile_name);
+	}
+	return NULL;
+}
+
+gchar * gst_rtsp_server_configuration_build_pipeline(GstRTSPServerConfiguration* config) {
+	GstRTSPPipelineProfile * video_profile = gst_rtsp_server_configuration_get_default_video_pipeline(config);
+	GstRTSPPipelineProfile * audio_profile = gst_rtsp_server_configuration_get_default_audio_pipeline(config);
+	gchar * pipeline = NULL;
+	gchar * audio_pipeline = NULL;
+
+	g_assert(video_profile);
+
+	pipeline = gst_rtsp_pipeline_profile_build_pipeline(video_profile);
+
+	if (audio_profile != NULL) {
+		audio_pipeline = gst_rtsp_pipeline_profile_build_pipeline(audio_profile);
+
+		if (audio_pipeline != NULL) {
+			pipeline = g_strdup_printf("%s%s", g_strndup(pipeline, strlen(pipeline) -1), audio_pipeline);			
+		}
+	}
+
+	return pipeline;
 }

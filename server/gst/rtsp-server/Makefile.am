@@ -9,6 +9,7 @@ public_headers = \
 		rtsp-session-pool.h \
 		rtsp-session.h \
         ../../profile/pipeline-profile.h \
+        ../../profile/pipeline-profile-ext.h \
         ../../profile/server-configuration.h
 		
 c_sources = \
@@ -22,6 +23,7 @@ c_sources = \
 	rtsp-session-pool.c \
 	rtsp-session.c \
         ../../profile/pipeline-profile.c \
+        ../../profile/pipeline-profile-ext.c \
         ../../profile/server-configuration.c
 	
 lib_LTLIBRARIES = \
