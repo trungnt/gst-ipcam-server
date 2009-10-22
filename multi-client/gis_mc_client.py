@@ -22,6 +22,10 @@ class gisMcClient:
 	STATE_PLAYING = 2
 	STATE_PAUSED = 3
 	state_names = { STATE_DISCONNECTED: "disconnected", STATE_CONNECTING: "connecting", STATE_PLAYING: "playing", STATE_PAUSED: "paused" }
+	cmb_fps = 'cbo0'
+	cmb_frame_size = 'cbo1'
+	fps_list = [ '1/1', '5/1', '10/1', '15/1', '20/1', '25/1', '30/1' ]
+	frame_size_list = [ '320x240', '640x480', '1280x720', '1280x960', '1280x1024' ]
 	def __init__(self, id):
 		''' init the object '''
 		global __client_path__
@@ -203,4 +207,40 @@ class gisMcClient:
 					pass
 			except:
 				pass
+
+	def change_fps(self, fps):
+		try:
+			if fps in gisMcClient.fps_list:
+				comboselect(self.main_window_title, gisMcClient.cmb_fps, fps)
+				return "OK"
+			return "Framerate " + fps + "(fps) is not available."
+		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
+			return "Change fps for client " + str(self.id) + ": Something wrong !"
+
+	def change_frame_size(self, frame_size):
+		try:
+			if frame_size in gisMcClient.frame_size_list:
+				comboselect(self.main_window_title, gisMcClient.cmb_frame_size, frame_size)
+				return "OK"
+			return "Frame size " + frame_size + " is not available."
+		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
+			return "Change frame size for client " + str(self.id) + ": Something wrong !"
+
+	def change_bitrate(self, bitrate):
+		try:
+			entry_bitrate = "txt2"
+			settextvalue(self.main_window_title, entry_bitrate, bitrate);
+			return "OK"
+		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
+			return "Change bitrate for client " + str(self.id) + ": Something wrong !"
+
+	def apply_change(self):
+		try:
+			click(self.main_window_title, "btnChange")
+		except LdtpExecutionError, e:
+			self.process_ldtp_exception(e)
+
 
