@@ -175,6 +175,17 @@ extern "C" {
 	gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, const gchar * var_name, const gchar * value);
 
 	/**
+	 * Get variable value from profile.
+	 * Return string should be free by g_free() after used.
+	 *
+	 * @param profile GstRTSPPipelineProfile* profile to get variable value.
+	 * @param var_name gchar* name of variable to get value.
+	 *
+	 * @return gchar* variable value or NULL if the variable is not valid.
+	 */
+	gchar * gst_rtsp_pipeline_profile_get_var(GstRTSPPipelineProfile * profile, const gchar * var_name);
+
+	/**
 	 * Get the double linked list of variables list of the profile.
 	 * The return value should not be free or changed
 	 *

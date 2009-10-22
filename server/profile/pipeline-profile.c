@@ -449,6 +449,16 @@ gboolean gst_rtsp_pipeline_profile_set_var(GstRTSPPipelineProfile * profile, con
 	return TRUE;
 }
 
+gchar * gst_rtsp_pipeline_profile_get_var(GstRTSPPipelineProfile* profile, const gchar* var_name) {
+	gchar * value;
+
+	g_return_val_if_fail(gst_rtsp_pipeline_profile_has_var(profile, var_name) == TRUE, NULL);
+
+	value = g_strdup((const gchar*)g_hash_table_lookup(profile->vars, var_name));
+
+	return value;
+}
+
 static gboolean gst_rtsp_pipeline_profile_has_var(GstRTSPPipelineProfile * profile, const gchar * var_name) {
 	GList * first = profile->vars_name;
 	GList * node = first;
