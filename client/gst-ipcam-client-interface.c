@@ -298,6 +298,8 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, status_bar, "status_bar");
 	GLADE_HOOKUP_OBJECT(main_window, entry_bitrate, "entry_bitrate");
 
+	gtk_widget_hide(toolbar1);
+	
 	return main_window;
 }
 
