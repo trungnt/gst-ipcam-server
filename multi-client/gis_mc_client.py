@@ -42,7 +42,11 @@ class gisMcClient:
 		except LdtpExecutionError, e:
 			self.process_ldtp_exception(e)
 			pass
-		#print "Error dialog name is ", self.error_dialog_title
+		except:
+			# other error.
+			# there's a case for this: a client with same id was added and removed before. We can register callback function a gain.
+			# infact we do not need to register it again, old one is still there
+			pass
 
 	def launch(self):
 		''' launch the client if it has not running : there is not any client with same id is running '''
@@ -64,7 +68,6 @@ class gisMcClient:
 		self.main_window_short_title = "frm" + self.main_window_title.replace(" ", "")
 		self.connection_dialog_title = self.create_window_title(__connection_dialog_title__)
 		self.error_dialog_title = self.create_window_title(__error_dialog_title__)
-		#self.error_dialog_title = "dlgError"
 
 	def create_window_title(self, title):
 		''' create the window title with client id '''

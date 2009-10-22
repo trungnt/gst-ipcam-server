@@ -516,15 +516,40 @@ gst_ipcam_client_create_error_dialog(const gchar* message, GtkWidget * parent)
 {
 	GtkWidget *dialog;
 	gchar * window_title;
+	window_title = gst_ipcam_client_window_create_title("Error");
+	dialog = gtk_dialog_new_with_buttons(window_title, parent,
+			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+			GTK_STOCK_OK,
+			GTK_RESPONSE_ACCEPT,
+			NULL);
+/*
 	dialog = gtk_message_dialog_new(GTK_WINDOW(parent),
 			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
 			GTK_MESSAGE_ERROR,
 			GTK_BUTTONS_OK,
 			"%s", message);
+*/
 	g_return_val_if_fail(dialog != NULL, NULL);
 
+	{
+		GtkWidget * hbox;
+		GtkWidget * label;
+		GtkWidget * icon;
+		GtkWidget * vbox;
+
+		hbox = gtk_hbox_new(FALSE, 10);
+		label = gtk_label_new(message);
+		icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+		gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 13);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 5);
+
+		vbox = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
+		gtk_widget_show_all(vbox);
+	}
+
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
-	window_title = gst_ipcam_client_window_create_title("Error");
+	
 	gtk_window_set_title(GTK_WINDOW(dialog), window_title);
 	g_free(window_title);
 
