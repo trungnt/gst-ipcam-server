@@ -311,7 +311,7 @@ gst_ipcam_client_create_main_window(void)
  * @return nothing
  */
 GtkWidget*
-gst_ipcam_client_create_connection_dialog(void)
+gst_ipcam_client_create_connection_dialog(GtkWidget * parent_window)
 {
 	connection_dialog = gtk_dialog_new();
 	gchar * connection_dialog_title = gst_ipcam_client_window_create_title(_("Connection"));
@@ -377,6 +377,10 @@ gst_ipcam_client_create_connection_dialog(void)
 	GLADE_HOOKUP_OBJECT(connection_dialog, entry_url, "entry_url");
 	GLADE_HOOKUP_OBJECT_NO_REF(connection_dialog, dialog_action_area, "dialog_action_area");
 	GLADE_HOOKUP_OBJECT(connection_dialog, btn_connect_dialog, "btn_connect_dialog");
+
+	if (parent_window != NULL) {
+		gtk_window_set_transient_for(GTK_WINDOW(connection_dialog), GTK_WINDOW(parent_window));
+	}
 
 	return connection_dialog;
 }
@@ -505,4 +509,24 @@ void
 gst_ipcam_client_set_status_audio_type(const gchar* type_name)
 {
 	gtk_label_set_text(GTK_LABEL(statusbar_label_audio_type), type_name);
+}
+
+GtkWidget *
+gst_ipcam_client_create_error_dialog(const gchar* message, GtkWidget * parent)
+{
+	GtkWidget *dialog;
+	gchar * window_title;
+	dialog = gtk_message_dialog_new(GTK_WINDOW(parent),
+			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+			GTK_MESSAGE_ERROR,
+			GTK_BUTTONS_OK,
+			"%s", message);
+	g_return_val_if_fail(dialog != NULL, NULL);
+
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(parent));
+	window_title = gst_ipcam_client_window_create_title("Error");
+	gtk_window_set_title(GTK_WINDOW(dialog), window_title);
+	g_free(window_title);
+
+	return dialog;
 }
