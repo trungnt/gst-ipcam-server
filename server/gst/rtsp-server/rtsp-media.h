@@ -148,7 +148,7 @@ struct _GstRTSPMediaStream {
   /* the caps of the stream */
   gulong        caps_sig;
   GstCaps      *caps;
-
+  
   /* transports we stream to */
   GList        *transports;
 };
@@ -202,6 +202,8 @@ struct _GstRTSPMedia {
 
   /* the range of media */
   GstRTSPTimeRange range;
+  /* FIXME: track bitrate encoder */
+  gchar          *bitrate;
 };
 
 /**

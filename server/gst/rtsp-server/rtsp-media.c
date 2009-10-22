@@ -1067,6 +1067,7 @@ setup_stream (GstRTSPMediaStream *stream, guint idx, GstRTSPMedia *media)
                   (GCallback) caps_notify, stream);                  
 
   stream->prepared = TRUE;
+  
   g_message ("DB: Setup stream");
   return TRUE;
 

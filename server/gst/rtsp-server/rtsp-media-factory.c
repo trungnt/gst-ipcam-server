@@ -21,6 +21,7 @@
 #include "string.h"
 #include "profile/pipeline-profile-ext.h"
 
+
 #define DEFAULT_LAUNCH         NULL
 #define DEFAULT_SHARED         FALSE
 
@@ -387,7 +388,6 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   /*if (factory->launch == NULL)*/
   if (factory->server_config == NULL)
     goto no_launch;
-
   /* we need to get framerate and bitrate here*/
   /* url format sent from client like this rtsp://server:port/test?framerate=25/1&bitrate=2048 */
   /*(  videoscale ! videorate ! video/x-raw-yuv,width=800,height=500,framerate=30/1 ! ffmpegcolorspace ! 
@@ -436,6 +436,7 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
 		 if (bitrate != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_bitrate(profile, bitrate);
+			 factory->bitrate = g_strdup(bitrate);
 		 }
 	 }
 	 
@@ -476,7 +477,6 @@ wrong_params:
   g_strfreev (tmp_0);  
   /* parse the user provided launch line */
   element = gst_parse_launch (factory->launch, &error);
- 
   if (element == NULL)
     goto parse_error;
 
@@ -619,7 +619,7 @@ default_construct (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
     goto no_pipeline;
 
   media->pipeline = klass->create_pipeline (factory, media);
-
+  media->bitrate = g_strdup(factory -> bitrate) ;
   gst_rtsp_media_factory_collect_streams (factory, url, media);
 
   return media;
@@ -725,6 +725,13 @@ gst_rtsp_media_factory_set_server_configuration(GstRTSPMediaFactory* factory, Gs
 	}
 
 	factory->server_config = server_config;
+   if (factory->bitrate == NULL)	{  
+	 GstRTSPPipelineProfile * profile = NULL;
+	 profile = gst_rtsp_server_configuration_get_default_video_pipeline(factory->server_config);
+	 if (profile != NULL)
+  	 	factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
+  }	 
+
 }
 
 GstRTSPServerConfiguration *

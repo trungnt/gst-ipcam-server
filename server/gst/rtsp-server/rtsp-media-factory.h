@@ -19,6 +19,7 @@
 
 #include <gst/gst.h>
 #include <gst/rtsp/gstrtspurl.h>
+#include <gst/gsttagsetter.h>
 
 #include "rtsp-media.h"
 #include "profile/server-configuration.h"
@@ -68,6 +69,7 @@ struct _GstRTSPMediaFactory {
   GstElement   *multiudpsink;  
   gboolean     two_streams;/** in case 2 streams: client ports will be odd and even */
   guint        v4l2src_port ;
+  gchar        *bitrate;
   
 };
 

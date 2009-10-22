@@ -49,8 +49,9 @@ gst_rtsp_sdp_from_media (GstRTSPMedia *media)
   gst_sdp_message_add_attribute (sdp, "type", "broadcast");
   rangestr = gst_rtsp_range_to_string (&media->range);
   gst_sdp_message_add_attribute (sdp, "range", rangestr);
-  g_free (rangestr);
+  gst_sdp_message_add_attribute (sdp, "encoder-bitrate", media->bitrate);
 
+  g_free (rangestr);
   for (i = 0; i < n_streams; i++) {
     GstRTSPMediaStream *stream;
     GstSDPMedia *smedia;
@@ -107,7 +108,6 @@ gst_rtsp_sdp_from_media (GstRTSPMedia *media)
       gst_sdp_media_add_attribute (smedia, "rtpmap", tmp);
       g_free (tmp);
     }
-
     /* the config uri */
     tmp = g_strdup_printf ("stream=%d", i);
     gst_sdp_media_add_attribute (smedia, "control", tmp);
