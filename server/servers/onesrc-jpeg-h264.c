@@ -20,11 +20,11 @@
 #include <gst/gst.h>
 #include <gst/rtsp-server/rtsp-server.h>
 
-#include "profile/pipeline-profile-ext.h"
-#include "profile/server-configuration.h"
+#include "profile/pipeline-profile.h"
 
-/* default profile file for this server */
-#define DEFAULT_PROFILE_FILE_VIDEO "onesrc-h264.ini"
+/* default profile files for this server */
+#define DEFAULT_PROFILE_FILE_VIDEO_H264         "onesrc-h264.ini"
+#define DEFAULT_PROFILE_FILE_JPEG               "onesrc-jpeg.ini"
 
 static gboolean
 timeout(GstRTSPServer *server, gboolean ignored) {
@@ -32,6 +32,7 @@ timeout(GstRTSPServer *server, gboolean ignored) {
 
   pool = gst_rtsp_server_get_session_pool(server);
   gst_rtsp_session_pool_cleanup(pool);
+  g_message("Server timeout");
   g_object_unref(pool);
 
   return TRUE;
@@ -42,7 +43,7 @@ main(int argc, char *argv[]) {
   GMainLoop *loop;
   GstRTSPServer *server;
   GstRTSPMediaMapping *mapping;
-  GstRTSPMediaFactory *factory;
+  GstRTSPMediaFactory *factory_h264, *factory_jpg;
   GstRTSPServerConfiguration * server_config = NULL;
 
   gst_init(&argc, &argv);
@@ -51,23 +52,25 @@ main(int argc, char *argv[]) {
 
   /* create a server instance */
   server = gst_rtsp_server_new();
+
   /* get the mapping for this server, every server has a default mapper object
    * that be used to map uri mount points to media factories */
 
   mapping = gst_rtsp_server_get_media_mapping(server);
 
-  /* make a media factory for a h264 video stream and audio (aac, g711 or g726) stream. The default media factory can use
+  /* make a media factory for h264 video stream and audio(aac, g711 or g726) stream. The default media factory can use
    * gst-launch syntax to create pipelines.
    * any launch line works as long as it contains elements named pay%d. Each
    * element with pay%d names will be a stream */
-  factory = gst_rtsp_media_factory_new();
-  /* set webcam source and port to listen for factory */
-  gst_rtsp_factory_set_device_source(factory, "v4l2src", "/dev/video0", 3000);
+  factory_h264 = gst_rtsp_media_factory_new();
+  factory_h264->two_streams = TRUE;
+  /* set webcam source and port to listen for server */
+  gst_rtsp_factory_set_device_source(factory_h264, "v4l2src", "/dev/video0", 3000);
 
   /* prepare server configuration for h264 stream */
-  server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO);
+  server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_VIDEO_H264);
 
-  /* check and set default audio profile in server configuration */
+  /* check and set audio profile for h264 stream */
   if (argc > 1 && server_config != NULL) {
     gchar * audio_profile_name = NULL;
     if (g_strrstr(argv[1], "aac")) {
@@ -82,14 +85,35 @@ main(int argc, char *argv[]) {
     }
   }
 
-  /* map server configuration to the media factory */
-  gst_rtsp_media_factory_set_server_configuration(factory, server_config);
+  /* map server configuration to h264 media factory */
+  gst_rtsp_media_factory_set_server_configuration(factory_h264, server_config);
 
   /* share the pipeline with multiple clients */
-  gst_rtsp_media_factory_set_shared(factory, TRUE);
+  gst_rtsp_media_factory_set_shared(factory_h264, TRUE);
 
   /* attach the test factory to the /h264 url */
-  gst_rtsp_media_mapping_add_factory(mapping, "/h264", factory);
+  gst_rtsp_media_mapping_add_factory(mapping, "/h264", factory_h264);
+
+  /* make a media factory for jpeg stream. The default media factory can use
+   * gst-launch syntax to create pipelines.
+   * any launch line works as long as it contains elements named pay%d. Each
+   * element with pay%d names will be a stream */
+  factory_jpg = gst_rtsp_media_factory_new();
+  /* set webcam source and port to listen for server */
+  /* gst_rtsp_factory_set_device_source (factory_jpg, "v4l2src", "/dev/video0", 3000); */
+  factory_jpg->two_streams = TRUE;
+  factory_jpg->v4l2src_pipeline = factory_h264->v4l2src_pipeline;
+  factory_jpg->v4l2src_port = factory_h264->v4l2src_port + 1;
+  factory_jpg->multiudpsink = factory_h264->multiudpsink;
+  /* prepare server configuration for jpeg stream */
+  server_config = gst_rtsp_server_configuration_load(DEFAULT_PROFILE_FILE_JPEG);
+  gst_rtsp_media_factory_set_server_configuration(factory_jpg, server_config);
+
+  /* share the pipeline with multiple clients */
+  gst_rtsp_media_factory_set_shared(factory_jpg, TRUE);
+
+  /* attach the test factory to the /jpg url */
+  gst_rtsp_media_mapping_add_factory(mapping, "/jpg", factory_jpg);
 
   /* don't need the ref to the mapper anymore */
   g_object_unref(mapping);
@@ -97,7 +121,7 @@ main(int argc, char *argv[]) {
   /* attach the server to the default maincontext */
   gst_rtsp_server_attach(server, NULL);
 
-  g_timeout_add_seconds(2, (GSourceFunc) timeout, server);
+  g_timeout_add_seconds(15, (GSourceFunc) timeout, server);
 
   /* start serving */
   g_main_loop_run(loop);

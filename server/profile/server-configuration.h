@@ -91,9 +91,11 @@ extern "C" {
 	 * The pipeline can be get by index or name using gst_rtsp_server_configuration_get_pipeline*()
 	 */
 	typedef struct GstRTSPServerConfiguration {
-		GList * pipelines_name; /// list of pipelines name
-		GHashTable * pipelines; /// a hash table stored pipelines using pipeline name as key
-		GHashTable * pipelines_by_index; /// same as above but using index as key
+		GList * pipelines_name; /**< list of pipelines name */
+		GHashTable * pipelines; /**< a hash table stored pipelines using pipeline name as key */
+		GHashTable * pipelines_by_index; /**< same as above but using index as key */
+		gchar * default_video_pipeline; /**< name of default video profile */
+		gchar * default_audio_pipeline; /**< name of default audio profile */
 	} GstRTSPServerConfiguration;
 
 	/**
@@ -151,6 +153,76 @@ extern "C" {
 	 * @return GstRTSPPipelineProfile* the pipeline we want to get or NULL if some thing wrong
 	 */
 	GstRTSPPipelineProfile * gst_rtsp_server_configuration_get_pipeline(const GstRTSPServerConfiguration * config, const gchar * name);
+
+	/**
+	 * set the default video pipeline for server configuration.
+	 * If the pipeline is not existed or it's not a video pipeline, return FALSE and do nothing, else return TRUE
+	 *
+	 * @param config GstRTSPServerConfiguration* the server configuration to set
+	 * @param pipeline_name gchar* name of pipeline to set to default video pipeline
+	 * @return gboolean
+	 */
+	gboolean gst_rtsp_server_configuration_set_default_video_pipeline(GstRTSPServerConfiguration * config, const gchar * pipeline_name);
+
+	/**
+	 * get the default video profile name of server configuration
+	 *
+	 * @param config GstRTSPServerConfiguration* the server configuration to get
+	 *
+	 * @return gchar* name of default video pipeline or NULL if no one is set
+	 */
+	const gchar * gst_rtsp_server_configuration_get_default_video_pipeline_name(const GstRTSPServerConfiguration * config);
+
+	/**
+	 * get default video profile name of server configuration
+	 *
+	 * @param config GstRTSPServerConfiguration* the server configuration to get
+	 *
+	 * @return GstRTSPPipelineProfile* default video profile or NULL if no one is set
+	 */
+	GstRTSPPipelineProfile * gst_rtsp_server_configuration_get_default_video_pipeline(const GstRTSPServerConfiguration * config);
+
+	/**
+	 * set default audio profile for server configuration.
+	 * If the profile is not existed or it's not an audio pipeline, nothing will be set and return FALSE.
+	 * Return TRUE if everything is ok
+	 *
+	 * @param config GstRTSPServerConfiguration* server configuration to set
+	 * @param pipeline_name gchar* name of audio profile to set to
+	 *
+	 * @return gboolean
+	 */
+	gboolean gst_rtsp_server_configuration_set_default_audio_pipeline(GstRTSPServerConfiguration * config, const gchar * pipeline_name);
+
+	/**
+	 * get default audio profile name of server configuration
+	 *
+	 * @param config GstRTSPServerConfiguration* server configuration to get
+	 *
+	 * @return gchar* name of default audio profile
+	 */
+	const gchar * gst_rtsp_server_configuration_get_default_audio_pipeline_name(const GstRTSPServerConfiguration * config);
+
+	/**
+	 * get default audio profile of server configuration.
+	 * This's the convenion function for above
+	 *
+	 * @param config GstRTSPServerConfiguration* server configuration to get
+	 *
+	 * @return GstRTSPPipelineProfile* default audio profile or NULL if no one is set
+	 */
+	GstRTSPPipelineProfile * gst_rtsp_server_configuration_get_default_audio_pipeline(const GstRTSPServerConfiguration * config);
+
+	/**
+	 * Build the combined pipeline. The output will be the combine of default video and audio pipeline.
+	 * If there's no default video pipeline, return NULL
+	 * If there's no default audio pipeline, result will be the default video pipeline
+	 *
+	 * @param config GstRTSPServerConfiguration* server configuration to get
+	 *
+	 * @return gchar* pipeline to launch
+	 */
+	gchar * gst_rtsp_server_configuration_build_pipeline(GstRTSPServerConfiguration * config);
 
 #ifdef	__cplusplus
 }

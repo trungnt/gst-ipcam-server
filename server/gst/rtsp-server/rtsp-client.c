@@ -27,7 +27,6 @@
 
 static GMutex *tunnels_lock;
 static GHashTable *tunnels;
-
 enum
 {
   PROP_0,
@@ -160,7 +159,7 @@ send_response (GstRTSPClient * client, GstRTSPSession * session,
     GstRTSPMessage * response)
 {
   gst_rtsp_message_add_header (response, GST_RTSP_HDR_SERVER,
-      "GStreamer RTSP server");
+      "GStreamer IPCam server");
 
   /* remove any previous header */
   gst_rtsp_message_remove_header (response, GST_RTSP_HDR_SESSION, -1);
@@ -250,14 +249,11 @@ find_media (GstRTSPClient * client, GstRTSPUrl * uri, GstRTSPMessage * request)
     client->uri = gst_rtsp_url_copy (uri);
     client->media = media;
   } else {
-    /* we have seen this uri before, used cached media */
-    media = client->media;
-    g_message ("reusing cached media %p", media);
+       media = client->media;
+       g_message ("reusing cached media %p", media);
   }
-
   if (media)
     g_object_ref (media);
-
   return media;
 
   /* ERRORS */

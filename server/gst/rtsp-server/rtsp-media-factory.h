@@ -19,8 +19,10 @@
 
 #include <gst/gst.h>
 #include <gst/rtsp/gstrtspurl.h>
+#include <gst/gsttagsetter.h>
 
 #include "rtsp-media.h"
+#include "profile/server-configuration.h"
 
 #ifndef __GST_RTSP_MEDIA_FACTORY_H__
 #define __GST_RTSP_MEDIA_FACTORY_H__
@@ -44,6 +46,7 @@ typedef struct _GstRTSPMediaFactoryClass GstRTSPMediaFactoryClass;
  * GstRTSPMediaFactory:
  * @lock: mutex protecting the datastructure.
  * @launch: the launch description
+ * @server_config: the set of pipeline, used to produce launch description
  * @shared: if media from this factory can be shared between clients
  * @media_lock: mutex protecting the medias.
  * @media: hashtable of shared media
@@ -55,11 +58,21 @@ struct _GstRTSPMediaFactory {
   GObject       parent;
 
   GMutex       *lock;
-  gchar        *launch;
+  gchar        *launch; /** @deprecate: temporary use for now. Will be removed later */
+  GstRTSPServerConfiguration * server_config;
   gboolean      shared;
 
   GMutex       *medias_lock;
   GHashTable   *medias;
+  /* use for webcam */
+  GstElement   *v4l2src_pipeline;
+  GstElement   *multiudpsink;  
+  gboolean     two_streams;/** in case 2 streams: client ports will be odd and even */
+  guint        v4l2src_port ;
+  /* FIXME: store bitrate and framerate info */
+  gchar          *bitrate;
+  gchar          *framerate;
+  
 };
 
 /**
@@ -93,27 +106,32 @@ struct _GstRTSPMediaFactoryClass {
   GstElement *      (*create_pipeline)(GstRTSPMediaFactory *factory, GstRTSPMedia *media);
 };
 
-GType                 gst_rtsp_media_factory_get_type     (void);
+GType                        gst_rtsp_media_factory_get_type     (void);
 
 /* creating the factory */
-GstRTSPMediaFactory * gst_rtsp_media_factory_new          (void);
+GstRTSPMediaFactory *        gst_rtsp_media_factory_new          (void);
 
 /* configuring the factory */
-void                  gst_rtsp_media_factory_set_launch   (GstRTSPMediaFactory *factory,
-                                                           const gchar *launch);
-gchar *               gst_rtsp_media_factory_get_launch   (GstRTSPMediaFactory *factory);
+void                         gst_rtsp_media_factory_set_launch   (GstRTSPMediaFactory *factory,
+                                                                  const gchar *launch);
+gchar *                      gst_rtsp_media_factory_get_launch   (GstRTSPMediaFactory *factory);
 
-void                  gst_rtsp_media_factory_set_shared   (GstRTSPMediaFactory *factory,
-                                                           gboolean shared);
-gboolean              gst_rtsp_media_factory_is_shared    (GstRTSPMediaFactory *factory);
+void                         gst_rtsp_media_factory_set_server_configuration(GstRTSPMediaFactory * factory,
+                                                                             GstRTSPServerConfiguration * server_config);
+GstRTSPServerConfiguration * gst_rtsp_media_factory_get_server_configuration(GstRTSPMediaFactory * factory);
+
+void                         gst_rtsp_media_factory_set_shared   (GstRTSPMediaFactory *factory,
+                                                                  gboolean shared);
+gboolean                     gst_rtsp_media_factory_is_shared    (GstRTSPMediaFactory *factory);
 
 /* creating the media from the factory and a url */
-GstRTSPMedia *        gst_rtsp_media_factory_construct    (GstRTSPMediaFactory *factory,
-                                                           const GstRTSPUrl *url);
+GstRTSPMedia *               gst_rtsp_media_factory_construct    (GstRTSPMediaFactory *factory,
+                                                                  const GstRTSPUrl *url);
 
-void                  gst_rtsp_media_factory_collect_streams (GstRTSPMediaFactory *factory,
+void                         gst_rtsp_media_factory_collect_streams (GstRTSPMediaFactory *factory,
                                                               const GstRTSPUrl *url,
                                                               GstRTSPMedia *media);
+void                         gst_rtsp_factory_set_device_source    (GstRTSPMediaFactory *factory, gchar *v4l2dev, gchar* prop, gint port);
 
 G_END_DECLS
 

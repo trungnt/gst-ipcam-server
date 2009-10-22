@@ -16,6 +16,20 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <arpa/inet.h>
+
 
 #include <gst/gst.h>
 #include <gst/rtsp/gstrtsprange.h>
@@ -134,7 +148,7 @@ struct _GstRTSPMediaStream {
   /* the caps of the stream */
   gulong        caps_sig;
   GstCaps      *caps;
-
+  
   /* transports we stream to */
   GList        *transports;
 };
@@ -188,6 +202,9 @@ struct _GstRTSPMedia {
 
   /* the range of media */
   GstRTSPTimeRange range;
+  /* FIXME: track bitrate encoder */
+  gchar          *bitrate;
+  gchar          *framerate;
 };
 
 /**

@@ -25,6 +25,7 @@
 #define DEFAULT_BACKLOG         5
 #define DEFAULT_PORT            8554
 
+
 enum
 {
   PROP_0,
@@ -131,7 +132,6 @@ GstRTSPServer *
 gst_rtsp_server_new (void)
 {
   GstRTSPServer *result;
-
   result = g_object_new (GST_TYPE_RTSP_SERVER, NULL);
 
   return result;
