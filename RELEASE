@@ -18,7 +18,7 @@ Client:
 
 Changes from release 0.2:  
 Server:  
-    * Support 3 stream types as independence servers: onesrc-h264, onesrc-mpeg4 and onesrc-jpeg.  
+    * Support 3 stream types as independent servers: onesrc-h264, onesrc-mpeg4 and onesrc-jpeg.  
     * Video servers have video stream synchronized with an audio stream.  
     * Supported video formats are: H.264 and MPEG4.  
     * Audio format can be configured when starting the server. Supported formats are: AAC, G711, G726.  
