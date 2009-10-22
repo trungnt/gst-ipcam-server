@@ -803,20 +803,20 @@ static const gchar * gst_ipcam_client_backend_stream_status_get_name(GstStreamSt
 {
 	switch (type)
 	{
-	case GST_STREAM_STATUS_TYPE_CREATE:
-		return "GST_STREAM_STATUS_TYPE_CREATE";
-	case GST_STREAM_STATUS_TYPE_ENTER:
-		return "GST_STREAM_STATUS_TYPE_ENTER";
-	case GST_STREAM_STATUS_TYPE_LEAVE:
-		return "GST_STREAM_STATUS_TYPE_LEAVE";
-	case GST_STREAM_STATUS_TYPE_DESTROY:
-		return "GST_STREAM_STATUS_TYPE_DESTROY";
-	case GST_STREAM_STATUS_TYPE_START:
-		return "GST_STREAM_STATUS_TYPE_START";
-	case GST_STREAM_STATUS_TYPE_PAUSE:
-		return "GST_STREAM_STATUS_TYPE_PAUSE";
-	case GST_STREAM_STATUS_TYPE_STOP:
-		return "GST_STREAM_STATUS_TYPE_STOP";
+		case GST_STREAM_STATUS_TYPE_CREATE:
+			return "GST_STREAM_STATUS_TYPE_CREATE";
+		case GST_STREAM_STATUS_TYPE_ENTER:
+			return "GST_STREAM_STATUS_TYPE_ENTER";
+		case GST_STREAM_STATUS_TYPE_LEAVE:
+			return "GST_STREAM_STATUS_TYPE_LEAVE";
+		case GST_STREAM_STATUS_TYPE_DESTROY:
+			return "GST_STREAM_STATUS_TYPE_DESTROY";
+		case GST_STREAM_STATUS_TYPE_START:
+			return "GST_STREAM_STATUS_TYPE_START";
+		case GST_STREAM_STATUS_TYPE_PAUSE:
+			return "GST_STREAM_STATUS_TYPE_PAUSE";
+		case GST_STREAM_STATUS_TYPE_STOP:
+			return "GST_STREAM_STATUS_TYPE_STOP";
 	}
 	return "Unknow Stream status type";
 }
@@ -830,23 +830,26 @@ static const gchar * gst_ipcam_client_backend_stream_status_get_name(GstStreamSt
  * @return nothing
  */
 void
-gst_ipcam_client_backend_read_latency_props(GstElement *videosink, GstElement *audiosink) {
-    gboolean live;
-    GstClockTime minLatency;
-    GstClockTime maxLatency;
-    GstQuery * latencyQuery = gst_query_new_latency();
-    /*For videosink*/
-    if (gst_element_query(videosink, latencyQuery)) {
-        gst_query_parse_latency(latencyQuery, &live, &minLatency, &maxLatency);
-	min_video_latency = minLatency;
-        max_video_latency = maxLatency; 
-    }
-    /*For audiosink*/
-    if (gst_element_query(audiosink, latencyQuery)) {
-        gst_query_parse_latency(latencyQuery, &live, &minLatency, &maxLatency);
-	min_audio_latency = minLatency;
-        max_audio_latency = maxLatency;
-    }
-    gst_query_unref(latencyQuery);
+gst_ipcam_client_backend_read_latency_props(GstElement *videosink, GstElement *audiosink)
+{
+	gboolean live;
+	GstClockTime minLatency;
+	GstClockTime maxLatency;
+	GstQuery * latencyQuery = gst_query_new_latency();
+	/*For videosink*/
+	if (gst_element_query(videosink, latencyQuery))
+	{
+		gst_query_parse_latency(latencyQuery, &live, &minLatency, &maxLatency);
+		min_video_latency = minLatency;
+		max_video_latency = maxLatency;
+	}
+	/*For audiosink*/
+	if (gst_element_query(audiosink, latencyQuery))
+	{
+		gst_query_parse_latency(latencyQuery, &live, &minLatency, &maxLatency);
+		min_audio_latency = minLatency;
+		max_audio_latency = maxLatency;
+	}
+	gst_query_unref(latencyQuery);
 }
 
