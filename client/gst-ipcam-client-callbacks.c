@@ -36,7 +36,7 @@ gst_ipcam_client_on_btn_connect_clicked(GtkButton *button,
 																				gpointer user_data)
 {
 	gtk_widget_set_sensitive(btn_connect, FALSE);
-	connection_dialog = gst_ipcam_client_create_connection_dialog();
+	connection_dialog = gst_ipcam_client_create_connection_dialog(main_window);
 
 	if (URL != NULL)
 	{

@@ -86,11 +86,11 @@ GtkWidget* gst_ipcam_client_create_main_window (void);
 /**
  * create the connection dialog
  *
- * @param void
+ * @param parent_window GtkWidget* parent window of this dialog
  *
  * @return nothing
  */
-GtkWidget* gst_ipcam_client_create_connection_dialog (void);
+GtkWidget* gst_ipcam_client_create_connection_dialog (GtkWidget * parent_window);
 
 /**
  * init the statusbar widget
@@ -132,3 +132,13 @@ void gst_ipcam_client_set_status_video_type(const gchar* type_name);
  * @return nothing
  */
 void gst_ipcam_client_set_status_audio_type(const gchar* type_name);
+
+/**
+ * Create error dialog widget
+ *
+ * @param message gchar* the message to put into error dialog
+ * @param parent GtkWidget* the parent window of this dialog
+ *
+ * @return GtkWidget* error dialog or NULL if something wrong
+ */
+GtkWidget * gst_ipcam_client_create_error_dialog(const gchar * message, GtkWidget * parent);
