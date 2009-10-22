@@ -5,7 +5,7 @@ from gis_mc_clients_manager import gisMcClientsMng
 from gis_mc_client import gisMcClient
 
 __author__ = "Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com"
-command_list = [ "list", "add", "remove", "connect", "disconnect", "pause", "resume", "exit", "help" ]
+command_list = [ "list", "add", "remove", "connect", "disconnect", "pause", "resume", "exit", "help", "change", "values" ]
 manager = gisMcClientsMng()
 
 def show_intro():
@@ -20,8 +20,14 @@ Avaiable commands:
 	- disconnect [client ids]			disconnect clients with given ids in the list
 	- pause [client ids]				pause connected clients with given ids
 	- resume [client ids]				resume paused clients with given ids
+	- change param value [client ids]		change parameter for clients with given ids.
+	- values param_name				get the list of available values for given parameter (fps and framesize)
 	- exit						exit the program
 	For [client ids], use 'all' to apply to all clients
+	For parameters, they can be:
+	- fps						frame rate. Get available values by using 'values fps'
+	- framesize					frame size. Get available values by using 'values framesize'
+	- bitrate					encoding bitrate
 For examples:
 	add 3						# launch 3 client
 	remove 1					# remove the client with id = 1
@@ -117,6 +123,49 @@ def process_input(cmd):
 	elif command == "help":
 		show_intro()
 		return 1
+	elif command == "values":
+		valid_params = ["fps", "framesize"]
+		if (len(command_args) < 2) or (command_args[1] not in valid_params):
+			print "values command require fps or framesize as parameter"
+			return -1
+		if command_args[1] == "fps":
+			print gisMcClient.fps_list
+		elif command_args[1] == "framesize":
+			print gisMcClient.frame_size_list
+		return 1
+	elif command == "change":
+		valid_params = ["fps", "framesize", "bitrate"]
+		params = {}
+		pos = 1
+		no_params = 0
+		if len(command_args) < 4:
+			print "change command require parameter value to change and clients id to work"
+			return -1
+		while True:
+			param = command_args[pos]
+			if param == "all":
+				break
+			if (param not in valid_params):
+				print "invalid parameter " + param
+				return -1
+			value = command_args[pos + 1]
+			pos = pos+2
+			if not params.has_key(param):
+				no_params = no_params + 1
+				params[param] = value
+			if no_params == 3:
+				break;
+		ids = get_client_ids(command_args, pos)
+		ok_ids = []
+		for param, value in params.iteritems():
+			if param == "fps":
+				ok_ids.extend(manager.change_fps(ids, value))
+			elif param == "framesize":
+				ok_ids.extend(manager.change_frame_size(ids, value))
+			elif param == "bitrate":
+				ok_ids.extend(manager.change_bitrate(ids, value))
+		manager.apply_change(ok_ids)
+		
 	else:
 		print "For now, i can not do the work from command: ", command
 		return 1
@@ -124,6 +173,8 @@ def process_input(cmd):
 		
 def check_client_path(base_dir, client_name = 'gis-ipcam-client', cli_paths = [], checked_dirs = []):
 	''' check and list the client with given name in given basedir '''
+	if not os.path.isdir(base_dir):
+		checked_dirs.append(base_dir)
 	if base_dir in checked_dirs:
 		return
 	checked_dirs.append(base_dir)
