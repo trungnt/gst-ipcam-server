@@ -49,7 +49,9 @@ gst_rtsp_sdp_from_media (GstRTSPMedia *media)
   gst_sdp_message_add_attribute (sdp, "type", "broadcast");
   rangestr = gst_rtsp_range_to_string (&media->range);
   gst_sdp_message_add_attribute (sdp, "range", rangestr);
+  /* we display this to client */
   gst_sdp_message_add_attribute (sdp, "encoder-bitrate", media->bitrate);
+  gst_sdp_message_add_attribute (sdp, "encoder-framerate", media->framerate);
 
   g_free (rangestr);
   for (i = 0; i < n_streams; i++) {

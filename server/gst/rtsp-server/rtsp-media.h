@@ -204,6 +204,7 @@ struct _GstRTSPMedia {
   GstRTSPTimeRange range;
   /* FIXME: track bitrate encoder */
   gchar          *bitrate;
+  gchar          *framerate;
 };
 
 /**

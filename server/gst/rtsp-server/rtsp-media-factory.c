@@ -424,6 +424,7 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
 		 if (framerate != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_framerate(profile, framerate);
+			 factory->framerate = g_strdup(framerate);
 		 }
 
 		 if (width != NULL) {
@@ -620,6 +621,7 @@ default_construct (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
   media->pipeline = klass->create_pipeline (factory, media);
   media->bitrate = g_strdup(factory -> bitrate) ;
+  media->framerate = g_strdup(factory->framerate);
   gst_rtsp_media_factory_collect_streams (factory, url, media);
 
   return media;
@@ -730,6 +732,7 @@ gst_rtsp_media_factory_set_server_configuration(GstRTSPMediaFactory* factory, Gs
 	 profile = gst_rtsp_server_configuration_get_default_video_pipeline(factory->server_config);
 	 if (profile != NULL)
   	 	factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
+  	 	factory->framerate = gst_rtsp_pipeline_profile_get_var(profile, "video-framerate");
   }	 
 
 }

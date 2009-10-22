@@ -69,7 +69,9 @@ struct _GstRTSPMediaFactory {
   GstElement   *multiudpsink;  
   gboolean     two_streams;/** in case 2 streams: client ports will be odd and even */
   guint        v4l2src_port ;
-  gchar        *bitrate;
+  /* FIXME: store bitrate and framerate info */
+  gchar          *bitrate;
+  gchar          *framerate;
   
 };
 
