@@ -200,6 +200,7 @@ gst_ipcam_client_create_main_window(void)
 	lbl_bitrate = gtk_label_new(_("Bit rate:"));
 	gtk_widget_show(lbl_bitrate);
 	gtk_container_add(GTK_CONTAINER(hbox3), lbl_bitrate);
+	gtk_widget_hide(lbl_bitrate);
 
 	alignment3 = gtk_alignment_new(0, 0, 1, 1);
 	gtk_widget_show(alignment3);
@@ -211,6 +212,7 @@ gst_ipcam_client_create_main_window(void)
 	gtk_container_add(GTK_CONTAINER(alignment3), entry_bitrate);
 	gtk_widget_set_size_request(entry_bitrate, 60, -1);
 	gtk_entry_set_invisible_char(GTK_ENTRY(entry_bitrate), 9679);
+	gtk_widget_hide(alignment3);
 
 	toolitem10 = (GtkWidget*) gtk_tool_item_new();
 	gtk_tool_item_set_expand (toolitem10, TRUE);
