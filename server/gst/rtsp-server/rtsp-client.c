@@ -929,7 +929,6 @@ handle_describe_request (GstRTSPClient * client, GstRTSPUrl * uri,
   str = g_strdup_printf ("rtsp://%s:%u%s/", uri->host, uri->port, uri->abspath);
   gst_rtsp_message_add_header (&response, GST_RTSP_HDR_CONTENT_BASE, str);
   g_free (str);
- 
   /* add SDP to the response body */
   str = gst_sdp_message_as_text (sdp);
   gst_rtsp_message_take_body (&response, (guint8 *) str, strlen (str));
