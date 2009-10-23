@@ -83,12 +83,14 @@ gst_ipcam_client_on_btn_disconnect_clicked(GtkButton *button,
 
 	/*Set all values in change toolbar to be empty*/
 	gtk_entry_set_text(entry_bitrate, "");
-	//gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (cbx_entry_fps)->entry), " ");
-	//gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (cbx_entry_fsize)->entry), " ");
-	//gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fps), 2, " ");
-	//gtk_combo_box_entry_set_text_column(cbx_entry_fps, 2);
-	//gtk_combo_box_entry_set_text_column(cbx_entry_fps, -1);
-	//gtk_combo_box_entry_set_text_column(cbx_entry_fsize, -1);
+
+	gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fps), 2, " ");
+	gtk_combo_box_set_active  (GTK_COMBO_BOX(cbx_entry_fps), 2);
+	gtk_combo_box_remove_text(GTK_COMBO_BOX(cbx_entry_fps), 2);
+
+	gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fsize), 2, " ");
+	gtk_combo_box_set_active  (GTK_COMBO_BOX(cbx_entry_fsize), 2);
+	gtk_combo_box_remove_text(GTK_COMBO_BOX(cbx_entry_fsize), 2);
 }
 
 /**
