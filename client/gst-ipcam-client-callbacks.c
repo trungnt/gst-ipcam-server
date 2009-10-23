@@ -305,7 +305,7 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	gchar *url_bitrate;
 	gchar * pipeline_description;
 
-	if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fps), "") != 0)
+	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(cbx_entry_fps)), "") != 0)
 	{
 		url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
 	}
@@ -314,7 +314,7 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 		url_fps = "";
 	}
 
-	if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fsize), "") != 0)
+	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(cbx_entry_fsize)), "") != 0)
 	{
 		gchar *f_size = gtk_combo_box_get_active_text(cbx_entry_fsize);
 		gchar **__f_size = g_strsplit(f_size, "x", 0);
@@ -325,7 +325,7 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 		url_fsize = "";
 	}
 
-	if (g_strcmp0(gtk_entry_get_text(entry_bitrate), "") != 0)
+	if (g_strcmp0(g_strchomp(gtk_entry_get_text(entry_bitrate)), "") != 0)
 	{
 		gchar *bitrate = gtk_entry_get_text(entry_bitrate);
 		url_bitrate = g_strconcat("", "bitrate=", bitrate, NULL);

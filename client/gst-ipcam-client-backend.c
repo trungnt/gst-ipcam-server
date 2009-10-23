@@ -209,7 +209,7 @@ gst_ipcam_client_backend_play()
 
 	state_return = gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	g_message("Setting to Play.....Done");
-        g_timeout_add_seconds(3, gst_ipcam_client_backend_set_latency, NULL);
+	g_timeout_add_seconds(3, gst_ipcam_client_backend_set_latency, NULL);
 	return state_return;
 }
 
@@ -410,80 +410,80 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 {
 	switch (GST_MESSAGE_TYPE(msg))
 	{
-	case GST_MESSAGE_ERROR:
-	{
-		gchar * debug;
-		GError * error;
-		gst_message_parse_error(msg, &error, &debug);
-		if ((prew_state == GST_PAUSE_STATE) && (curt_state == GST_PLAYING_STATE))
+		case GST_MESSAGE_ERROR:
 		{
-			gst_ipcam_client_backend_stop();
-			pipeline = NULL;
-			gst_ipcam_client_backend_create_pipeline((gchar *) data);
-			gst_ipcam_client_backend_play();
+			gchar * debug;
+			GError * error;
+			gst_message_parse_error(msg, &error, &debug);
+			if ((prew_state == GST_PAUSE_STATE) && (curt_state == GST_PLAYING_STATE))
+			{
+				gst_ipcam_client_backend_stop();
+				pipeline = NULL;
+				gst_ipcam_client_backend_create_pipeline((gchar *) data);
+				gst_ipcam_client_backend_play();
 
-			g_message("PLAY request sent.");
+				g_message("PLAY request sent.");
 
-			/*Resize the mainwindow to show the video got from server*/
-			gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-			gtk_widget_set_sensitive(vbox2, TRUE);
+				/*Resize the mainwindow to show the video got from server*/
+				gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
+				gtk_widget_set_sensitive(vbox2, TRUE);
+			}
+			else
+			{
+				g_message("PLAY request could not be sent.");
+
+				GtkWidget *dialog;
+				dialog = gtk_message_dialog_new(NULL,
+																				GTK_DIALOG_DESTROY_WITH_PARENT,
+																				GTK_MESSAGE_ERROR,
+																				GTK_BUTTONS_CLOSE,
+																				"The connection is failed. Please try again");
+
+				gtk_dialog_run(GTK_DIALOG(dialog));
+				gtk_widget_destroy(dialog);
+
+				gst_ipcam_client_on_btn_disconnect_clicked(NULL, NULL);
+				g_free(debug);
+
+				g_warning("Pipeline error: %s", error->message);
+
+				g_error_free(error);
+
+			}
 		}
-		else
+			break;
+		case GST_MESSAGE_STATE_CHANGED:
 		{
-			g_message("PLAY request could not be sent.");
-
-			GtkWidget *dialog;
-			dialog = gtk_message_dialog_new(NULL,
-																			GTK_DIALOG_DESTROY_WITH_PARENT,
-																			GTK_MESSAGE_ERROR,
-																			GTK_BUTTONS_CLOSE,
-																			"The connection is failed. Please try again");
-
-			gtk_dialog_run(GTK_DIALOG(dialog));
-			gtk_widget_destroy(dialog);
-
-			gst_ipcam_client_on_btn_disconnect_clicked(NULL, NULL);
-			g_free(debug);
-
-			g_warning("Pipeline error: %s", error->message);
-
-			g_error_free(error);
-
+			GstState oldState, newState, pending;
+			gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
+			switch (newState)
+			{
+				case GST_STATE_PLAYING:
+					if (video_sink != NULL)
+						gst_ipcam_client_read_video_props(video_sink);
+					gst_ipcam_client_set_status_text("Playing");
+					gst_ipcam_client_set_status_video_type(video_type);
+					gst_ipcam_client_set_status_audio_type(audio_type);
+					break;
+				case GST_STATE_PAUSED:
+					gst_ipcam_client_set_status_text("Paused");
+					break;
+				case GST_STATE_NULL:
+					gst_ipcam_client_set_status_text("Stopped");
+					break;
+				case GST_STATE_READY:
+					break;
+				default:
+					g_message("Unknow state : %d!", newState);
+					gst_ipcam_client_set_status_text("Stopped");
+					break;
+			}
+				break;
 		}
-	}
-		break;
-	case GST_MESSAGE_STATE_CHANGED:
-	{
-		GstState oldState, newState, pending;
-		gst_message_parse_state_changed(msg, &oldState, &newState, &pending);
-		switch (newState)
-		{
-		case GST_STATE_PLAYING:
-			if (video_sink != NULL)
-				gst_ipcam_client_read_video_props(video_sink);
-			gst_ipcam_client_set_status_text("Playing");
-			gst_ipcam_client_set_status_video_type(video_type);
-			gst_ipcam_client_set_status_audio_type(audio_type);
-			break;
-		case GST_STATE_PAUSED:
-			gst_ipcam_client_set_status_text("Paused");
-			break;
-		case GST_STATE_NULL:
-			gst_ipcam_client_set_status_text("Stopped");
-			break;
-		case GST_STATE_READY:
 			break;
 		default:
-			g_message("Unknow state : %d!", newState);
-			gst_ipcam_client_set_status_text("Stopped");
+			gst_ipcam_client_backend_print_gst_message(msg);
 			break;
-		}
-		break;
-	}
-		break;
-	default:
-		gst_ipcam_client_backend_print_gst_message(msg);
-		break;
 	}
 	return TRUE;
 }
@@ -492,75 +492,75 @@ static void gst_ipcam_client_backend_print_gst_message(GstMessage* message)
 {
 	switch (GST_MESSAGE_TYPE(message))
 	{
-	case GST_MESSAGE_ERROR:
-	{
-		gchar * debug;
-		GError * error;
-		gst_message_parse_error(message, &error, &debug);
-
-		if (debug != NULL)
+		case GST_MESSAGE_ERROR:
 		{
-			g_debug("Error Debug: %s", debug);
-			g_free(debug);
-		}
+			gchar * debug;
+			GError * error;
+			gst_message_parse_error(message, &error, &debug);
 
-		if (error != NULL)
+			if (debug != NULL)
+			{
+				g_debug("Error Debug: %s", debug);
+				g_free(debug);
+			}
+
+			if (error != NULL)
+			{
+				g_warning("Backend error message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_error_free(error);
+			}
+		}
+			break;
+		case GST_MESSAGE_INFO:
 		{
-			g_warning("Backend error message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
-			g_error_free(error);
-		}
-	}
-		break;
-	case GST_MESSAGE_INFO:
-	{
-		gchar * debug;
-		GError * error;
-		gst_message_parse_info(message, &error, &debug);
+			gchar * debug;
+			GError * error;
+			gst_message_parse_info(message, &error, &debug);
 
-		if (debug != NULL)
+			if (debug != NULL)
+			{
+				g_debug("Info Debug: %s", debug);
+				g_free(debug);
+			}
+
+			if (error != NULL)
+			{
+				g_warning("Backend info message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_error_free(error);
+			}
+		}
+			break;
+		case GST_MESSAGE_WARNING:
 		{
-			g_debug("Info Debug: %s", debug);
-			g_free(debug);
-		}
+			gchar * debug;
+			GError * error;
+			gst_message_parse_warning(message, &error, &debug);
 
-		if (error != NULL)
+			if (debug != NULL)
+			{
+				g_debug("Warning Debug: %s", debug);
+				g_free(debug);
+			}
+
+			if (error != NULL)
+			{
+				g_warning("Backend warning message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
+				g_error_free(error);
+			}
+		}
+			break;
+		case GST_MESSAGE_STREAM_STATUS:
 		{
-			g_warning("Backend info message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
-			g_error_free(error);
-		}
-	}
-		break;
-	case GST_MESSAGE_WARNING:
-	{
-		gchar * debug;
-		GError * error;
-		gst_message_parse_warning(message, &error, &debug);
+			GstElement * owner;
+			GstStreamStatusType type;
+			gst_message_parse_stream_status(message, &type, &owner);
 
-		if (debug != NULL)
-		{
-			g_debug("Warning Debug: %s", debug);
-			g_free(debug);
+			g_message("Got status %s from element %s", gst_ipcam_client_backend_stream_status_get_name(type), gst_element_get_name(owner));
 		}
-
-		if (error != NULL)
-		{
-			g_warning("Backend warning message (%s): %s", GST_MESSAGE_TYPE_NAME(message), error->message);
-			g_error_free(error);
-		}
-	}
-		break;
-	case GST_MESSAGE_STREAM_STATUS:
-	{
-		GstElement * owner;
-		GstStreamStatusType type;
-		gst_message_parse_stream_status(message, &type, &owner);
-
-		g_message("Got status %s from element %s", gst_ipcam_client_backend_stream_status_get_name(type), gst_element_get_name(owner));
-	}
-		break;
-	default:
-		g_message("got the message of type %s", gst_message_type_get_name(GST_MESSAGE_TYPE(message)));
-		break;
+			break;
+		default:
+			g_message("got the message of type %s", gst_message_type_get_name(GST_MESSAGE_TYPE(message)));
+			break;
 	}
 }
 
@@ -735,19 +735,22 @@ gst_ipcam_client_read_video_props(GstElement *video_sink)
 	gst_structure_get_int(str, "width", &width);
 	gst_structure_get_int(str, "height", &height);
 
-	g_message("frame rate %s", framerate);
+	if(g_strcmp0(framerate, "") != 0)
+		g_message("frame rate %s", framerate);
+	
+	if((width != 0) && (height != 0))
+		g_message("The video size of this set of capabilities is %dx%d",
+							width, height);
 
-	g_message("The video size of this set of capabilities is %dx%d",
-						width, height);
+	if(g_strcmp0(bitrate, "") != 0)
+		g_message("Bitrate is %s", bitrate);
 
-	g_message("Bitrate is %s", bitrate);
-
-	if (g_strcmp0(framerate, "") != 0)
+	if(g_strcmp0(framerate, "") != 0)
 		status_props = g_strconcat("", "Fps:", framerate, NULL);
 
 	status_props = g_strconcat(status_props, " Frame size:", g_strdup_printf("%d", width),
 														 "x", g_strdup_printf("%d", height), NULL);
-	if (g_strcmp0(bitrate, "") != 0)
+	if(g_strcmp0(bitrate, "") != 0)
 		status_props = g_strconcat(status_props, " Bitrate:", bitrate, NULL);
 	gst_ipcam_client_set_status_properties(status_props);
 }
