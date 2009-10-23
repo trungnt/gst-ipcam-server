@@ -44,7 +44,7 @@ gst_ipcam_client_create_main_window(void)
 	gchar * main_window_title = gst_ipcam_client_window_create_title(_("Gst Ipcam Client"));
 	gtk_window_set_title(GTK_WINDOW(main_window), main_window_title);
 	g_free(main_window_title);
-	gtk_window_set_default_size(GTK_WINDOW(main_window), 550, 50);
+	gtk_window_set_default_size(GTK_WINDOW(main_window), 650, 50);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(vbox);
@@ -102,14 +102,19 @@ gst_ipcam_client_create_main_window(void)
 	btn_about = gtk_button_new_from_stock("gtk-about");
 	gtk_widget_show(btn_about);
 	gtk_container_add(GTK_CONTAINER(toolitem_about), btn_about);
+	
+	toolitem_quit = (GtkWidget*) gtk_tool_item_new();
+	gtk_tool_item_set_expand (toolitem_quit, TRUE);
+	gtk_widget_show(toolitem_quit);
+
+	gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem_quit, -1);
 
 	toolitem_quit = (GtkWidget*) gtk_tool_item_new();
 	gtk_widget_show(toolitem_quit);
-	gtk_container_add(GTK_CONTAINER(toolbar), toolitem_quit);
-
 	btn_quit = gtk_button_new_from_stock("gtk-quit");
 	gtk_widget_show(btn_quit);
 	gtk_container_add(GTK_CONTAINER(toolitem_quit), btn_quit);
+	gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem_quit, -1);
 
 	hbox1 = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(hbox1);
@@ -208,9 +213,14 @@ gst_ipcam_client_create_main_window(void)
 	gtk_entry_set_invisible_char(GTK_ENTRY(entry_bitrate), 9679);
 
 	toolitem10 = (GtkWidget*) gtk_tool_item_new();
+	gtk_tool_item_set_expand (toolitem10, TRUE);
 	gtk_widget_show(toolitem10);
-	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem10);
+	gtk_toolbar_insert (GTK_TOOLBAR (toolbar1), toolitem10, -1);
 
+	toolitem10 = (GtkWidget*) gtk_tool_item_new();
+	gtk_widget_show(toolitem10);
+	gtk_toolbar_insert (GTK_TOOLBAR (toolbar1), toolitem10, -1);
+	
 	hbox4 = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(hbox4);
 	gtk_container_add(GTK_CONTAINER(toolitem10), hbox4);
@@ -298,7 +308,7 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, status_bar, "status_bar");
 	GLADE_HOOKUP_OBJECT(main_window, entry_bitrate, "entry_bitrate");
 
-	gtk_widget_hide(toolbar1);
+	/*gtk_widget_hide(toolbar1);*/
 	
 	return main_window;
 }
@@ -319,6 +329,7 @@ gst_ipcam_client_create_connection_dialog(GtkWidget * parent_window)
 	g_free(connection_dialog_title);
 	gtk_window_set_resizable(GTK_WINDOW(connection_dialog), FALSE);
 	gtk_window_set_type_hint(GTK_WINDOW(connection_dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_widget_set_size_request(connection_dialog, 290, -1);
 
 	dialog_vbox = GTK_DIALOG(connection_dialog)->vbox;
 	gtk_widget_show(dialog_vbox);
@@ -343,7 +354,6 @@ gst_ipcam_client_create_connection_dialog(GtkWidget * parent_window)
 									 (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
 									 (GtkAttachOptions) (0), 0, 0);
 	gtk_entry_set_invisible_char(GTK_ENTRY(entry_url), 9679);
-
 	dialog_action_area = GTK_DIALOG(connection_dialog)->action_area;
 	gtk_widget_show(dialog_action_area);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(dialog_action_area), GTK_BUTTONBOX_END);
