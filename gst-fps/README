@@ -1,0 +1,21 @@
+WHAT IT IS
+----------
+
+GstFpsBin is a small gstreamer(http://gstreamer.net/) plugin to allow user adjust
+video frame rate runtime.
+
+HOW TO USE IT
+-------------
+
+Just like normal gstreamer element.
+
+To build:
+    $cd gst-fps
+    $./autogen.sh
+    $make
+    $sudo make install
+
+To test the plugin, use a pipeline like this
+    $gst-launch videotestsrc ! fpsbin framerate='5/1' ! autovideosink
+
+This will limit the frame rate to 5 (fps)
