@@ -433,11 +433,7 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 				g_message("PLAY request could not be sent.");
 
 				GtkWidget *dialog;
-				dialog = gtk_message_dialog_new(NULL,
-																				GTK_DIALOG_DESTROY_WITH_PARENT,
-																				GTK_MESSAGE_ERROR,
-																				GTK_BUTTONS_CLOSE,
-																				"The connection is failed. Please try again");
+				dialog = gst_ipcam_client_create_error_dialog("The connection is failed. Please try again", GTK_WINDOW(main_window));
 
 				gtk_dialog_run(GTK_DIALOG(dialog));
 				gtk_widget_destroy(dialog);
