@@ -5,7 +5,7 @@ from gis_mc_clients_manager import gisMcClientsMng
 from gis_mc_client import gisMcClient
 
 __author__ = "Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com"
-command_list = [ "list", "add", "remove", "connect", "disconnect", "pause", "resume", "exit", "help"]#, "change", "values" ]
+command_list = [ "list", "add", "remove", "connect", "disconnect", "pause", "resume", "exit", "help", "change", "values" ]
 manager = gisMcClientsMng()
 
 def show_intro():
@@ -20,8 +20,13 @@ Avaiable commands:
 	- disconnect [client ids]			disconnect clients with given ids in the list
 	- pause [client ids]				pause connected clients with given ids
 	- resume [client ids]				resume paused clients with given ids
+	- change param value [client ids]		change parameter for clients with given ids.
+	- values param_name				get the list of available values for given parameter (fps and framesize)
 	- exit						exit the program
 	For [client ids], use 'all' to apply to all clients
+	For parameters, they can be:
+	- fps						frame rate. Get available values by using 'values fps'
+	- framesize					frame size. Get available values by using 'values framesize'
 For examples:
 	add 3						# launch 3 client
 	remove 1					# remove the client with id = 1
@@ -128,7 +133,7 @@ def process_input(cmd):
 			print gisMcClient.frame_size_list
 		return 1
 	elif command == "change":
-		valid_params = ["fps", "framesize", "bitrate"]
+		valid_params = ["fps", "framesize"]
 		params = {}
 		pos = 1
 		no_params = 0
