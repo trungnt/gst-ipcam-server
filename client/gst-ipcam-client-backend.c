@@ -594,6 +594,18 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad)
 
 	g_message("Stream type : %s\n", stream_type);
 	{
+		if (g_strcmp0(stream_type, "JPEG") == 0)
+		{
+			/* Set bitrate label and bitrate entry to be insensitive*/
+			gtk_widget_set_sensitive(lbl_bitrate, FALSE);
+			gtk_widget_set_sensitive(entry_bitrate, FALSE);
+		}
+		else
+		{
+			/* Set bitrate label and bitrate entry to be sensitive*/
+			gtk_widget_set_sensitive(lbl_bitrate, TRUE);
+			gtk_widget_set_sensitive(entry_bitrate, TRUE);
+		}
 		/* preprocess stream type */
 		if (g_strcmp0(stream_type, "MP4V-ES") == 0)
 		{
@@ -614,12 +626,6 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad)
 		{
 			g_free(stream_type);
 			stream_type = g_strdup("G711");
-		}
-		else if (g_strcmp0(stream_type, "JPEG") == 0)
-		{
-			/* Set bitrate label and bitrate entry to be insensitive*/
-			gtk_widget_set_sensitive(lbl_bitrate, FALSE);
-			gtk_widget_set_sensitive(entry_bitrate, FALSE);
 		}
 	}
 	

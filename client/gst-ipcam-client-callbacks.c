@@ -305,6 +305,7 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	gchar *url_bitrate;
 	gchar * pipeline_description;
 
+	URL = strtok(URL, "?");
 	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(cbx_entry_fps)), "") != 0)
 	{
 		url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
