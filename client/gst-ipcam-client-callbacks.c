@@ -85,8 +85,8 @@ gst_ipcam_client_on_btn_disconnect_clicked(GtkButton *button,
 	gtk_entry_set_text(entry_bitrate, "");
 	//gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (cbx_entry_fps)->entry), " ");
 	//gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (cbx_entry_fsize)->entry), " ");
-	gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fps), 2, " ");
-	gtk_combo_box_entry_set_text_column(cbx_entry_fps, 2);
+	//gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fps), 2, " ");
+	//gtk_combo_box_entry_set_text_column(cbx_entry_fps, 2);
 	//gtk_combo_box_entry_set_text_column(cbx_entry_fps, -1);
 	//gtk_combo_box_entry_set_text_column(cbx_entry_fsize, -1);
 }
@@ -303,7 +303,6 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	gchar *url_bitrate;
 	gchar * pipeline_description;
 
-	gst_ipcam_client_backend_stop();
 	if (g_strcmp0(gtk_combo_box_get_active_text(cbx_entry_fps), "") != 0)
 	{
 		url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
@@ -362,13 +361,21 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	{
 		pipeline_description = g_strconcat("", URL, "?", url_bitrate, NULL);
 	}
+	else
+	{
+		pipeline_description = NULL;
+	}
 
-	g_message(pipeline_description);
-	gst_ipcam_client_backend_create_pipeline(pipeline_description);
-	gst_ipcam_client_backend_play();
+	if (pipeline_description != NULL)
+	{
+		gst_ipcam_client_backend_stop();
+		g_message(pipeline_description);
+		gst_ipcam_client_backend_create_pipeline(pipeline_description);
+		gst_ipcam_client_backend_play();
 
-	g_message("PLAY request sent.");
-	/*Resize the mainwindow to show the video got from server*/
-	gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-	gtk_widget_set_sensitive(vbox2, TRUE);
+		g_message("PLAY request sent.");
+		/*Resize the mainwindow to show the video got from server*/
+		gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
+		gtk_widget_set_sensitive(vbox2, TRUE);
+	}
 }
