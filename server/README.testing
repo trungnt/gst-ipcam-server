@@ -3,10 +3,12 @@ This is a brief instruction guide to fetch, build and test gst-ipcam-server serv
 I. FETCH SOURCE CODE
  - Create a new folder on your hard disk to store source code.
  - Go to that folder and fetch the code with this command:
-  	$ git clone git://github.com/trungnt/gst-ipcam-server.git
+	$ git clone git://github.com/trungnt/gst-ipcam-server.git
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
+ - To test a given release - for example, release XXX - use this command:
+	$ git reset --hard XXX
  - To work with the development version, use the following command:
    	$ git checkout --track -b server-development origin/server-development
  - Notes: If the development branch was already fetched, no need to fetch it again. Instead, switch to the branch by the commands:
@@ -14,14 +16,46 @@ I. FETCH SOURCE CODE
 	$ git pull 				# to update to the latest revision.
 
 II. BUILD
- - NOTE: before building the server, go to section III to check whether all necessary packages are present in your system.
+ - NOTE: before building the server, go to section IV to check whether all necessary packages are present in your system.
  - Go to the folder "server".
  - For the first time build, run:
    	$ ./autogen.sh
  - Build :
    	$ make
 
-III. SOFTWARE DEPENDENCIES
+III. Fps Plugin
+  From release 0.4, server comes with fps plugin to adjust framerate at runtime.
+
+1. Fetch Source Code
+  Fps plugin can be installed indepedence with the server but here. But here, it comes with server source code. No need to do any extra work.
+
+2. Build
+ - Inside gst-ipcam-server folder, change to gst-fps folder:
+	$ cd gst-fps
+ - Then:
+	$ ./autogen.sh --prefix=/usr
+	$ make
+	$ sudo make install
+
+3. Usage
+ - Fps plugin is a gstreamer plugin. Use it like other ones.
+ - The plugin element's name is fpsbin.
+ - fpsbin element has one property: framerate - value of frame rate to set to.
+
+IV. SOFTWARE DEPENDENCIES
+1. Standard Gstreamers packages from Ubuntu 9.04 repository:
+- Run the following command:
+	$ sudo apt-get install gstreamer0.10-plugins-bad and gstreamer0.10-plugins-bad-multiverse
+
+If you can not run the command, enable "Communiti-maintained Open Source software (universe)" and "Software restricted by copyright or legal issues (multiverse)" by following below steps:
+	+ From the main menu, select "System".
+	+ Select "Adminitrastion".
+	+ Select "Software Sources"
+	+ Check "Communiti-maintained Open Source software (universe)" and "Software restricted by copyright or legal issues (multiverse)".
+	+ Click "Close" button.
+	+ Then click "Reload" on popup dialog or run "sudo apt-get update" in the terminal.
+	+ After that, you can use install command as above.
+
 1. Gstreamers version >= 0.10.24.1, from ppa repository:  
 - Add following lines to /etc/apt/sources.list:  
 	deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main  
@@ -29,20 +63,12 @@ III. SOFTWARE DEPENDENCIES
  
 - Then:  
 	$ sudo apt-get update  
-	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev  
- 
-2. MPEG4 and H.264 encoders from FFMPEG  
- + gstreamer0.10-ffmpeg version 0.10.6.2-1ubuntu2 (standard package with Ubuntu 9.04, ppa package may not work).
- + libavcodec-unstripped-52.
- 	$ sudo apt-get install gstreamer0.10-ffmpeg libavcodec-unstripped-52  
- 
-- After installation, gst-inspect may not find ffenc_mpeg4 and ffenc_libx264. This case often happens if gstreamer0.10-ffmpeg was installed with libavcodec package (which does not include MPEG4 and H.264 encoders). To fix, remove old gstreamer plugin registry files by issuing:  
-	$ rm ~/.gstreamer-0.10/registry.*  
+	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg
  
 3. Build tools, if not installed yet:  
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev 
 
-IV. RUN
+V. RUN
    We have 3 servers for H264, JPEG and MPEG4 inside "servers" directory with names: 
     - onesrc-h264 (url: rtsp://ip:8554/h264)
     - onesrc-jpeg (url: rtsp://ip:8554/jpg)

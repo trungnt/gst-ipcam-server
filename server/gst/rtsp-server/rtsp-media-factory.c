@@ -425,8 +425,10 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 		 if (framerate != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_framerate(profile, framerate);
 			 factory->framerate = g_strdup(framerate);
-		 }
-
+		 } else {
+	   	 factory->framerate = gst_rtsp_pipeline_profile_get_var(profile, "video-framerate");
+		 } 
+		 
 		 if (width != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_width(profile, width);
 		 }
@@ -438,12 +440,19 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 		 if (bitrate != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_bitrate(profile, bitrate);
 			 factory->bitrate = g_strdup(bitrate);
+		 } else {
+     	 	 factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
 		 }
 	 }
 	 
 wrong_params:
  	 g_free (url_launch);
 	 g_hash_table_destroy (params);
+  } else {
+	 GstRTSPPipelineProfile * profile = NULL;
+	 profile = gst_rtsp_server_configuration_get_default_video_pipeline(factory->server_config);
+    factory->framerate = gst_rtsp_pipeline_profile_get_var(profile, "video-framerate");
+    factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
   }	
   /* we add new client here */
 
@@ -727,14 +736,7 @@ gst_rtsp_media_factory_set_server_configuration(GstRTSPMediaFactory* factory, Gs
 	}
 
 	factory->server_config = server_config;
-   if (factory->bitrate == NULL)	{  
-	 GstRTSPPipelineProfile * profile = NULL;
-	 profile = gst_rtsp_server_configuration_get_default_video_pipeline(factory->server_config);
-	 if (profile != NULL)
-  	 	factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
-  	 	factory->framerate = gst_rtsp_pipeline_profile_get_var(profile, "video-framerate");
-  }	 
-
+	
 }
 
 GstRTSPServerConfiguration *
