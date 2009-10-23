@@ -33,7 +33,7 @@ III. SOFTWARE REQUIREMENTS
 
  - Then:
 	$ sudo apt-get update
-	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg
+	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg gstreamer0.10-plugins-good
  
 3. Build tools, if not installed yet:  
     $ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
