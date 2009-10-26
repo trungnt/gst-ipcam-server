@@ -187,7 +187,7 @@ static void gst_bit_rate_start_pipeline(GstBitRate * bitrate_element);
  * Idle function to set bitrate if we can't set it before.
  *
  * @param data gpointer pointer to bitrate element
- * @return gboolean TRUE if this idle function should be remove from timeout list, FALSE otherwise
+ * @return gboolean FALSE if this idle function should be remove from timeout list, TRUE otherwise.
  */
 static gboolean gst_bit_rate_set_bitrate_idle(gpointer data);
 
@@ -195,9 +195,13 @@ static gboolean gst_bit_rate_set_bitrate_idle(gpointer data);
  * Idle function to set encoder name if we can't set it before
  *
  * @param data gpointer pointer to bitrate element
- * @return gboolean TRUE if finished setting encoder name (idle function won't be called again), FALSE otherwise
+ * @return gboolean FALSE if finished setting encoder name (idle function won't be called again), TRUE otherwise
  */
 static gboolean gst_bit_rate_set_encoder_name_idle(gpointer data);
+
+/**
+ * for debugging colorization
+ */
 
 /* GObject vmethod implementations */
 
@@ -403,6 +407,7 @@ static gboolean gst_bit_rate_set_encoder_with_name(GstBitRate* bitrate_element, 
 		}
 		return TRUE;
 	}
+
 	if (g_strcmp0(bitrate_element->waiting_encoder_name, encoder_name) != 0) {
 		if (bitrate_element->waiting_encoder_name != NULL) {
 			g_free(bitrate_element->waiting_encoder_name);
@@ -466,7 +471,7 @@ static void gst_bit_rate_start_pipeline(GstBitRate* bitrate_element) {
 static gboolean gst_bit_rate_set_bitrate_idle(gpointer data) {
 	GstBitRate * bitrate_element = (GstBitRate *) data;
 	if (bitrate_element->is_bitrate_waiting == TRUE) {
-		return gst_bit_rate_set_bitrate(bitrate_element, bitrate_element->waiting_bitrate);
+		return (!gst_bit_rate_set_bitrate(bitrate_element, bitrate_element->waiting_bitrate));
 	}
 
 	return FALSE;
@@ -475,7 +480,7 @@ static gboolean gst_bit_rate_set_bitrate_idle(gpointer data) {
 static gboolean gst_bit_rate_set_encoder_name_idle(gpointer data) {
 	GstBitRate * bitrate_element = (GstBitRate *) data;
 	if (bitrate_element->is_encoder_name_waiting == TRUE) {
-		return gst_bit_rate_set_encoder_with_name(bitrate_element, bitrate_element->waiting_encoder_name);
+		return (!gst_bit_rate_set_encoder_with_name(bitrate_element, bitrate_element->waiting_encoder_name));
 	}
 
 	return FALSE;
