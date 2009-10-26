@@ -14,7 +14,11 @@ A.I.1. Fetch Source Code
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
- - To test a given release XXX, use the command:
+ - To test a given release XXX, use these commands:
+	$ git pull --tags			# to update to the latest revision with tags
+	or
+	$ git fetch --tags			# to update and fetch new tags
+	then
 	$ git reset --hard XXX
   For example:
 	$ git reset --hard 0.1
@@ -53,7 +57,7 @@ A.I.3.b. Gstreamer version >= 0.10.24.1, from ppa repository:
 
 - Then:
 	$ sudo apt-get update
-	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg
+	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg gstreamer0.10-plugins-good gstreamers0.10-plugin-base
 
 A.I.3.c. Build tools, if not installed yet:
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
@@ -136,7 +140,11 @@ A.II.1. Fetch Source Code
    After finishing this command, a sub-folder named "gst-ipcam-server" will be created with our source code inside.
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
- - To test a given release XXX, use the command:
+ - To test a given release XXX, use these commands:
+	$ git pull --tags			# to update to the latest revision with tags
+	or
+	$ git fetch --tags			# to update and fetch new tags
+	then
 	$ git reset --hard XXX
   For example:
 	$ git reset --hard 0.1
