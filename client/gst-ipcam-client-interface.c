@@ -209,7 +209,7 @@ gst_ipcam_client_create_main_window(void)
 	entry_bitrate = gtk_entry_new();
 	gtk_widget_show(entry_bitrate);
 	gtk_container_add(GTK_CONTAINER(alignment3), entry_bitrate);
-	gtk_widget_set_size_request(entry_bitrate, 60, -1);
+	gtk_widget_set_size_request(entry_bitrate, 120, -1);
 	gtk_entry_set_invisible_char(GTK_ENTRY(entry_bitrate), 9679);
 
 	toolitem10 = (GtkWidget*) gtk_tool_item_new();
@@ -307,8 +307,6 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, prw_video, "prw_video");
 	GLADE_HOOKUP_OBJECT(main_window, status_bar, "status_bar");
 	GLADE_HOOKUP_OBJECT(main_window, entry_bitrate, "entry_bitrate");
-
-	/*gtk_widget_hide(toolbar1);*/
 	
 	return main_window;
 }
@@ -532,13 +530,7 @@ gst_ipcam_client_create_error_dialog(const gchar* message, GtkWidget * parent)
 			GTK_STOCK_OK,
 			GTK_RESPONSE_ACCEPT,
 			NULL);
-/*
-	dialog = gtk_message_dialog_new(GTK_WINDOW(parent),
-			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-			GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_OK,
-			"%s", message);
-*/
+	
 	g_return_val_if_fail(dialog != NULL, NULL);
 
 	{

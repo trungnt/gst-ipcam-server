@@ -752,6 +752,7 @@ gst_ipcam_client_read_video_props(GstElement *video_sink)
 
 	status_props = g_strconcat(status_props, " Frame size:", g_strdup_printf("%d", width),
 														 "x", g_strdup_printf("%d", height), NULL);
+	
 	if(g_strcmp0(bitrate, "") != 0)
 		status_props = g_strconcat(status_props, " Bitrate:", bitrate, NULL);
 	gst_ipcam_client_set_status_properties(status_props);
