@@ -401,8 +401,8 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
     GHashTable *params = NULL;
 	 guint param_number = 0;
 
-	/* now parse query */
-	params = gst_rtsp_media_factory_query_parsing(url_launch);
+	 /* now parse query */
+	 params = gst_rtsp_media_factory_query_parsing(url_launch);
 	 /*url_launch = g_strdup (factory->launch);*/
 	 param_number = g_hash_table_size (params);
 	 if (param_number == 0) 
@@ -424,8 +424,10 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
 		 if (framerate != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_framerate(profile, framerate);
+			 g_free (factory->framerate);			 
 			 factory->framerate = g_strdup(framerate);
 		 } else {
+		    g_free (factory->framerate);
 	   	 factory->framerate = gst_rtsp_pipeline_profile_get_var(profile, "video-framerate");
 		 } 
 		 
@@ -439,9 +441,11 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
 
 		 if (bitrate != NULL) {
 			 gst_rtsp_pipeline_profile_video_set_bitrate(profile, bitrate);
+			 g_free (factory->bitrate);
 			 factory->bitrate = g_strdup(bitrate);
 		 } else {
-     	 	 factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
+		    g_free (factory->bitrate);
+     	 	 factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");     	 	 
 		 }
 	 }
 	 
@@ -451,6 +455,8 @@ wrong_params:
   } else {
 	 GstRTSPPipelineProfile * profile = NULL;
 	 profile = gst_rtsp_server_configuration_get_default_video_pipeline(factory->server_config);
+	 g_free (factory->framerate);
+	 g_free (factory->bitrate);
     factory->framerate = gst_rtsp_pipeline_profile_get_var(profile, "video-framerate");
     factory->bitrate = gst_rtsp_pipeline_profile_get_var(profile, "video-bitrate");
   }	
