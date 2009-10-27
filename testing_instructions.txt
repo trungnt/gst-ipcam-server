@@ -57,7 +57,7 @@ A.I.3.b. Gstreamer version >= 0.10.24.1, from ppa repository:
 
 - Then:
 	$ sudo apt-get update
-	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg gstreamer0.10-plugins-good gstreamers0.10-plugin-base
+	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg gstreamer0.10-plugins-good gstreamer0.10-plugins-base
 
 A.I.3.c. Build tools, if not installed yet:
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
