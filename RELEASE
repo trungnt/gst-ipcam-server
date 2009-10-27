@@ -11,7 +11,7 @@ Current stable version is 0.7 and includes 2 components:
 
 Changes from release 0.6:  
 Server:  
-    * Support for 2 output streams from 2 source cameras.  
+    * Added support for 2 output streams from 2 source cameras.  
     * Output streams can be: JPEG with H.264 or JPEG with MPEG4.  
 
 Changes from release 0.5:  
