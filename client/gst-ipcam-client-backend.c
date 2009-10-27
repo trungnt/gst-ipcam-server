@@ -249,7 +249,9 @@ gst_ipcam_client_backend_stop()
 
 	/*resize the main window*/
 	gtk_window_resize(GTK_WINDOW(main_window), 650, 50);
-	gtk_widget_set_sensitive(vbox2, FALSE);
+	/*Set the prw_video to be zezo*/
+	gtk_widget_set_size_request(prw_video, 0, 0);
+	gtk_widget_set_sensitive(toolbar1, FALSE);
 	GstStateChangeReturn state_return;
 
 	state_return = gst_element_set_state(pipeline, GST_STATE_NULL);
@@ -426,7 +428,7 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 
 				/*Resize the mainwindow to show the video got from server*/
 				gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-				gtk_widget_set_sensitive(vbox2, TRUE);
+				gtk_widget_set_sensitive(toolbar1, TRUE);
 			}
 			else
 			{
@@ -741,8 +743,11 @@ gst_ipcam_client_read_video_props(GstElement *video_sink)
 		g_message("frame rate %s", framerate);
 	
 	if((width != 0) && (height != 0))
+	{
 		g_message("The video size of this set of capabilities is %dx%d",
 							width, height);
+		gtk_widget_set_size_request(prw_video, width, height);
+	}
 
 	if(g_strcmp0(bitrate, "") != 0)
 		g_message("Bitrate is %s", bitrate);

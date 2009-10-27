@@ -208,8 +208,8 @@ gst_ipcam_client_on_btn_connect_dialog_clicked(GtkButton *button,
 	g_message("PLAY request sent.");
 
 	/*Resize the mainwindow to show Video got from server*/
-	gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-	gtk_widget_set_sensitive(vbox2, TRUE);
+	//gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
+	gtk_widget_set_sensitive(toolbar1, TRUE);
 
 	/*remove btn_Connect button from toolitem_Connect*/
 	gtk_container_remove(GTK_CONTAINER(toolitem_connect), btn_connect);
@@ -379,6 +379,6 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 		g_message("PLAY request sent.");
 		/*Resize the mainwindow to show the video got from server*/
 		gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-		gtk_widget_set_sensitive(vbox2, TRUE);
+		gtk_widget_set_sensitive(toolbar1, TRUE);
 	}
 }

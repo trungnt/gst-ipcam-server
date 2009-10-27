@@ -116,18 +116,10 @@ gst_ipcam_client_create_main_window(void)
 	gtk_container_add(GTK_CONTAINER(toolitem_quit), btn_quit);
 	gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem_quit, -1);
 
-	hbox1 = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(hbox1);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox1, TRUE, TRUE, 0);
-
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox2);
-	gtk_widget_set_sensitive(vbox2, FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox1), vbox2, TRUE, TRUE, 0);
-
 	toolbar1 = gtk_toolbar_new();
 	gtk_widget_show(toolbar1);
-	gtk_box_pack_start(GTK_BOX(vbox2), toolbar1, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(toolbar1, FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar1, FALSE, TRUE, 0);
 	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar1), GTK_TOOLBAR_BOTH);
 	tmp_toolbar_icon_size = gtk_toolbar_get_icon_size(GTK_TOOLBAR(toolbar1));
 
@@ -229,17 +221,17 @@ gst_ipcam_client_create_main_window(void)
 	gtk_widget_show(btn_change);
 	gtk_box_pack_start(GTK_BOX(hbox4), btn_change, FALSE, FALSE, 0);
 
-	alignment4 = gtk_alignment_new(0.5, 0.5, 1, 1);
-	gtk_widget_show(alignment4);
-	gtk_box_pack_start(GTK_BOX(vbox2), alignment4, TRUE, TRUE, 0);
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox2);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, TRUE, FALSE, 0);
 
 	prw_video = gtk_drawing_area_new();
 	gtk_widget_show(prw_video);
-	gtk_container_add(GTK_CONTAINER(alignment4), prw_video);
-
+	gtk_box_pack_start(GTK_BOX(vbox2), prw_video, FALSE, TRUE, 0);
+	
 	status_bar = gst_ipcam_client_init_status_bar();
 	gtk_widget_show(status_bar);
-	gtk_box_pack_start(GTK_BOX(vbox), status_bar, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), status_bar, FALSE, TRUE, 0);
 	gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar), FALSE);
 
 	g_signal_connect_swapped((gpointer) btn_connect, "clicked",
@@ -287,7 +279,6 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, btn_about, "btn_about");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem_quit, "toolitem_quit");
 	GLADE_HOOKUP_OBJECT(main_window, btn_quit, "btn_quit");
-	GLADE_HOOKUP_OBJECT(main_window, hbox1, "hbox1");
 	GLADE_HOOKUP_OBJECT(main_window, hbox2, "hbox2");
 	GLADE_HOOKUP_OBJECT(main_window, hbox3, "hbox3");
 	GLADE_HOOKUP_OBJECT(main_window, hbox4, "hbox4");
@@ -299,7 +290,6 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, alignment1, "alignment1");
 	GLADE_HOOKUP_OBJECT(main_window, alignment2, "alignment2");
 	GLADE_HOOKUP_OBJECT(main_window, alignment3, "alignment3");
-	GLADE_HOOKUP_OBJECT(main_window, alignment4, "alignment4");
 	GLADE_HOOKUP_OBJECT(main_window, lbl_bitrate, "lbl_bitrate");
 	GLADE_HOOKUP_OBJECT(main_window, btn_change, "btn_change");
 	GLADE_HOOKUP_OBJECT(main_window, lbl_fps, "lbl_fps");
