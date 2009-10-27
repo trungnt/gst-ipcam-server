@@ -15,9 +15,9 @@ A.I.1. Fetch Source Code
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
  - To test a given release XXX, use these commands:
-	$ git pull --tags			# to update to the latest revision with tags
+	$ git pull --tags			
 	or
-	$ git fetch --tags			# to update and fetch new tags
+	$ git fetch --tags			
 	then
 	$ git reset --hard XXX
   For example:
@@ -141,9 +141,9 @@ A.II.1. Fetch Source Code
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
  - To test a given release XXX, use these commands:
-	$ git pull --tags			# to update to the latest revision with tags
+	$ git pull --tags			
 	or
-	$ git fetch --tags			# to update and fetch new tags
+	$ git fetch --tags			
 	then
 	$ git reset --hard XXX
   For example:

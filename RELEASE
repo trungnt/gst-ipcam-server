@@ -1,13 +1,18 @@
 
-Release notes for gst-ipcam-server 0.6.
+Release notes for gst-ipcam-server 0.7.
 
 This is a release announcement for gst-ipcam-server software package.
 
 gst-ipcam-server is a media streaming server based on gstreamer library, rtsp protocol and gst-rtsp-server project. The server implementation is for SH7724 streaming server prototype. The server supports 3 codecs for image and video formats: H.264, MPEG4 and JPEG.
 
-Current stable version is 0.6 and includes 2 components:
+Current stable version is 0.7 and includes 2 components:
 	* Server: based on gst-rtsp-server project.
 	* Client: a simple client used for demonstration.
+
+Changes from release 0.6:  
+Server:  
+    * Support for 2 output streams from 2 source cameras.  
+    * Output streams can be: JPEG with H.264 or JPEG with MPEG4.  
 
 Changes from release 0.5:  
 Server:  
