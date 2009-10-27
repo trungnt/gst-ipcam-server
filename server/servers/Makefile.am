@@ -16,3 +16,4 @@ AM_LDFLAGS = \
 	$(GST_LIBS) \
 	$(top_builddir)/gst/rtsp-server/libgstrtspserver-@GST_MAJORMINOR@.la
 
+
