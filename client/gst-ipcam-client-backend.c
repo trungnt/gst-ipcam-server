@@ -24,8 +24,6 @@ static gpointer window;
 static gchar *video_type;
 static gchar *audio_type;
 static GstElement *pipeline, *rtspsrc, *video_sink, *audio_sink;
-static GstElement *video_decoder = NULL;
-static GstElement *audio_decoder = NULL;
 static GstElement * video_tee, * audio_tee;
 static GstElement * audio_branch;
 static gint prew_state;
@@ -260,6 +258,13 @@ gst_ipcam_client_backend_stop()
 	/*Set video type and audio type to NULL after disconnect*/
 	video_type = NULL;
 	audio_type = NULL;
+	pipeline = NULL;
+	video_sink = NULL;
+	audio_sink = NULL;
+	video_tee = NULL;
+	audio_tee = NULL;
+	rtspsrc = NULL;
+	audio_branch = NULL;
 
 	/*Set properties status to NULL after disconnect*/
 	gst_ipcam_client_set_status_properties("");
