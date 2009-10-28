@@ -139,4 +139,4 @@ void gst_ipcam_client_set_status_audio_type(const gchar* type_name);
  *
  * @return GtkWidget* error dialog or NULL if something wrong
  */
-GtkWidget * gst_ipcam_client_create_error_dialog(const gchar * message, GtkWidget * parent);
+GtkWidget * gst_ipcam_client_create_error_dialog(const gchar * message, GtkWindow * parent);
