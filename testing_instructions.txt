@@ -1,13 +1,43 @@
 This is a brief instruction guide to fetch, build and test gst-ipcam-server servers and gst-ipcam-client demo client on Ubuntu 9.04.
 
+NOTES: This is the general instructions for all releases. Some of the servers and features may not be available in earlier versions. Full features are only available starting from release 0.9 onwards. Refer to the Release notes of each release for further information.
+
 =========================================================================
-= A. BUILD AND TEST FROM SOURCE                                         =
+= A. HARDWARE REQUIREMENTS                                              =
+=========================================================================
+This section is about hardware requirements necessary to run gst-ipcam-server servers.
+
+A.I. Webcam (image source)
+-------------------------------------------------------------------------
+The servers are tested to work well with Logitech Quickcam E3500 Plus as image source but should work with any UVC Webcam compatible with v4l2 driver.
+
+Before trying gst-ipcam-server, it is advised to make sure first the Webcam to be used works correctly with your Ubuntu. Follow these steps:
+ - Connect the Webcam to your PC.
+ - Check it works with gstreamer:
+	$ gst-launch v4l2src ! autovideosink
+   If everything is fine, a screen showing live images captured by the Webcam will display.
+
+NOTES: In order to test servers with 2 source cameras, the PC must have 2 USB connectors available and each Webcam must be connected to a different USB connector.
+
+A.II. Microphone (audio source)
+-------------------------------------------------------------------------
+The servers are tested to work well with the microphone bundled with Logitech Quickcam E3500 Plus.
+
+By default, Ubuntu Jaunty 9.04 comes with a sound recorder program which can be used to test the microphone.
+ - In the gnome menu, select "Applications" -> "Sound & Video" -> "Sound Recorder".
+ - In the Sound Recorder toolbar, click "Record". In the bottom of it's window, you will see a label "Recording ..." and a progress bar with label "Level:".
+ - Make some noise or talk to the microphone, the "Level:" progress bar shows some movements when the program recognizes different sound levels, meaning that the microphone works.
+ - You can click "Stop" and then "Play" to hear what has been recorded.
+
+
+=========================================================================
+= B. BUILD AND TEST FROM SOURCE                                         =
 =========================================================================
 
-A.I. SERVER
+B.I. SERVER
 -------------------------------------------------------------------------
 
-A.I.1. Fetch Source Code
+B.I.1. Fetch Source Code
  - Create a new folder on your hard disk to store source code.
  - Go to that folder and fetch the code with this command:
 	$ git clone git://github.com/trungnt/gst-ipcam-server.git
@@ -15,12 +45,10 @@ A.I.1. Fetch Source Code
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
  - To test a given release XXX, use these commands:
-	$ git pull --tags			# to update to the latest revision with tags
-	or
-	$ git fetch --tags			# to update and fetch new tags
+	$ git fetch --tags			# to make sure all tags are fetched and updated
 	then
 	$ git reset --hard XXX
-  For example:
+  For example, to work with release 0.1:
 	$ git reset --hard 0.1
  - To work with the development version of the servers, use the following command:
    	$ git checkout --track -b server-development origin/server-development
@@ -28,16 +56,16 @@ A.I.1. Fetch Source Code
 	$ git checkout server-development 	# to switch to an existing server-development branch.
 	$ git pull 				# to update to the latest revision.
 
-A.I.2. Build
- - NOTE: before building the server, go to section A.I.3. to check whether all necessary packages are present in your system.
+B.I.2. Build
+ - NOTE: before building the server, go to section B.I.3. to check whether all necessary packages are present in your system.
  - Go to the folder "server"
  - For the first time build, run:
    	$ ./autogen.sh
  - Build :
    	$ make
 
-A.I.3. Software Dependencies
-A.I.3.a. Standard Gstreamers packages from Ubuntu 9.04 repository:
+B.I.3. Software Dependencies
+B.I.3.a. Standard Gstreamers packages from Ubuntu 9.04 repository:
 - Run the following command:
 	$ sudo apt-get install gstreamer0.10-plugins-bad and gstreamer0.10-plugins-bad-multiverse
 
@@ -50,7 +78,7 @@ If apt-get doesn't found mentioned packages, enable "Community-maintained Open S
 	+ Then click "Reload" on popup dialog or run "sudo apt-get update" in the terminal.
 	+ Once done, you should be able to install necessary packages by re-running the above command.
 
-A.I.3.b. Gstreamer version >= 0.10.24.1, from ppa repository:
+B.I.3.b. Gstreamer version >= 0.10.24.1, from ppa repository:
 - Add following lines to /etc/apt/sources.list (you will need sudo rights):
 	deb http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main
 	deb-src http://ppa.launchpad.net/gstreamer-developers/ppa/ubuntu jaunty main
@@ -59,10 +87,10 @@ A.I.3.b. Gstreamer version >= 0.10.24.1, from ppa repository:
 	$ sudo apt-get update
 	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg gstreamer0.10-plugins-good gstreamer0.10-plugins-base
 
-A.I.3.c. Build tools, if not installed yet:
+B.I.3.c. Build tools, if not installed yet:
 	$ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev
 
-A.I.4. Run
+B.I.4. Run
   We have 9 different servers inside "servers" directory, named as follows:
 	- onesrc-h264: server supporting only H264 streams (one source camera).
 	- onesrc-jpeg: server supporting only JPEG streams (one source camera).
@@ -89,13 +117,13 @@ A.I.4. Run
 	To start MPEG4 server with AAC audio, run:
 		$ ./onesrc-mpeg4 aac
 
-A.I.5. Fps Plugin
+B.I.5. Fps Plugin
   Starting from release 0.4, servers come with fps plugin to enable adjusting stream framerate at runtime.
 
-A.I.5.a. Fetch Source Code
+B.I.5.a. Fetch Source Code
   As a note, fps plugin can be installed indepedently from the servers although it is being delivered here together with servers.
 
-A.I.5.b. Build
+B.I.5.b. Build
  - From inside gst-ipcam-server folder, change to gst-fps folder:
 	$ cd gst-fps
  - Then:
@@ -103,18 +131,18 @@ A.I.5.b. Build
 	$ make
 	$ sudo make install
 
-A.I.5.c. Usage
+B.I.5.c. Usage
  - Fps plugin is a gstreamer plugin therefore can be used in the usual way of using gstreamer plugins.
  - The plugin element's name is fpsbin.
  - fpsbin element has one property: framerate - frame rate value to set to.
 
-A.I.6. Bitrate Plugin
+B.I.6. Bitrate Plugin
   Starting from release 0.5, servers come with bitrate plugin to enable adjusting bitrate parameter for the video encoder at runtime.
 
-A.I.6.a. Fetch Source Code
+B.I.6.a. Fetch Source Code
   Similar to fps plugin.
 
-A.I.6.b. Build
+B.I.6.b. Build
  - From inside gst-ipcam-server folder, change to gst-bitrate folder:
 	$ cd gst-bitrate
  - Then:
@@ -122,7 +150,7 @@ A.I.6.b. Build
 	$ make
 	$ sudo make install
 
-A.I.6.c. Usage
+B.I.6.c. Usage
  - Bitrate plugin is a gstreamer plugin therefore can be used in the usual way of using gstreamer plugins.
  - The plugin element's name is bitrate.
  - bitrate element has 2 properties:
@@ -130,10 +158,10 @@ A.I.6.c. Usage
 	+ bitrate: bitrate value to set to.
 
 
-A.II. CLIENT
+B.II. CLIENT
 -------------------------------------------------------------------------
 
-A.II.1. Fetch Source Code
+B.II.1. Fetch Source Code
  - Create a new folder on your hard disk to store source code.
  - Go to that folder and fetch the code with this command:
 	$ git clone git://github.com/trungnt/gst-ipcam-server.git
@@ -141,12 +169,10 @@ A.II.1. Fetch Source Code
  - Go to gst-ipcam-server folder:
 	$ cd gst-ipcam-server
  - To test a given release XXX, use these commands:
-	$ git pull --tags			# to update to the latest revision with tags
-	or
-	$ git fetch --tags			# to update and fetch new tags
+	$ git fetch --tags			# to make sure all tags are fetched and updated
 	then
 	$ git reset --hard XXX
-  For example:
+  For example, to work with release 0.1:
 	$ git reset --hard 0.1
  - To work with the development version of the client, use the following command:
    	$ git checkout --track -b client-development origin/client-development
@@ -154,27 +180,27 @@ A.II.1. Fetch Source Code
 	$ git checkout client-development 	# to switch to existing client-development branch.
 	$ git pull 				# to update to the latest revision.
 
-A.II.2. Build
- - NOTE: before building the client, go to section A.II.3. to check whether all necessary packages are present in your system.
+B.II.2. Build
+ - NOTE: before building the client, go to section B.II.3. to check whether all necessary packages are present in your system.
  - Go to the folder "client".
  - Build the package:
 	$ make
 
-A.II.3. Software Requirements
-A.II.3.a. Basic gstreamer packages
+B.II.3. Software Requirements
+B.II.3.a. Basic gstreamer packages
  - Run following command to install required basic gstreamer packages:
 	$ sudo apt-get install gstreamer0.10-plugins-base gstreamer0.10-plugins-bad gstreamer0.10-ffmpeg
 
-A.II.3.b. Gstreamers version >= 0.10.24.1, from ppa repository:
- - Follow the instructions in section A.I.3.b to add ppa repository to apt-get configuration file.
+B.II.3.b. Gstreamers version >= 0.10.24.1, from ppa repository:
+ - Follow the instructions in section B.I.3.b to add ppa repository to apt-get configuration file.
  - Then:
 	$ sudo apt-get update
 	$ sudo apt-get install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev gstreamer0.10-ffmpeg gstreamer0.10-plugins-good
 
-A.II.3.c. Build tools, if not installed yet:
+B.II.3.c. Build tools, if not installed yet:
     $ sudo apt-get install autoconf automake pkg-config libtool build-essential gettext libglib2.0-dev libgtk2.0-dev
 
-A.II.4. Run
+B.II.4. Run
  - run command:
    	$ ./gst-ipcam-client
  - Usage: The client support the following features:
@@ -188,21 +214,21 @@ A.II.4. Run
 
 	+ Adjust parameters: supported runtime adjustable parameters can be changed using drop-down lists for frame rate, frame size, or input field for bitrate. Select or enter the new value then click "Change" button.
 
-A.II.5. Multi-Clients Frontend
+B.II.5. Multi-Clients Frontend
   From release 0.3, the client comes with a frontend as a helper to run more than one client.
 
-A.II.5.a. Install requirements packages
+B.II.5.a. Install requirements packages
  - Run the following command to install ldtp bindding for python:
 	$ sudo apt-get install python-ldtp
 
-A.II.5.b. Enable Assistive Technologies
+B.II.5.b. Enable Assistive Technologies
  - From the main Gnome menu, select "System".
  - Select "Preferences".
  - Then "Assistive Technologies".
  - In the open dialog, check "Enable assistive technologies".
  - Log out then log in again for the change to take effect.
 
-A.II.5.c. Run
+B.II.5.c. Run
  - Under client-development branch, change to the directory "multi-client".
  - Then:
 	$ python multiclients_cmd.py
@@ -231,11 +257,11 @@ A.II.5.c. Run
 
 
 =========================================================================
-= B. TEST FROM BINARY PACKAGE                                           =
+= C. TEST FROM BINARY PACKAGE                                           =
 =========================================================================
 Binary packages gathers pre-build applications into one archive.
 
-B.I. Unpack
+C.I. Unpack
 -------------------------------------------------------------------------
  - The packages name is of the form: gst-ipcam-server-XXX.tar.bz2 where XXX is the release number.
  - Unpack the package:
@@ -244,24 +270,24 @@ B.I. Unpack
  - Change to that folder:
 	$ cd gst-ipcam-server-XXX
 
-B.II. Server
+C.II. Server
 -------------------------------------------------------------------------
-B.II.1. Software Requirements
-  Follow the instructions in A.I.3.a. and A.I.3.b. to install requirements packages.
+C.II.1. Software Requirements
+  Follow the instructions in B.I.3.a. and B.I.3.b. to install requirements packages.
 
-B.II.2. Run
-  Follow the instructions in A.I.4. to run servers.
+C.II.2. Run
+  Follow the instructions in B.I.4. to run servers.
 
-B.III. Client
+C.III. Client
 -------------------------------------------------------------------------
-B.III.1. Software Requirements
-  Follow the instructions in A.II.3.a. and A.II.3.b. to install requirements packages.
+C.III.1. Software Requirements
+  Follow the instructions in B.II.3.a. and B.II.3.b. to install requirements packages.
 
-B.III.2. Run
-  Follow the instructions in A.II.4. to run the client.
+C.III.2. Run
+  Follow the instructions in B.II.4. to run the client.
 
-B.IV. Multi-Clients Frontend
+C.IV. Multi-Clients Frontend
 -------------------------------------------------------------------------
-  Follow the instructions in A.II.5. for multi-client frontend usage.
+  Follow the instructions in B.II.5. for multi-client frontend usage.
   NOTE: Binary package comes with a wrapper script for the frontend under "gst-ipcam-server-XXX" folder with name "mc_frontend". User can use this script to launch the frontend.
 
