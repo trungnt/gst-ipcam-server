@@ -261,6 +261,12 @@ gst_ipcam_client_backend_stop()
 	if(pipeline != NULL)
 		gst_object_unref(pipeline);
 
+	video_sink = NULL;
+	audio_sink = NULL;
+	audio_branch = NULL;
+	video_tee = NULL;
+	audio_tee = NULL;
+
 	/*Set properties status to NULL after disconnect*/
 	gst_ipcam_client_set_status_properties("");
 	return state_return;
