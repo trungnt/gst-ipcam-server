@@ -764,7 +764,8 @@ static void gst_ipcam_client_read_video_props()
 	if(g_strcmp0(bitrate, "") != 0)
 		status_props = g_strconcat(status_props, " Bitrate:", bitrate, NULL);
 	gst_ipcam_client_set_status_properties(status_props);
-	gst_ipcam_client_set_video_props(framerate, "320x240", bitrate);
+	gst_ipcam_client_set_video_props(framerate, g_strconcat("", g_strdup_printf("%d", width),
+																							"x", g_strdup_printf("%d", height)), bitrate);
 }
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline)
