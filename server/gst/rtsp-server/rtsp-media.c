@@ -168,6 +168,12 @@ gst_rtsp_media_finalize (GObject * obj)
     g_source_destroy (media->source);
     g_source_unref (media->source);
   }
+  if (media->bitrate) {
+	 g_free (media->bitrate);	  
+  }
+  if (media->framerate) {
+	 g_free (media->framerate);
+  }
 
   G_OBJECT_CLASS (gst_rtsp_media_parent_class)->finalize (obj);
 }
