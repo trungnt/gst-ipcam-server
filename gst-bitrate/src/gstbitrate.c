@@ -451,6 +451,13 @@ static gboolean gst_bit_rate_set_bitrate(GstBitRate* bitrate_element, gulong bit
  */
 static void gst_bit_rate_stop_pipeline(GstBitRate* bitrate_element) {
 	GstElement * pipeline = GST_ELEMENT(gst_element_get_parent(bitrate_element));
+	GstElement * tmp = pipeline;
+	while (tmp != NULL) {
+		tmp = GST_ELEMENT(gst_element_get_parent(pipeline));
+		if (tmp != NULL) {
+			pipeline = tmp;
+		}
+	}
 	if (pipeline != NULL) {
 		gst_element_set_state(pipeline, GST_STATE_READY);
 	}
@@ -463,6 +470,13 @@ static void gst_bit_rate_stop_pipeline(GstBitRate* bitrate_element) {
  */
 static void gst_bit_rate_start_pipeline(GstBitRate* bitrate_element) {
 	GstElement * pipeline = GST_ELEMENT(gst_element_get_parent(bitrate_element));
+	GstElement * tmp = pipeline;
+	while (tmp != NULL) {
+		tmp = GST_ELEMENT(gst_element_get_parent(pipeline));
+		if (tmp != NULL) {
+			pipeline = tmp;
+		}
+	}
 	if (pipeline != NULL) {
 		gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	}
