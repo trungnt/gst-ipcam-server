@@ -126,6 +126,14 @@ gst_rtsp_media_factory_finalize (GObject * obj)
   gst_element_set_state (factory->v4l2src_pipeline, GST_STATE_NULL);
   g_object_unref (factory->v4l2src_pipeline);
   g_object_unref (factory->multiudpsink);
+  
+  if (factory->framerate) {
+  	 g_free (factory->framerate);
+  }
+  if (factory->bitrate) {
+    g_free (factory->bitrate);
+  }
+  
   G_OBJECT_CLASS (gst_rtsp_media_factory_parent_class)->finalize (obj);
 }
 
@@ -391,8 +399,9 @@ default_get_element (GstRTSPMediaFactory *factory, const GstRTSPUrl *url)
   /* we need to get framerate and bitrate here*/
   /* url format sent from client like this rtsp://server:port/test?framerate=25/1&bitrate=2048 */
   /*(  videoscale ! videorate ! video/x-raw-yuv,width=800,height=500,framerate=30/1 ! ffmpegcolorspace ! 
-  x264enc bitrate=2048 ! rtph264pay name=pay0 pt=96  alsasrc ! audio/x-raw-int ! faac bitrate=22000 ! 
-  rtpmp4apay name=pay1 pt=97 )  */
+      x264enc bitrate=2048 ! rtph264pay name=pay0 pt=96  alsasrc ! audio/x-raw-int ! faac bitrate=22000 ! 
+      rtpmp4apay name=pay1 pt=97 )  
+  */
   if (url_launch) {
     gchar *framerate = NULL;
     gchar *bitrate = NULL;
