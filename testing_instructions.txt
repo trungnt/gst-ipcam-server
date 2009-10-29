@@ -17,7 +17,7 @@ Before trying gst-ipcam-server, it is advised to make sure first the Webcam to b
 	$ gst-launch v4l2src ! autovideosink
    If everything is fine, a screen showing live images captured by the Webcam will display.
 
-NOTES: In order to test servers with 2 source cameras, the PC must have 2 USB connectors available and each Webcam must be connected to a different USB connector.
+NOTES: In order to test servers with 2 source cameras, the PC must have 2 USB connectors available and each Webcam must be connected to a different USB header.
 
 A.II. Microphone (audio source)
 -------------------------------------------------------------------------
