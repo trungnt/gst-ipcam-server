@@ -27,7 +27,6 @@ GtkWidget *toolitem_about;
 GtkWidget *btn_about;
 GtkWidget *toolitem_quit;
 GtkWidget *btn_quit;
-GtkWidget *hbox1;
 GtkWidget *hbox2;
 GtkWidget *hbox3;
 GtkWidget *hbox4;
@@ -45,7 +44,6 @@ GtkWidget *toolitem7;
 GtkWidget *alignment1;
 GtkWidget *alignment2;
 GtkWidget *alignment3;
-GtkWidget *alignment4;
 GtkWidget *toolitem10;
 GtkWidget *lbl_bitrate;
 GtkWidget *btn_change;
@@ -141,4 +139,4 @@ void gst_ipcam_client_set_status_audio_type(const gchar* type_name);
  *
  * @return GtkWidget* error dialog or NULL if something wrong
  */
-GtkWidget * gst_ipcam_client_create_error_dialog(const gchar * message, GtkWidget * parent);
+GtkWidget * gst_ipcam_client_create_error_dialog(const gchar * message, GtkWindow * parent);

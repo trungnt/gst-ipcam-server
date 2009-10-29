@@ -145,8 +145,13 @@ def process_input(cmd):
 			if param == "all":
 				break
 			if (param not in valid_params):
-				print "invalid parameter " + param
-				return -1
+				try:
+					tmp_id = int(param)	# if ok then this can be the start of id sequences
+				except:
+					print "invalid parameter " + param
+					return -1
+				else:
+					break
 			value = command_args[pos + 1]
 			pos = pos+2
 			if not params.has_key(param):
