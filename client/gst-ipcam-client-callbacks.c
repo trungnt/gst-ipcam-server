@@ -82,7 +82,7 @@ gst_ipcam_client_on_btn_disconnect_clicked(GtkButton *button,
 	gst_ipcam_client_set_status_audio_type("");
 
 	/*Set all values in change toolbar to be empty*/
-	gtk_entry_set_text(entry_bitrate, "");
+	gtk_entry_set_text(GTK_ENTRY(entry_bitrate), "");
 
 	gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fps), 2, " ");
 	gtk_combo_box_set_active  (GTK_COMBO_BOX(cbx_entry_fps), 2);
@@ -175,9 +175,8 @@ void
 gst_ipcam_client_on_btn_quit_clicked(GtkButton *button,
 																		 gpointer user_data)
 {
-	gst_ipcam_client_backend_stop();
-	gtk_main_quit();
 	gst_ipcam_client_backend_deinit();
+	gtk_main_quit();
 }
 
 /**
@@ -195,7 +194,7 @@ gst_ipcam_client_on_btn_connect_dialog_clicked(GtkButton *button,
 {
 	/* static gint counter = 0;*/
 	is_connect_button_clicked = TRUE;
-	gchar *url = gtk_entry_get_text(entry_url);
+	const gchar *url = gtk_entry_get_text(GTK_ENTRY(entry_url));
 	URL = g_strconcat("", url, NULL);
 	gst_ipcam_client_backend_set_window(GINT_TO_POINTER(GDK_WINDOW_XWINDOW(prw_video->window)));
 
@@ -209,7 +208,7 @@ gst_ipcam_client_on_btn_connect_dialog_clicked(GtkButton *button,
 
 	/*Resize the mainwindow to show Video got from server*/
 	gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-	gtk_widget_set_sensitive(vbox2, TRUE);
+	gtk_widget_set_sensitive(toolbar1, TRUE);
 
 	/*remove btn_Connect button from toolitem_Connect*/
 	gtk_container_remove(GTK_CONTAINER(toolitem_connect), btn_connect);
@@ -260,9 +259,8 @@ gst_ipcam_client_on_connection_dialog_destroy(GtkObject *object,
 void gst_ipcam_client_on_main_window_destroy(GtkObject *object,
 																						 gpointer user_data)
 {
-	gst_ipcam_client_backend_stop();
-	gtk_main_quit();
 	gst_ipcam_client_backend_deinit();
+	gtk_main_quit();
 }
 
 /**
@@ -303,21 +301,21 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	gchar *url_fps;
 	gchar *url_fsize;
 	gchar *url_bitrate;
-	gchar * pipeline_description;
+	gchar *pipeline_description;
 
-	URL = strtok(URL, "?");
-	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(cbx_entry_fps)), "") != 0)
+	URL = (gchar*)strtok(URL, "?");
+	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(GTK_COMBO_BOX(cbx_entry_fps))), "") != 0)
 	{
-		url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(cbx_entry_fps), NULL);
+		url_fps = g_strconcat("", "?framerate=", gtk_combo_box_get_active_text(GTK_COMBO_BOX(cbx_entry_fps)), NULL);
 	}
 	else
 	{
 		url_fps = "";
 	}
 
-	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(cbx_entry_fsize)), "") != 0)
+	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(GTK_COMBO_BOX(cbx_entry_fsize))), "") != 0)
 	{
-		gchar *f_size = gtk_combo_box_get_active_text(cbx_entry_fsize);
+		gchar *f_size = gtk_combo_box_get_active_text(GTK_COMBO_BOX(cbx_entry_fsize));
 		gchar **__f_size = g_strsplit(f_size, "x", 0);
 		url_fsize = g_strconcat("", "width=", __f_size[0], "&height=", __f_size[1], NULL);
 	}
@@ -326,9 +324,9 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 		url_fsize = "";
 	}
 
-	if (g_strcmp0(g_strchomp(gtk_entry_get_text(entry_bitrate)), "") != 0)
+	if (g_strcmp0(g_strchomp(gtk_entry_get_text(GTK_ENTRY(entry_bitrate))), "") != 0)
 	{
-		gchar *bitrate = gtk_entry_get_text(entry_bitrate);
+		const gchar *bitrate = gtk_entry_get_text(GTK_ENTRY(entry_bitrate));
 		url_bitrate = g_strconcat("", "bitrate=", bitrate, NULL);
 	}
 	else
@@ -372,13 +370,13 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	if (pipeline_description != NULL)
 	{
 		gst_ipcam_client_backend_stop();
-		g_message(pipeline_description);
+		g_message("%s", pipeline_description);
 		gst_ipcam_client_backend_create_pipeline(pipeline_description);
 		gst_ipcam_client_backend_play();
 
 		g_message("PLAY request sent.");
 		/*Resize the mainwindow to show the video got from server*/
 		gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
-		gtk_widget_set_sensitive(vbox2, TRUE);
+		gtk_widget_set_sensitive(toolbar1, TRUE);
 	}
 }
