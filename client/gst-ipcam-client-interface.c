@@ -547,3 +547,24 @@ gst_ipcam_client_create_error_dialog(const gchar* message, GtkWindow * parent)
 
 	return dialog;
 }
+
+/**
+ * set all video properties to all blank boxes
+ *
+ * @param type_name const gchar* the audio type
+ *
+ * @return nothing
+ */
+void
+gst_ipcam_client_set_video_props(gchar* frame_rate, gchar* frame_size, gchar* bitrate)
+{
+	gtk_entry_set_text(GTK_ENTRY(entry_bitrate), bitrate);
+
+	gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fps), 2, frame_rate);
+	gtk_combo_box_set_active  (GTK_COMBO_BOX(cbx_entry_fps), 2);
+	gtk_combo_box_remove_text(GTK_COMBO_BOX(cbx_entry_fps), 2);
+
+	gtk_combo_box_insert_text(GTK_COMBO_BOX(cbx_entry_fsize), 2, frame_size);
+	gtk_combo_box_set_active  (GTK_COMBO_BOX(cbx_entry_fsize), 2);
+	gtk_combo_box_remove_text(GTK_COMBO_BOX(cbx_entry_fsize), 2);
+}

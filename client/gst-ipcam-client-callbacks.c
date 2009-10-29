@@ -207,7 +207,7 @@ gst_ipcam_client_on_btn_connect_dialog_clicked(GtkButton *button,
 	g_message("PLAY request sent.");
 
 	/*Resize the mainwindow to show Video got from server*/
-	//gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
+	gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
 	gtk_widget_set_sensitive(toolbar1, TRUE);
 
 	/*remove btn_Connect button from toolitem_Connect*/
@@ -259,9 +259,8 @@ gst_ipcam_client_on_connection_dialog_destroy(GtkObject *object,
 void gst_ipcam_client_on_main_window_destroy(GtkObject *object,
 																						 gpointer user_data)
 {
-	gst_ipcam_client_backend_stop();
-	gtk_main_quit();
 	gst_ipcam_client_backend_deinit();
+	gtk_main_quit();
 }
 
 /**
@@ -302,7 +301,7 @@ gst_ipcam_client_on_btn_change_clicked(GtkButton *button,
 	gchar *url_fps;
 	gchar *url_fsize;
 	gchar *url_bitrate;
-	gchar * pipeline_description;
+	gchar *pipeline_description;
 
 	URL = (gchar*)strtok(URL, "?");
 	if (g_strcmp0(g_strchomp(gtk_combo_box_get_active_text(GTK_COMBO_BOX(cbx_entry_fps))), "") != 0)
