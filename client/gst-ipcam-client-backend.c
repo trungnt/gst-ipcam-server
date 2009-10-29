@@ -716,6 +716,7 @@ static void gst_ipcam_client_read_video_props()
 	GstStructure *str = NULL;
 	GstPad *video_pad;
 	GstCaps *video_caps;
+	gchar * frame_size;
 
 	video_pad = gst_element_get_static_pad(video_sink, "sink");
 	if (video_pad == NULL)
@@ -760,12 +761,11 @@ static void gst_ipcam_client_read_video_props()
 
 	status_props = g_strconcat(status_props, " Frame size:", g_strdup_printf("%d", width),
 														 "x", g_strdup_printf("%d", height), NULL);
-	
+	frame_size = g_strconcat(g_strdup_printf("%d", width), "x", g_strdup_printf("%d", height), NULL);
 	if(g_strcmp0(bitrate, "") != 0)
 		status_props = g_strconcat(status_props, " Bitrate:", bitrate, NULL);
 	gst_ipcam_client_set_status_properties(status_props);
-	gst_ipcam_client_set_video_props(framerate, g_strconcat("", g_strdup_printf("%d", width),
-																							"x", g_strdup_printf("%d", height)), bitrate);
+	gst_ipcam_client_set_video_props(framerate, frame_size, bitrate);
 }
 
 static gboolean gst_ipcam_client_backend_create_video_branch(GstElement* pipeline)
