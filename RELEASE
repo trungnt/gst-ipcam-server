@@ -8,7 +8,7 @@ gst-ipcam-server is a media streaming server based on gstreamer library, rtsp pr
 Current stable version is 1.0RC and includes 2 components:
 	* Server: based on gst-rtsp-server project.
 	* Client: a simple client used for demonstration.
-Version 1.0RC is taken from 0.9. Almost everything is the same as in 0.9.
+This is the first release candidate for version 1.0. It is copied from release 0.9.
 
 Changes from release 0.8:  
 Server:  
