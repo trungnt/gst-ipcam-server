@@ -1,3 +1,4 @@
+Gst-ipcam-server is an RTSP server based on GstRTSP.
 GstRTSP is an RTSP server built on top of GStreamer (http://gstreamer.net).
 
 Currently there is no configuration tools for this server so any streamed 
