@@ -236,22 +236,18 @@ gst_ipcam_client_create_main_window(void)
 	toolitem10 = (GtkWidget*) gtk_tool_item_new();
 	gtk_widget_show(toolitem10);
 	gtk_toolbar_insert (GTK_TOOLBAR (toolbar1), GTK_TOOL_ITEM(toolitem10), -1);
-	
-	hbox4 = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(hbox4);
-	gtk_container_add(GTK_CONTAINER(toolitem10), hbox4);
 
 	btn_change = gtk_button_new_with_mnemonic(_("Change"));
 	gtk_widget_show(btn_change);
-	gtk_box_pack_start(GTK_BOX(hbox4), btn_change, FALSE, FALSE, 0);
-
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox2);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, TRUE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(toolitem10), btn_change);
+	
+	vbox_prw_video = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox_prw_video);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox_prw_video, TRUE, FALSE, 0);
 
 	prw_video = gtk_drawing_area_new();
 	gtk_widget_show(prw_video);
-	gtk_box_pack_start(GTK_BOX(vbox2), prw_video, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox_prw_video), prw_video, FALSE, TRUE, 0);
 	
 	status_bar = gst_ipcam_client_init_status_bar();
 	gtk_widget_show(status_bar);
@@ -303,12 +299,18 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, btn_about, "btn_about");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem_quit, "toolitem_quit");
 	GLADE_HOOKUP_OBJECT(main_window, btn_quit, "btn_quit");
-	GLADE_HOOKUP_OBJECT(main_window, hbox4, "hbox4");
-	GLADE_HOOKUP_OBJECT(main_window, vbox2, "vbox2");
+	GLADE_HOOKUP_OBJECT(main_window, vbox_prw_video, "vbox_prw_video");
 	GLADE_HOOKUP_OBJECT(main_window, toolbar1, "toolbar1");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem3, "toolitem3");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem4, "toolitem4");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem5, "toolitem5");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem6, "toolitem6");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem7, "toolitem7");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem8, "toolitem8");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem9, "toolitem9");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem10, "toolitem10");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem11, "toolitem11");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem12, "toolitem12");
 	GLADE_HOOKUP_OBJECT(main_window, alignment1, "alignment1");
 	GLADE_HOOKUP_OBJECT(main_window, alignment2, "alignment2");
 	GLADE_HOOKUP_OBJECT(main_window, alignment3, "alignment3");
