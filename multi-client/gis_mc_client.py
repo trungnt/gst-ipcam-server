@@ -5,7 +5,7 @@ from ldtp import *
 from ldtputils import *
 
 __author__ = "Nguyen Thanh Trung <nguyenthanh.trung@nomovok.com"
-__client_path__ = "../../client/gst-ipcam-client"
+__client_path__ = "../client/gst-ipcam-client"
 
 __stream_type_h264__ = "H264 stream"
 __stream_type_jpeg__ = "Jpeg stream"

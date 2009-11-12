@@ -21,7 +21,7 @@
 #include "gst-ipcam-client-callbacks.h"
 
 /* amount of ms to buffer in the client */
-#define MAX_LATENCY 500
+#define MAX_LATENCY 1000
 
 static gpointer window;
 static gchar *video_type;
@@ -247,7 +247,7 @@ gst_ipcam_client_backend_stop()
 	curt_state = GST_STOP_STATE;
 
 	/*resize the main window*/
-	gtk_window_resize(GTK_WINDOW(main_window), 650, 50);
+	gtk_window_resize(GTK_WINDOW(main_window), 730, 50);
 	/*Set the prw_video to be zezo*/
 	gtk_widget_set_size_request(prw_video, 0, 0);
 	gtk_widget_set_sensitive(toolbar1, FALSE);
@@ -434,7 +434,7 @@ static gboolean gst_ipcam_client_backend_bus_watch(GstBus* bus, GstMessage* msg,
 				g_message("PLAY request sent.");
 
 				/*Resize the mainwindow to show the video got from server*/
-				gtk_window_resize(GTK_WINDOW(main_window), 650, 500);
+				gtk_window_resize(GTK_WINDOW(main_window), 730, 500);
 				gtk_widget_set_sensitive(toolbar1, TRUE);
 			}
 			else
@@ -604,18 +604,25 @@ void gst_ipcam_client_on_pad_added(GstElement *element, GstPad *pad)
 			/* Set bitrate label and bitrate entry to be insensitive*/
 			gtk_widget_set_sensitive(lbl_bitrate, FALSE);
 			gtk_widget_set_sensitive(entry_bitrate, FALSE);
+			gtk_widget_set_sensitive(lbl_bitrate_unit, FALSE);
 		}
 		else
 		{
 			/* Set bitrate label and bitrate entry to be sensitive*/
 			gtk_widget_set_sensitive(lbl_bitrate, TRUE);
 			gtk_widget_set_sensitive(entry_bitrate, TRUE);
+			gtk_widget_set_sensitive(lbl_bitrate_unit, TRUE);
 		}
 		/* preprocess stream type */
 		if (g_strcmp0(stream_type, "MP4V-ES") == 0)
 		{
 			g_free(stream_type);
 			stream_type = g_strdup("MPEG4");
+			gtk_label_set_label(GTK_LABEL(lbl_bitrate_unit), "(bps)");
+		}
+		else if (g_strcmp0(stream_type, "H264") == 0)
+		{
+			gtk_label_set_label(GTK_LABEL(lbl_bitrate_unit), "(kbps)");
 		}
 		else if (g_strcmp0(stream_type, "MP4A-LATM") == 0)
 		{
@@ -703,7 +710,6 @@ gst_ipcam_client_backend_create_pipeline(const gchar *url)
 
 	g_object_set(G_OBJECT(rtspsrc), "location", url, NULL);
 	g_object_set(G_OBJECT(rtspsrc), "latency", MAX_LATENCY, NULL);
-	/*g_object_set(G_OBJECT(rtspsrc), "debug", TRUE, NULL);*/
 	g_signal_connect(rtspsrc, "pad-added", G_CALLBACK(gst_ipcam_client_on_pad_added), NULL);
 
 	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, NULL);
@@ -727,6 +733,7 @@ static void gst_ipcam_client_read_video_props()
 	GstPad *video_pad;
 	GstCaps *video_caps;
 	gchar * frame_size;
+	const gchar * bitrate_unit;
 
 	video_pad = gst_element_get_static_pad(video_sink, "sink");
 	if (video_pad == NULL)
@@ -735,7 +742,6 @@ static void gst_ipcam_client_read_video_props()
 	}
 	video_caps = gst_pad_get_negotiated_caps(video_pad);
 
-	//g_return_if_fail(gst_caps_is_fixed(video_caps));
 	if (video_caps != NULL)
 		str = gst_caps_get_structure(video_caps, 0);
 	else
@@ -767,13 +773,16 @@ static void gst_ipcam_client_read_video_props()
 	framerate = strtok(framerate, "\"");
 
 	if(g_strcmp0(framerate, "") != 0)
-		status_props = g_strconcat("", "Fps:", framerate, NULL);
+		status_props = g_strconcat("", "Fps:", framerate, "(fps)   ", NULL);
 
 	status_props = g_strconcat(status_props, " Frame size:", g_strdup_printf("%d", width),
-														 "x", g_strdup_printf("%d", height), NULL);
+														 "x", g_strdup_printf("%d", height), "(pixels)   ", NULL);
 	frame_size = g_strconcat(g_strdup_printf("%d", width), "x", g_strdup_printf("%d", height), NULL);
 	if(g_strcmp0(bitrate, "") != 0)
-		status_props = g_strconcat(status_props, " Bitrate:", bitrate, NULL);
+	{
+		bitrate_unit = gtk_label_get_label(GTK_LABEL(lbl_bitrate_unit));
+		status_props = g_strconcat(status_props, " Bitrate:", bitrate, bitrate_unit, NULL);
+	}
 	gst_ipcam_client_set_status_properties(status_props);
 	gst_ipcam_client_set_video_props(framerate, frame_size, bitrate);
 }
