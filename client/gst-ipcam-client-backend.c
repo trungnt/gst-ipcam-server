@@ -21,7 +21,7 @@
 #include "gst-ipcam-client-callbacks.h"
 
 /* amount of ms to buffer in the client */
-#define MAX_LATENCY 2000
+#define MAX_LATENCY 1000
 
 static gpointer window;
 static gchar *video_type;
