@@ -10,6 +10,7 @@ Current stable version is 1.0RC2 and includes 2 components:
 	* Client: a simple client used for demonstration.
 
 Changes from release 0.9/1.0RC:
+Client:
     * Reduced maximal latency at the client side.
 
 Changes from release 0.8:  
