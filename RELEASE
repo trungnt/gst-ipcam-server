@@ -12,6 +12,8 @@ Current stable version is 1.0RC3 and includes 2 components:
 Changes from release 1.0RC2:
 Server:
     * Finetuned server configurations to increase performance.
+Client:
+    * Fixed some warnings at the client.
 
 Changes from release 0.9/1.0RC:
 Client:
