@@ -252,7 +252,6 @@ gst_ipcam_client_create_main_window(void)
 	status_bar = gst_ipcam_client_init_status_bar();
 	gtk_widget_show(status_bar);
 	gtk_box_pack_end(GTK_BOX(vbox), status_bar, FALSE, TRUE, 0);
-	gtk_statusbar_set_has_resize_grip(GTK_STATUSBAR(status_bar), FALSE);
 
 	g_signal_connect_swapped((gpointer) btn_connect, "clicked",
 													 G_CALLBACK(gst_ipcam_client_on_btn_connect_clicked),
