@@ -44,7 +44,7 @@ gst_ipcam_client_create_main_window(void)
 	gchar * main_window_title = gst_ipcam_client_window_create_title(_("Gst Ipcam Client"));
 	gtk_window_set_title(GTK_WINDOW(main_window), main_window_title);
 	g_free(main_window_title);
-	gtk_window_set_default_size(GTK_WINDOW(main_window), 650, 50);
+	gtk_window_set_default_size(GTK_WINDOW(main_window), 730, 50);
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(vbox);
@@ -135,14 +135,9 @@ gst_ipcam_client_create_main_window(void)
 	gtk_widget_show(toolitem7);
 	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem7);
 
-	alignment1 = gtk_alignment_new(0, 0, 1, 1);
-	gtk_widget_show(alignment1);
-	gtk_container_add(GTK_CONTAINER(toolitem7), alignment1);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment1), 0, 0, 0, 20);
-
 	cbx_entry_fps = gtk_combo_box_entry_new_text();
 	gtk_widget_show(cbx_entry_fps);
-	gtk_container_add(GTK_CONTAINER(alignment1), cbx_entry_fps);
+	gtk_container_add(GTK_CONTAINER(toolitem7), cbx_entry_fps);
 	gtk_widget_set_size_request(cbx_entry_fps, 70, -1);
 
 	gtk_combo_box_append_text(GTK_COMBO_BOX(cbx_entry_fps), _("1/1"));
@@ -153,26 +148,34 @@ gst_ipcam_client_create_main_window(void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(cbx_entry_fps), _("25/1"));
 	gtk_combo_box_append_text(GTK_COMBO_BOX(cbx_entry_fps), _("30/1"));
 
+	toolitem3 = (GtkWidget*) gtk_tool_item_new();
+	gtk_widget_show(toolitem3);
+	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem3);
+
+	alignment1 = gtk_alignment_new(0, 0, 1, 1);
+	gtk_widget_show(alignment1);
+	gtk_container_add(GTK_CONTAINER(toolitem3), alignment1);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment1), 0, 0, 0, 20);
+
+	lbl_fps_unit = gtk_label_new(_("(fps)"));
+	gtk_widget_show(lbl_fps_unit);
+	gtk_container_add(GTK_CONTAINER(alignment1), lbl_fps_unit);
+	
 	toolitem8 = (GtkWidget*) gtk_tool_item_new();
 	gtk_widget_show(toolitem8);
 	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem8);
-
-	hbox2 = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(hbox2);
-	gtk_container_add(GTK_CONTAINER(toolitem8), hbox2);
-
+	
 	lbl_fsize = gtk_label_new(_("Frame size:"));
 	gtk_widget_show(lbl_fsize);
-	gtk_box_pack_start(GTK_BOX(hbox2), lbl_fsize, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(toolitem8), lbl_fsize);
 
-	alignment2 = gtk_alignment_new(0, 0, 1, 1);
-	gtk_widget_show(alignment2);
-	gtk_box_pack_start(GTK_BOX(hbox2), alignment2, FALSE, FALSE, 0);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment2), 0, 0, 0, 20);
-
+	toolitem11 = (GtkWidget*) gtk_tool_item_new();
+	gtk_widget_show(toolitem11);
+	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem11);
+	
 	cbx_entry_fsize = gtk_combo_box_entry_new_text();
 	gtk_widget_show(cbx_entry_fsize);
-	gtk_container_add(GTK_CONTAINER(alignment2), cbx_entry_fsize);
+	gtk_container_add(GTK_CONTAINER(toolitem11), cbx_entry_fsize);
 	gtk_widget_set_size_request(cbx_entry_fsize, 90, -1);
 
 	gtk_combo_box_append_text(GTK_COMBO_BOX(cbx_entry_fsize), _("320x240")); /*QVGA*/
@@ -181,29 +184,50 @@ gst_ipcam_client_create_main_window(void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(cbx_entry_fsize), _("1280x960")); /*Quad-VGA*/
 	gtk_combo_box_append_text(GTK_COMBO_BOX(cbx_entry_fsize), _("1280x1024")); /*SXGA*/
 
+	toolitem4 = (GtkWidget*) gtk_tool_item_new();
+	gtk_widget_show(toolitem4);
+	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem4);
+
+	alignment2 = gtk_alignment_new(0, 0, 1, 1);
+	gtk_widget_show(alignment2);
+	gtk_container_add(GTK_CONTAINER(toolitem4), alignment2);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment2), 0, 0, 0, 20);
+
+	lbl_fsize_unit = gtk_label_new(_("(pixels)"));
+	gtk_widget_show(lbl_fsize_unit);
+	gtk_container_add(GTK_CONTAINER(alignment2), lbl_fsize_unit);
+	
 	toolitem9 = (GtkWidget*) gtk_tool_item_new();
 	gtk_widget_show(toolitem9);
 	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem9);
 
-	hbox3 = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(hbox3);
-	gtk_container_add(GTK_CONTAINER(toolitem9), hbox3);
-
 	lbl_bitrate = gtk_label_new(_("Bit rate:"));
 	gtk_widget_show(lbl_bitrate);
-	gtk_container_add(GTK_CONTAINER(hbox3), lbl_bitrate);
+	gtk_container_add(GTK_CONTAINER(toolitem9), lbl_bitrate);
 
-	alignment3 = gtk_alignment_new(0, 0, 1, 1);
-	gtk_widget_show(alignment3);
-	gtk_box_pack_start(GTK_BOX(hbox3), alignment3, TRUE, TRUE, 0);
-	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment3), 0, 0, 0, 20);
-
+	toolitem12 = (GtkWidget*) gtk_tool_item_new();
+	gtk_widget_show(toolitem12);
+	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem12);
+	
 	entry_bitrate = gtk_entry_new();
 	gtk_widget_show(entry_bitrate);
-	gtk_container_add(GTK_CONTAINER(alignment3), entry_bitrate);
+	gtk_container_add(GTK_CONTAINER(toolitem12), entry_bitrate);
 	gtk_widget_set_size_request(entry_bitrate, 120, -1);
 	gtk_entry_set_invisible_char(GTK_ENTRY(entry_bitrate), 9679);
 
+	toolitem5 = (GtkWidget*) gtk_tool_item_new();
+	gtk_widget_show(toolitem5);
+	gtk_container_add(GTK_CONTAINER(toolbar1), toolitem5);
+
+	alignment3 = gtk_alignment_new(0, 0, 1, 1);
+	gtk_widget_show(alignment3);
+	gtk_container_add(GTK_CONTAINER(toolitem5), alignment3);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(alignment3), 0, 0, 0, 20);
+
+	lbl_bitrate_unit = gtk_label_new(_("(bps)"));
+	gtk_widget_show(lbl_bitrate_unit);
+	gtk_container_add(GTK_CONTAINER(alignment3), lbl_bitrate_unit);
+	
 	toolitem10 = (GtkWidget*) gtk_tool_item_new();
 	gtk_tool_item_set_expand (GTK_TOOL_ITEM(toolitem10), TRUE);
 	gtk_widget_show(toolitem10);
@@ -212,22 +236,18 @@ gst_ipcam_client_create_main_window(void)
 	toolitem10 = (GtkWidget*) gtk_tool_item_new();
 	gtk_widget_show(toolitem10);
 	gtk_toolbar_insert (GTK_TOOLBAR (toolbar1), GTK_TOOL_ITEM(toolitem10), -1);
-	
-	hbox4 = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(hbox4);
-	gtk_container_add(GTK_CONTAINER(toolitem10), hbox4);
 
 	btn_change = gtk_button_new_with_mnemonic(_("Change"));
 	gtk_widget_show(btn_change);
-	gtk_box_pack_start(GTK_BOX(hbox4), btn_change, FALSE, FALSE, 0);
-
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(vbox2);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, TRUE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(toolitem10), btn_change);
+	
+	vbox_prw_video = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox_prw_video);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox_prw_video, TRUE, FALSE, 0);
 
 	prw_video = gtk_drawing_area_new();
 	gtk_widget_show(prw_video);
-	gtk_box_pack_start(GTK_BOX(vbox2), prw_video, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox_prw_video), prw_video, FALSE, TRUE, 0);
 	
 	status_bar = gst_ipcam_client_init_status_bar();
 	gtk_widget_show(status_bar);
@@ -279,14 +299,18 @@ gst_ipcam_client_create_main_window(void)
 	GLADE_HOOKUP_OBJECT(main_window, btn_about, "btn_about");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem_quit, "toolitem_quit");
 	GLADE_HOOKUP_OBJECT(main_window, btn_quit, "btn_quit");
-	GLADE_HOOKUP_OBJECT(main_window, hbox2, "hbox2");
-	GLADE_HOOKUP_OBJECT(main_window, hbox3, "hbox3");
-	GLADE_HOOKUP_OBJECT(main_window, hbox4, "hbox4");
-	GLADE_HOOKUP_OBJECT(main_window, vbox2, "vbox2");
+	GLADE_HOOKUP_OBJECT(main_window, vbox_prw_video, "vbox_prw_video");
 	GLADE_HOOKUP_OBJECT(main_window, toolbar1, "toolbar1");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem3, "toolitem3");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem4, "toolitem4");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem5, "toolitem5");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem6, "toolitem6");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem7, "toolitem7");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem8, "toolitem8");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem9, "toolitem9");
 	GLADE_HOOKUP_OBJECT(main_window, toolitem10, "toolitem10");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem11, "toolitem11");
+	GLADE_HOOKUP_OBJECT(main_window, toolitem12, "toolitem12");
 	GLADE_HOOKUP_OBJECT(main_window, alignment1, "alignment1");
 	GLADE_HOOKUP_OBJECT(main_window, alignment2, "alignment2");
 	GLADE_HOOKUP_OBJECT(main_window, alignment3, "alignment3");
